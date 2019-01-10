@@ -4,10 +4,10 @@ plugins {
     id "idea"
 }
 
-def ROBOT_MAIN_CLASS = "frc.team1983.robot.Main"
+def ROBOT_MAIN_CLASS = "frc.team1983.Main"
 
 sourceSets {
-    main.java.srcDirs = ['src/frc']
+    main.java.srcDirs = ['src']
     test.java.srcDirs = ['test']
 }
 
