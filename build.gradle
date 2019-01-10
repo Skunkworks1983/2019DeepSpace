@@ -7,11 +7,8 @@ plugins {
 def ROBOT_MAIN_CLASS = "frc.team1983.robot.Main"
 
 sourceSets {
-    test {
-        java {
-            srcDirs = ["test"]
-        }
-    }
+    main.java.srcDirs = ['src/java']
+    test.java.srcDirs = ['test/java']
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
