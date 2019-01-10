@@ -1,4 +1,4 @@
-package frc.team1983.robot;
+package main.java.frc.team1983.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
