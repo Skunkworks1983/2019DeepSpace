@@ -7,8 +7,8 @@ plugins {
 def ROBOT_MAIN_CLASS = "frc.team1983.robot.Main"
 
 sourceSets {
-    main.java.srcDirs = ['src/java']
-    test.java.srcDirs = ['test/java']
+    main.java.srcDirs = ['src/frc']
+    test.java.srcDirs = ['test']
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -32,7 +32,7 @@ deploy {
         // Built in artifact to deploy arbitrary files to the roboRIO.
         fileTreeArtifact('frcStaticFileDeploy') {
             // The directory below is the local directory to deploy
-            files = fileTree(dir: 'src/main/deploy')
+            files = fileTree(dir: 'src/frc/team1983/deploy')
             // Deploy to RoboRIO target, into /home/lvuser/deploy
             targets << "roborio"
             directory = '/home/lvuser/deploy'
