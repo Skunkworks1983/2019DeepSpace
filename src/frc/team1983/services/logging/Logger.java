@@ -1,5 +1,7 @@
 package frc.team1983.services.logging;
 
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Logger {
@@ -62,7 +64,7 @@ public class Logger {
 
         if(level.PRIORITY >= minPriority)
         {
-            System.out.println(objectClass.toString() + " " + level.name() + ": " + message);
+            System.out.println(LocalTime.now() + objectClass.toString() + " " + level.name() + ": " + message);
         }
     }
 }

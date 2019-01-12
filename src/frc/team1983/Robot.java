@@ -18,17 +18,24 @@ public class Robot extends TimedRobot
     private OI oi;
     private Logger logger;
 
-    public Robot()
+    Robot()
+    {
+        instance = this;
+    }
+
+    @Override
+    public void robotInit()
     {
         logger = Logger.getInstance();
         logger.setGlobalLevel(Level.INFO);
+        logger.info("Logging test", getClass());
 
         drivebase = new Drivebase();
-        estimator = new StateEstimator();
+        //estimator = new StateEstimator();
         pigeon = new PigeonIMU(Constants.MotorMap.Drivebase.LEFT_1);
         oi = new OI();
 
-        new Thread(estimator).start();
+        //new Thread(estimator).start();
     }
 
     @Override
