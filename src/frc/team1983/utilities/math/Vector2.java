@@ -135,4 +135,14 @@ public class Vector2
     {
         set(Vector2.twist(this, center, degrees));
     }
+
+    public static Vector2 opposite(Vector2 v)
+    {
+        return new Vector2(-v.getX(), -v.getY());
+    }
+
+    public void opposite()
+    {
+        set(Vector2.opposite(this));
+    }
 }
