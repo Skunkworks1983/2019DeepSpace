@@ -44,6 +44,12 @@ public class Drivebase extends Subsystem
 
     }
 
+    public void zero()
+    {
+        left1.setSelectedSensorPosition(0);
+        right1.setSelectedSensorPosition(0);
+    }
+
     public void setLeft(ControlMode mode, double value)
     {
         left1.set(mode, value);
@@ -53,4 +59,35 @@ public class Drivebase extends Subsystem
     {
         right1.set(mode, value);
     }
+
+    public static double toInches(double ticks)
+    {
+        return ticks * Constants.DRIVEBASE_INCHES_PER_TICK;
+    }
+
+    public static double toTicks(double inches)
+    {
+        return inches / Constants.DRIVEBASE_INCHES_PER_TICK;
+    }
+
+    public double getLeftPosition()
+    {
+        return toInches(left1.getSelectedSensorPosition());
+    }
+
+    public double getRightPosition()
+    {
+        return toInches(right1.getSelectedSensorPosition());
+    }
+
+    public double getLeftVelocity()
+    {
+        return toInches(left1.getSelectedSensorVelocity() * 10);
+    }
+
+    public double getRightVelocity()
+    {
+        return toInches(right1.getSelectedSensorVelocity() * 10);
+    }
+
 }

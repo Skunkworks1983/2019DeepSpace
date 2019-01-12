@@ -16,4 +16,14 @@ public class Pose
     {
         this(position, new Vector2(Math.cos(Math.toRadians(degrees)), Math.sin(Math.toRadians(degrees))));
     }
+
+    public Vector2 getPosition()
+    {
+        return position;
+    }
+
+    public Vector2 getDirection()
+    {
+        return direction;
+    }
 }

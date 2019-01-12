@@ -4,6 +4,9 @@ public class Constants
 {
     public static final double EPSILON = 1e-5;
 
+    public static final double DRIVEBASE_INCHES_PER_TICK = (6 * Math.PI) / 1360.0;
+    public static final double PATHING_TANGENT_LENGTH = 0;
+
     public static class MotorMap
     {
         public static class Drivebase
@@ -36,5 +39,10 @@ public class Constants
             public static int RIGHT = 0;
             public static int PANEL = 0;
         }
+    }
+
+    public static class Estimator
+    {
+        public static final int UPDATE_RATE = 20;
     }
 }
