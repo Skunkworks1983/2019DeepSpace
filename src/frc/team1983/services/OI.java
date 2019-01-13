@@ -1,7 +1,7 @@
 package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
-import frc.team1983.Constants;
+import frc.team1983.constants.OIConstants;
 
 public class OI
 {
@@ -9,9 +9,9 @@ public class OI
 
     public OI()
     {
-        left = new Joystick(Constants.OI.Map.LEFT);
-        right = new Joystick(Constants.OI.Map.LEFT);
-        panel = new Joystick(Constants.OI.Map.LEFT);
+        left = new Joystick(OIConstants.Map.LEFT);
+        right = new Joystick(OIConstants.Map.LEFT);
+        panel = new Joystick(OIConstants.Map.LEFT);
     }
 
     public double getLeftY()

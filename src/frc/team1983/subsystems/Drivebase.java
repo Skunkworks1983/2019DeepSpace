@@ -3,8 +3,9 @@ package frc.team1983.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team1983.Constants;
 import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.constants.DrivebaseConstants;
+import frc.team1983.constants.MotorMap;
 
 public class Drivebase extends Subsystem
 {
@@ -13,22 +14,22 @@ public class Drivebase extends Subsystem
 
     public Drivebase()
     {
-        left1 = new TalonSRX(Constants.MotorMap.Drivebase.LEFT_1);
-        left1.setInverted(Constants.MotorMap.Drivebase.LEFT_1_REVERSED);
-        left2 = new TalonSRX(Constants.MotorMap.Drivebase.LEFT_2);
-        left2.setInverted(Constants.MotorMap.Drivebase.LEFT_2_REVERSED);
+        left1 = new TalonSRX(MotorMap.Drivebase.LEFT_1);
+        left1.setInverted(MotorMap.Drivebase.LEFT_1_REVERSED);
+        left2 = new TalonSRX(MotorMap.Drivebase.LEFT_2);
+        left2.setInverted(MotorMap.Drivebase.LEFT_2_REVERSED);
         left2.follow(left1);
-        left3 = new TalonSRX(Constants.MotorMap.Drivebase.LEFT_3);
-        left3.setInverted(Constants.MotorMap.Drivebase.LEFT_3_REVERSED);
+        left3 = new TalonSRX(MotorMap.Drivebase.LEFT_3);
+        left3.setInverted(MotorMap.Drivebase.LEFT_3_REVERSED);
         left3.follow(left2);
 
-        right1 = new TalonSRX(Constants.MotorMap.Drivebase.RIGHT_1);
-        right1.setInverted(Constants.MotorMap.Drivebase.RIGHT_1_REVERSED);
-        right2 = new TalonSRX(Constants.MotorMap.Drivebase.RIGHT_2);
-        right2.setInverted(Constants.MotorMap.Drivebase.RIGHT_2_REVERSED);
+        right1 = new TalonSRX(MotorMap.Drivebase.RIGHT_1);
+        right1.setInverted(MotorMap.Drivebase.RIGHT_1_REVERSED);
+        right2 = new TalonSRX(MotorMap.Drivebase.RIGHT_2);
+        right2.setInverted(MotorMap.Drivebase.RIGHT_2_REVERSED);
         right2.follow(right1);
-        right3 = new TalonSRX(Constants.MotorMap.Drivebase.RIGHT_3);
-        right3.setInverted(Constants.MotorMap.Drivebase.RIGHT_3_REVERSED);
+        right3 = new TalonSRX(MotorMap.Drivebase.RIGHT_3);
+        right3.setInverted(MotorMap.Drivebase.RIGHT_3_REVERSED);
         right3.follow(right2);
     }
 
@@ -62,12 +63,12 @@ public class Drivebase extends Subsystem
 
     public static double toInches(double ticks)
     {
-        return ticks * Constants.DRIVEBASE_INCHES_PER_TICK;
+        return ticks * DrivebaseConstants.DRIVEBASE_INCHES_PER_TICK;
     }
 
     public static double toTicks(double inches)
     {
-        return inches / Constants.DRIVEBASE_INCHES_PER_TICK;
+        return inches / DrivebaseConstants.DRIVEBASE_INCHES_PER_TICK;
     }
 
     public double getLeftPosition()
