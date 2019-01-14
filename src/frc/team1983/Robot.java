@@ -3,6 +3,7 @@ package frc.team1983;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
@@ -32,7 +33,7 @@ public class Robot extends TimedRobot
 
         drivebase = new Drivebase();
         //estimator = new StateEstimator();
-        pigeon = new PigeonIMU(Constants.MotorMap.Drivebase.LEFT_1);
+        pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
         oi = new OI();
 
         //new Thread(estimator).start();
