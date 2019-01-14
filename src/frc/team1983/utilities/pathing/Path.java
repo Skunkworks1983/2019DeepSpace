@@ -1,6 +1,6 @@
 package frc.team1983.utilities.pathing;
 
-import frc.team1983.Constants;
+import frc.team1983.constants.DrivebaseConstants;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
@@ -23,8 +23,8 @@ public class Path extends Bezier
 
             path[i] = new Bezier(
                     current.getPosition(),
-                    Vector2.add(current.getPosition(), Vector2.scale(new Vector2(Math.cos(theta1), Math.sin(theta1)), Constants.PATHING_TANGENT_LENGTH)),
-                    Vector2.add(next.getPosition(), Vector2.scale(new Vector2(Math.cos(theta2), Math.sin(theta2)), -Constants.PATHING_TANGENT_LENGTH)),
+                    Vector2.add(current.getPosition(), Vector2.scale(new Vector2(Math.cos(theta1), Math.sin(theta1)), DrivebaseConstants.PATHING_TANGENT_LENGTH)),
+                    Vector2.add(next.getPosition(), Vector2.scale(new Vector2(Math.cos(theta2), Math.sin(theta2)), -DrivebaseConstants.PATHING_TANGENT_LENGTH)),
                     next.getPosition()
             );
         }

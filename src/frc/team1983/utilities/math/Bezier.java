@@ -1,6 +1,6 @@
 package frc.team1983.utilities.math;
 
-import frc.team1983.Constants;
+import frc.team1983.constants.Constants;
 
 import java.util.Arrays;
 

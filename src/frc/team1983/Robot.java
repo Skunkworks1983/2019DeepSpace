@@ -3,6 +3,7 @@ package frc.team1983;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
@@ -28,7 +29,7 @@ public class Robot extends TimedRobot
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
-        pigeon = new PigeonIMU(Constants.MotorMap.Drivebase.LEFT_1);
+        pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
         oi = new OI();
     }
 
