@@ -2,12 +2,12 @@ package frc.team1983.services;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.team1983.Robot;
-import frc.team1983.constants.EstimatorConstants;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
 
 public class StateEstimator implements Runnable
 {
+    public static final int UPDATE_RATE = 20;
     private Drivebase drivebase;
     private PigeonIMU pigeon;
 
@@ -63,7 +63,7 @@ public class StateEstimator implements Runnable
 
             try
             {
-                Thread.sleep((long) 1000.0 / EstimatorConstants.UPDATE_RATE);
+                Thread.sleep((long) 1000.0 / UPDATE_RATE);
             }
             catch(InterruptedException exception)
             {
