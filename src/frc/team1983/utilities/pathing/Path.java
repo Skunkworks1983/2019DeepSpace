@@ -4,7 +4,7 @@ import frc.team1983.Constants;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
-public class Path
+public class Path extends Bezier
 {
     private Pose[] poses;
     private Bezier[] path;

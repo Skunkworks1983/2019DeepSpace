@@ -13,11 +13,6 @@ public class Line
         this.direction = direction.getNormalized();
     }
 
-    public Line(Vector2 origin, double degrees)
-    {
-        this(origin, new Vector2(Math.cos(degrees * Math.PI / 180), Math.sin(degrees * Math.PI / 180)));
-    }
-
     public Vector2 getOrigin()
     {
         return origin;
