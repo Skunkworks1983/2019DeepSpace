@@ -11,9 +11,9 @@ public class OI
 
     public OI()
     {
-        left = new Joystick(Map.LEFT.PORT);
-        right = new Joystick(Map.RIGHT.PORT);
-        panel = new Joystick(Map.PANEL.PORT);
+        left = new Joystick(Map.LEFT);
+        right = new Joystick(Map.RIGHT);
+        panel = new Joystick(Map.PANEL);
     }
 
     public double getLeftY()
@@ -26,17 +26,10 @@ public class OI
         return right.getY();
     }
 
-    public enum Map
+    public static class Map
     {
-        LEFT(0),
-        RIGHT(0),
-        PANEL(0)
-        ;
-
-        final int PORT;
-        private Map(int port)
-        {
-            this.PORT = port;
-        }
+        public static final int LEFT = 0;
+        public static final int RIGHT = 0;
+        public static final int PANEL = 0;
     }
 }
