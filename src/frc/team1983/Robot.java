@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
+import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
@@ -14,6 +15,7 @@ public class Robot extends TimedRobot
     private static Robot instance;
     private Drivebase drivebase;
     private PigeonIMU pigeon;
+    private StateEstimator estimator;
     private OI oi;
     private Logger logger;
 
@@ -30,7 +32,11 @@ public class Robot extends TimedRobot
 
         drivebase = new Drivebase();
         pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
+        estimator = new StateEstimator();
+        new Thread(estimator).start();
         oi = new OI();
+
+        oi.initializeBindings();
     }
 
     @Override

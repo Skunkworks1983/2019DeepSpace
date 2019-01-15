@@ -1,14 +1,16 @@
 package frc.team1983.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.constants.DrivebaseConstants;
 import frc.team1983.constants.MotorMap;
 
 public class Drivebase extends Subsystem
 {
+    public static final double DRIVEBASE_INCHES_PER_TICK = (6 * Math.PI) / 1360.0;
+    public static final double PATHING_TANGENT_LENGTH = 0;
     private TalonSRX left1, left2, left3;
     private TalonSRX right1, right2, right3;
 
@@ -16,6 +18,7 @@ public class Drivebase extends Subsystem
     {
         left1 = new TalonSRX(MotorMap.Drivebase.LEFT_1);
         left1.setInverted(MotorMap.Drivebase.LEFT_1_REVERSED);
+        left1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         left2 = new TalonSRX(MotorMap.Drivebase.LEFT_2);
         left2.setInverted(MotorMap.Drivebase.LEFT_2_REVERSED);
         left2.follow(left1);
@@ -25,6 +28,7 @@ public class Drivebase extends Subsystem
 
         right1 = new TalonSRX(MotorMap.Drivebase.RIGHT_1);
         right1.setInverted(MotorMap.Drivebase.RIGHT_1_REVERSED);
+        right1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         right2 = new TalonSRX(MotorMap.Drivebase.RIGHT_2);
         right2.setInverted(MotorMap.Drivebase.RIGHT_2_REVERSED);
         right2.follow(right1);
@@ -63,12 +67,12 @@ public class Drivebase extends Subsystem
 
     public static double toInches(double ticks)
     {
-        return ticks * DrivebaseConstants.DRIVEBASE_INCHES_PER_TICK;
+        return ticks * DRIVEBASE_INCHES_PER_TICK;
     }
 
     public static double toTicks(double inches)
     {
-        return inches / DrivebaseConstants.DRIVEBASE_INCHES_PER_TICK;
+        return inches / DRIVEBASE_INCHES_PER_TICK;
     }
 
     public double getLeftPosition()
