@@ -131,28 +131,21 @@ public class Vector2
         return Vector2.add(center, Vector2.scale(new Vector2(Math.cos(theta + degrees), Math.sin(theta + degrees)), r));
     }
 
+    public static Vector2 rotate(Vector2 point, double degrees)
+    {
+        return twist(point, new Vector2(0, 0), degrees);
+    }
+
     public void twist(Vector2 center, double degrees)
     {
         set(Vector2.twist(this, center, degrees));
-    }
-
-    public static Vector2 opposite(Vector2 v)
-    {
-        return new Vector2(-v.getX(), -v.getY());
-    }
-
-    public void opposite()
-    {
-        set(Vector2.opposite(this));
     }
 
     public static Vector2 findCenter(Vector2... points)
     {
         Vector2 center = points[0];
         for(int i = 1; i < points.length; i++)
-        {
             center = Vector2.scale(Vector2.add(center, points[i]), 1.0 / 2.0);
-        }
         return center;
     }
 }

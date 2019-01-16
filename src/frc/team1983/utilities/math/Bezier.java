@@ -1,6 +1,7 @@
 package frc.team1983.utilities.math;
 
 import frc.team1983.constants.Constants;
+import frc.team1983.utilities.Pair;
 
 import java.util.Arrays;
 
@@ -8,11 +9,13 @@ public class Bezier
 {
     public static int RESOLUTION = 20;
 
-    private Vector2[] points;
+    private final Vector2[] points;
     private double length = 0;
 
     public Bezier(Vector2... points)
     {
+        if(points.length < 2)
+            throw new IllegalArgumentException("Cannot generate a Bezier curve with less than two points");
         this.points = points;
     }
 
@@ -30,6 +33,19 @@ public class Bezier
     public Vector2 evaluate(double t)
     {
         return evaluate(this, t);
+    }
+
+    public static double getLength(Bezier curve)
+    {
+        if(curve.length == 0)
+            for(double i = 0; i < RESOLUTION; i++)
+                curve.length += curve.evaluate(i / RESOLUTION).getDistanceTo(curve.evaluate((i + 1) / RESOLUTION));
+        return curve.length;
+    }
+
+    public double getLength()
+    {
+        return getLength(this);
     }
 
     public static Vector2 evaluateTangent(Bezier curve, double t)
@@ -88,38 +104,27 @@ public class Bezier
         return evaluateRadiusOfCurvatuve(this, t);
     }
 
-    public static Vector2 approximateClosestPointOnCurve(Bezier curve, Vector2 point)
+    public static Pair approximateClosestPointOnCurve(Bezier curve, Vector2 point)
     {
-        Vector2 closest = curve.evaluate(0);
+        double closestT = 0;
+        Vector2 closest = curve.evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
-        for(int i = 0; i <= RESOLUTION; i++)
+        for(double i = 0; i <= RESOLUTION; i++)
         {
-            Vector2 candidate = curve.evaluate((double) i / RESOLUTION);
+            Vector2 candidate = curve.evaluate(i / RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
+                closestT = i / RESOLUTION;
                 closest = candidate;
                 closestDistance = candidateDistance;
             }
         }
-        return closest;
+        return new Pair(closestT, closest);
     }
 
-    public Vector2 approximateClosestPointOnCurve(Vector2 point)
+    public Pair approximateClosestPointOnCurve(Vector2 point)
     {
         return approximateClosestPointOnCurve(this, point);
-    }
-
-    public static double getLength(Bezier curve)
-    {
-        if(curve.length == 0)
-            for(int i = 0; i < RESOLUTION; i++)
-                curve.length += curve.evaluate((double) i / RESOLUTION).getDistanceTo(curve.evaluate((double) (i + 1) / RESOLUTION));
-        return curve.length;
-    }
-
-    public double getLength()
-    {
-        return getLength(this);
     }
 }

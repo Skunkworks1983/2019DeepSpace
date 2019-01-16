@@ -1,5 +1,6 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
@@ -59,20 +60,22 @@ public class Path extends Bezier
     }
 
     @Override
-    public Vector2 approximateClosestPointOnCurve(Vector2 point)
+    public Pair approximateClosestPointOnCurve(Vector2 point)
     {
-        Vector2 closest = evaluate(0);
+        double closestT = 0;
+        Vector2 closest = getSegment(closestT).evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
-        for(int i = 0; i <= RESOLUTION * path.length; i++)
+        for(double i = 0; i <= RESOLUTION * path.length; i++)
         {
-            Vector2 candidate = evaluate((double) i / (RESOLUTION * path.length));
+            Vector2 candidate = getSegment(closestT).evaluate(i / RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
+                closestT = i / RESOLUTION;
                 closest = candidate;
                 closestDistance = candidateDistance;
             }
         }
-        return closest;
+        return new Pair(closestT, closest);
     }
 }
