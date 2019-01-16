@@ -145,4 +145,14 @@ public class Vector2
     {
         set(Vector2.opposite(this));
     }
+
+    public static Vector2 findCenter(Vector2... points)
+    {
+        Vector2 center = points[0];
+        for(int i = 1; i < points.length; i++)
+        {
+            center = Vector2.scale(Vector2.add(center, points[i]), 1.0 / 2.0);
+        }
+        return center;
+    }
 }

@@ -5,7 +5,7 @@ import frc.team1983.utilities.math.Vector2;
 
 public class Path extends Bezier
 {
-    public static final double TANGENT_LENGTH = 2.0; // Feet
+    public static final double TANGENT_LENGTH = 2.0; // feet
 
     private Bezier[] path;
     private double length = 0;
@@ -33,13 +33,7 @@ public class Path extends Bezier
 
     private Bezier getSegment(double t)
     {
-        if (t < 0 || t > 1)
-            throw new IllegalArgumentException("Cannot evaluate at " + t + ", must be between 0 and 1!");
-
-        double length = 0;
-        for(Bezier curve : path)
-            length += curve.getLength();
-        length *= t;
+        length = getLength() * t;
         for(Bezier curve : path)
         {
             if(curve.getLength() <= length)
@@ -50,54 +44,35 @@ public class Path extends Bezier
     }
 
     @Override
+    public double getLength()
+    {
+        if(length == 0)
+            for(Bezier curve : path)
+                length += curve.getLength();
+        return length;
+    }
+
+    @Override
     public Vector2 evaluate(double t)
     {
         return getSegment(t).evaluate(t);
     }
 
     @Override
-    public Vector2 evaluateTangent(double t)
+    public Vector2 approximateClosestPointOnCurve(Vector2 point)
     {
-        return getSegment(t).evaluateTangent(t);
-    }
-
-    @Override
-    public double getLength()
-    {
-        if(length == 0)
-            for(int i = 0; i < RESOLUTION * path.length; i++)
-                length += evaluate((double) i / RESOLUTION).getDistanceTo(evaluate((double) (i + 1) / RESOLUTION));
-        return length;
-    }
-
-    public double evaluateClosestT(double resolution, Vector2 point)
-    {
-        double t = Double.NaN;
-        Vector2 test;
-        double smallestDistance = Double.MAX_VALUE;
-
-        // Loop through points on the path
-        for (int i = 0; i <= resolution; i++)
+        Vector2 closest = evaluate(0);
+        double closestDistance = Vector2.getDistance(closest, point);
+        for(int i = 0; i <= RESOLUTION * path.length; i++)
         {
-            double step = Math.min(i * (1.0 / resolution), 1.0);
-            test = evaluate(step);
-
-            // Find the distance to the curve
-            double dist = point.getDistanceTo(test);
-
-            // If the shortest distance doesn't exist yet, set it to this distance
-            if (dist < smallestDistance)
+            Vector2 candidate = evaluate((double) i / (RESOLUTION * path.length));
+            double candidateDistance = Vector2.getDistance(candidate, point);
+            if(candidateDistance < closestDistance)
             {
-                t = step;
-                smallestDistance = dist;
+                closest = candidate;
+                closestDistance = candidateDistance;
             }
         }
-
-        return t;
-    }
-
-    public double evaluateClosestT(Vector2 point)
-    {
-        return evaluateClosestT(RESOLUTION * path.length, point);
+        return closest;
     }
 }

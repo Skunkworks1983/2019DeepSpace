@@ -83,4 +83,12 @@ public class UT_Vector2
         assertThat(Vector2.equals(Vector2.twist(new Vector2(-1, 0), new Vector2(0, 0), 90), new Vector2(0, -1)), equalTo(true));
         assertThat(Vector2.equals(Vector2.twist(new Vector2(0, 0), new Vector2(1, 0), -90), new Vector2(1, 1)), equalTo(true));
     }
+
+    @Test
+    public void centeringTest()
+    {
+        Vector2 center1 = Vector2.findCenter(new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0));
+        System.out.println(center1.toString());
+
+    }
 }

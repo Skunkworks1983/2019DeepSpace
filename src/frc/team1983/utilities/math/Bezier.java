@@ -88,6 +88,28 @@ public class Bezier
         return evaluateRadiusOfCurvatuve(this, t);
     }
 
+    public static Vector2 approximateClosestPointOnCurve(Bezier curve, Vector2 point)
+    {
+        Vector2 closest = curve.evaluate(0);
+        double closestDistance = Vector2.getDistance(closest, point);
+        for(int i = 0; i <= RESOLUTION; i++)
+        {
+            Vector2 candidate = curve.evaluate((double) i / RESOLUTION);
+            double candidateDistance = Vector2.getDistance(candidate, point);
+            if(candidateDistance < closestDistance)
+            {
+                closest = candidate;
+                closestDistance = candidateDistance;
+            }
+        }
+        return closest;
+    }
+
+    public Vector2 approximateClosestPointOnCurve(Vector2 point)
+    {
+        return approximateClosestPointOnCurve(this, point);
+    }
+
     public static double getLength(Bezier curve)
     {
         if(curve.length == 0)

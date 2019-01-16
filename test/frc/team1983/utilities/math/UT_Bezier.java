@@ -69,4 +69,10 @@ public class UT_Bezier
     {
 
     }
+
+    @Test
+    public void closestPointTest()
+    {
+
+    }
 }
