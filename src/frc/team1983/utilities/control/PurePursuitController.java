@@ -5,8 +5,8 @@ import frc.team1983.utilities.pathing.Pose;
 
 public class PurePursuitController
 {
-    public static double evaluateSteeringRadius(Pose pose, Path path)
+    public static double[] evaluateOutput(Pose pose, Path path, double velocity)
     {
-        return 0;
+        return new double[] {0.0, 0.0};
     }
 }

@@ -4,12 +4,14 @@ import frc.team1983.utilities.math.Vector2;
 
 public class Pose
 {
-    private Vector2 position, direction;
+    private final Vector2 position, direction;
+    private final double heading;
 
     public Pose(Vector2 position, Vector2 direction)
     {
         this.position = position;
         this.direction = direction;
+        this.heading = Math.atan2(direction.getY(), direction.getX());
     }
 
     public Pose(Vector2 position, double degrees)
