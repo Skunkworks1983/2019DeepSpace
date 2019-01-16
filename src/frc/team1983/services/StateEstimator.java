@@ -4,6 +4,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
+import frc.team1983.utilities.pathing.Pose;
 
 public class StateEstimator implements Runnable
 {
@@ -29,6 +30,11 @@ public class StateEstimator implements Runnable
     public StateEstimator()
     {
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getPigeon());
+    }
+
+    public Pose getCurrentPose()
+    {
+        return new Pose(position, pigeon.getFusedHeading());
     }
 
     public Vector2 getPosition()
