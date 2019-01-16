@@ -6,13 +6,13 @@ import java.util.Arrays;
 
 public class Bezier
 {
+    public static int RESOLUTION = 20;
+
     private Vector2[] points;
+    private double length = 0;
 
     public Bezier(Vector2... points)
     {
-        if(points.length < 2)
-            throw new IllegalArgumentException("cannot construct Bezier with less than two points");
-
         this.points = points;
     }
 
@@ -90,11 +90,10 @@ public class Bezier
 
     public static double getLength(Bezier curve)
     {
-        double length = 0;
-        double segments = 20;
-        for(int i = 0; i < segments; i++)
-            length += curve.evaluate((double) i / segments).getDistanceTo(curve.evaluate((double) (i + 1) / segments));
-        return length;
+        if(curve.length == 0)
+            for(int i = 0; i < RESOLUTION; i++)
+                curve.length += curve.evaluate((double) i / RESOLUTION).getDistanceTo(curve.evaluate((double) (i + 1) / RESOLUTION));
+        return curve.length;
     }
 
     public double getLength()

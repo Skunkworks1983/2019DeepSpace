@@ -17,6 +17,11 @@ public class Pose
         this(position, new Vector2(Math.cos(Math.toRadians(degrees)), Math.sin(Math.toRadians(degrees))));
     }
 
+    public Pose(double x, double y, double degrees)
+    {
+        this(new Vector2(x, y), degrees);
+    }
+
     public Vector2 getPosition()
     {
         return position;

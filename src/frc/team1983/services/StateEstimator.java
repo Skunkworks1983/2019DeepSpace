@@ -7,7 +7,7 @@ import frc.team1983.utilities.math.Vector2;
 
 public class StateEstimator implements Runnable
 {
-    public static int UPDATE_RATE = 20;
+    public static final int UPDATE_RATE = 20;
 
     private Drivebase drivebase;
     private PigeonIMU pigeon;
@@ -19,6 +19,11 @@ public class StateEstimator implements Runnable
     {
         this.drivebase = drivebase;
         this.pigeon = pigeon;
+
+        lastLeftPosition = drivebase.getLeftPosition();
+        lastRightPosition = drivebase.getRightPosition();
+
+        new Thread(this).start();
     }
 
     public StateEstimator()
@@ -31,13 +36,18 @@ public class StateEstimator implements Runnable
         return position;
     }
 
+    public void setPosition(Vector2 position)
+    {
+        this.position = position;
+    }
+
     private synchronized void execute()
     {
         double leftPosition = drivebase.getLeftPosition();
         double rightPosition = drivebase.getRightPosition();
         double angle = pigeon.getFusedHeading() * Math.PI / 180.0;
 
-        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 24.0;
+        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
         position.add(Vector2.scale(new Vector2(Math.sin(angle), Math.cos(angle)), displacement));
 
         lastLeftPosition = leftPosition;

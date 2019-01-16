@@ -1,6 +1,7 @@
 package frc.team1983;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.constants.MotorMap;
@@ -22,18 +23,13 @@ public class Robot extends TimedRobot
     Robot()
     {
         instance = this;
-    }
 
-    @Override
-    public void robotInit()
-    {
         logger = Logger.getInstance();
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
         pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
         estimator = new StateEstimator();
-        new Thread(estimator).start();
         oi = new OI();
 
         oi.initializeBindings();
@@ -60,6 +56,11 @@ public class Robot extends TimedRobot
     public PigeonIMU getPigeon()
     {
         return pigeon;
+    }
+
+    public StateEstimator getEstimator()
+    {
+        return estimator;
     }
 
     public OI getOI()

@@ -9,8 +9,8 @@ import frc.team1983.constants.MotorMap;
 
 public class Drivebase extends Subsystem
 {
-    public static final double DRIVEBASE_INCHES_PER_TICK = (6 * Math.PI) / 1360.0;
-    public static final double PATHING_TANGENT_LENGTH = 0;
+    public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0;
+
     private TalonSRX left1, left2, left3;
     private TalonSRX right1, right2, right3;
 
@@ -49,12 +49,6 @@ public class Drivebase extends Subsystem
 
     }
 
-    public void zero()
-    {
-        left1.setSelectedSensorPosition(0);
-        right1.setSelectedSensorPosition(0);
-    }
-
     public void setLeft(ControlMode mode, double value)
     {
         left1.set(mode, value);
@@ -65,34 +59,34 @@ public class Drivebase extends Subsystem
         right1.set(mode, value);
     }
 
-    public static double toInches(double ticks)
+    public static double toFeet(double ticks)
     {
-        return ticks * DRIVEBASE_INCHES_PER_TICK;
+        return ticks * FEET_PER_TICK;
     }
 
-    public static double toTicks(double inches)
+    public static double toTicks(double feet)
     {
-        return inches / DRIVEBASE_INCHES_PER_TICK;
+        return feet / FEET_PER_TICK;
     }
 
     public double getLeftPosition()
     {
-        return toInches(left1.getSelectedSensorPosition());
+        return toFeet(left1.getSelectedSensorPosition());
     }
 
     public double getRightPosition()
     {
-        return toInches(right1.getSelectedSensorPosition());
+        return toFeet(right1.getSelectedSensorPosition());
     }
 
     public double getLeftVelocity()
     {
-        return toInches(left1.getSelectedSensorVelocity() * 10);
+        return toFeet(left1.getSelectedSensorVelocity() * 10);
     }
 
     public double getRightVelocity()
     {
-        return toInches(right1.getSelectedSensorVelocity() * 10);
+        return toFeet(right1.getSelectedSensorVelocity() * 10);
     }
 
 }
