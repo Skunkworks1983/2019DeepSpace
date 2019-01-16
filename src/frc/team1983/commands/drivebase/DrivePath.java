@@ -1,6 +1,7 @@
 package frc.team1983.commands.drivebase;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.StateEstimator;
@@ -31,10 +32,10 @@ public class DrivePath extends Command
     @Override
     public void execute()
     {
-        double[] output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 5);
+        double[] output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 4);
 
         drivebase.setLeft(ControlMode.PercentOutput, output[0]);
-        drivebase.setLeft(ControlMode.PercentOutput, output[1]);
+        drivebase.setRight(ControlMode.PercentOutput, output[1]);
     }
 
     @Override

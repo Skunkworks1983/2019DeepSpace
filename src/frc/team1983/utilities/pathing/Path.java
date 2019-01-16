@@ -17,15 +17,15 @@ public class Path extends Bezier
         for(int i = 0; i < poses.length - 1; i++)
         {
             Vector2 position0 = poses[i].getPosition();
-            double theta0 = Math.atan2(poses[i].getDirection().getY(), poses[i].getDirection().getX());
+            double theta0 = Math.toRadians(poses[i].getHeading());
 
             Vector2 position1 = poses[i + 1].getPosition();
-            double theta1 = Math.atan2(poses[i + 1].getDirection().getY(), poses[i + 1].getDirection().getX());
+            double theta1 = Math.toRadians(poses[i + 1].getHeading());
 
             path[i] = new Bezier(
                 position0,
-                new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH, position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
-                new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH, position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
+                new Vector2(position0.getX() + Math.sin(theta0) * TANGENT_LENGTH, position0.getY() + Math.cos(theta0) * TANGENT_LENGTH),
+                new Vector2(position1.getX() + Math.sin(theta1) * -TANGENT_LENGTH, position1.getY() + Math.cos(theta1) * -TANGENT_LENGTH),
                 position1
             );
         }
@@ -49,11 +49,13 @@ public class Path extends Bezier
         return path[path.length - 1];
     }
 
+    @Override
     public Vector2 evaluate(double t)
     {
         return getSegment(t).evaluate(t);
     }
 
+    @Override
     public Vector2 evaluateTangent(double t)
     {
         return getSegment(t).evaluateTangent(t);

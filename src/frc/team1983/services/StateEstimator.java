@@ -8,12 +8,12 @@ import frc.team1983.utilities.pathing.Pose;
 
 public class StateEstimator implements Runnable
 {
-    public static final int UPDATE_RATE = 20;
+    public static final int UPDATE_RATE = 30;
 
     private Drivebase drivebase;
     private PigeonIMU pigeon;
 
-    private double lastLeftPosition = 0, lastRightPosition = 0;
+    private double lastLeftPosition, lastRightPosition;
     private Vector2 position = new Vector2(0, 0);
 
     public StateEstimator(Drivebase drivebase, PigeonIMU pigeon)
@@ -51,10 +51,10 @@ public class StateEstimator implements Runnable
     {
         double leftPosition = drivebase.getLeftPosition();
         double rightPosition = drivebase.getRightPosition();
-        double angle = pigeon.getFusedHeading() * Math.PI / 180.0;
+        double angle = Math.toRadians(pigeon.getFusedHeading());
 
         double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
-        position.add(Vector2.scale(new Vector2(Math.sin(angle), Math.cos(angle)), displacement));
+        position.add(Vector2.scale(new Vector2(-Math.sin(angle), Math.cos(angle)), displacement));
 
         lastLeftPosition = leftPosition;
         lastRightPosition = rightPosition;
@@ -63,15 +63,18 @@ public class StateEstimator implements Runnable
     @Override
     public void run()
     {
-        execute();
+        while(true)
+        {
+            execute();
 
-        try
-        {
-            Thread.sleep((long) 1000.0 / UPDATE_RATE);
-        }
-        catch(InterruptedException exception)
-        {
-            exception.printStackTrace();
+            try
+            {
+                Thread.sleep((long) 1000.0 / UPDATE_RATE);
+            }
+            catch(InterruptedException exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 }

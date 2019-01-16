@@ -37,6 +37,8 @@ public class Drivebase extends Subsystem
         right3 = new TalonSRX(MotorMap.Drivebase.RIGHT_3);
         right3.setInverted(MotorMap.Drivebase.RIGHT_3_REVERSED);
         right3.follow(right2);
+
+        zero();
     }
 
     @Override
@@ -51,6 +53,17 @@ public class Drivebase extends Subsystem
 
     }
 
+    public void zero()
+    {
+        left1.setSelectedSensorPosition(0);
+        right1.setSelectedSensorPosition(0);
+    }
+
+    public TalonSRX getPigeonTalon()
+    {
+        return left3;
+    }
+
     public void setLeft(ControlMode mode, double value)
     {
         left1.set(mode, value);
@@ -63,12 +76,12 @@ public class Drivebase extends Subsystem
 
     public static double toFeet(double ticks)
     {
-        return ticks * FEET_PER_TICK;
+        return -ticks * FEET_PER_TICK;
     }
 
     public static double toTicks(double feet)
     {
-        return feet / FEET_PER_TICK;
+        return -feet / FEET_PER_TICK;
     }
 
     public double getLeftPosition()

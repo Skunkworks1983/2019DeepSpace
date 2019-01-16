@@ -14,7 +14,7 @@ public class Vector2
 
     public String toString()
     {
-        return "<" + x + ", " + y + ">";
+        return "<" + Math.round(x * 100.0) / 100.0 + ", " + Math.round(y * 100.0) / 100.0 + ">";
     }
 
     public double getX()
