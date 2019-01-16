@@ -10,6 +10,8 @@ import frc.team1983.constants.MotorMap;
 public class Drivebase extends Subsystem
 {
     public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0;
+    public static final double MAX_VELOCITY = 14; // feet / second
+    public static final double TRACK_WIDTH = 26.0 / 12.0; // feet
 
     private TalonSRX left1, left2, left3;
     private TalonSRX right1, right2, right3;
