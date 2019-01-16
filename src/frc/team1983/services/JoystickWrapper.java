@@ -15,14 +15,14 @@ public class JoystickWrapper extends Joystick {
 
         buttons = new ArrayList<>();
 
-        int i = 0;
+        int i = 1; //Buttons are 1 indexed
         while(true)
         {
             try
             {
                 buttons.add(new JoystickButton(this, i++));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 break;
             }
