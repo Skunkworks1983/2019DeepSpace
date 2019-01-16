@@ -33,4 +33,9 @@ public class Pose
     {
         return direction;
     }
+
+    public double getHeading()
+    {
+        return heading;
+    }
 }
