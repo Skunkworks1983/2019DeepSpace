@@ -1,4 +1,4 @@
-package frc.team1983.utilities.math;
+package frc.team1983.utilities.pathing;
 
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
