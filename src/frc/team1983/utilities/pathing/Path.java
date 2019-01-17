@@ -25,8 +25,8 @@ public class Path extends Bezier
 
             path[i] = new Bezier(
                 position0,
-                new Vector2(position0.getX() + Math.sin(theta0) * TANGENT_LENGTH, position0.getY() + Math.cos(theta0) * TANGENT_LENGTH),
-                new Vector2(position1.getX() + Math.sin(theta1) * -TANGENT_LENGTH, position1.getY() + Math.cos(theta1) * -TANGENT_LENGTH),
+                new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH, position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
+                new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH, position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
                 position1
             );
         }

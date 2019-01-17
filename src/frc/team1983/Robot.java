@@ -1,6 +1,5 @@
 package frc.team1983;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -11,12 +10,13 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
+import frc.team1983.utilities.sensors.Pigeon;
 
 public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
-    private PigeonIMU pigeon;
+    private Pigeon pigeon;
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
@@ -29,8 +29,7 @@ public class Robot extends TimedRobot
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
-        pigeon = new PigeonIMU(drivebase.getPigeonTalon());
-        pigeon.setFusedHeading(0);
+        pigeon = new Pigeon(drivebase.getPigeonTalon());
         estimator = new StateEstimator();
         oi = new OI();
 
@@ -41,15 +40,16 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+
+        System.out.println(pigeon.getHeading());
     }
 
     @Override
     public void autonomousInit()
     {
         Path path = new Path(
-                new Pose(0, 0, 0),
-                new Pose(0, 10, 0),
-                new Pose(5, 5, 90)
+                new Pose(0, 0, 90),
+                new Pose(-10, 10, 180)
         );
 
         Scheduler.getInstance().add(new DrivePath(path));
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot
         return drivebase;
     }
 
-    public PigeonIMU getPigeon()
+    public Pigeon getPigeon()
     {
         return pigeon;
     }

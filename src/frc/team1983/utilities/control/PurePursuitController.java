@@ -41,12 +41,13 @@ public class PurePursuitController
                                        Vector2.sub(icc, pose.getPosition()).getNormalized());
         radius *= Math.signum(direction);
 
+
         // calculate output
         double distanceToEnd = path.getLength() * (1 - closestT);
         velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
 
-        output[0] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
-        output[1] = velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
+        output[0] = velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
+        output[1] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
 
         return output;
     }
