@@ -19,8 +19,8 @@ public class PurePursuitController
 
         // find closest point on path to robot
         Pair closest = path.evaluateClosestPoint(pose.getPosition());
-        double closestT = (double) closest.value1;
-        Vector2 closestPoint = (Vector2) closest.value2;
+        double closestT = (double) closest.getValue1();
+        Vector2 closestPoint = (Vector2) closest.getValue2();
 
         // find lookAhead point
         Vector2 lookAhead = path.evaluate(Math.min(closestT + LOOK_AHEAD_DISTANCE / path.getLength(), 1.0));
