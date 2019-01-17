@@ -1,19 +1,14 @@
 package frc.team1983;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.commands.drivebase.DrivePath;
-import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
-import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
@@ -46,7 +41,6 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
-        System.out.println(estimator.getPosition() + ", " + pigeon.getFusedHeading());
     }
 
     @Override
@@ -54,7 +48,8 @@ public class Robot extends TimedRobot
     {
         Path path = new Path(
                 new Pose(0, 0, 0),
-                new Pose(-10, 10, 0)
+                new Pose(0, 10, 0),
+                new Pose(5, 5, 90)
         );
 
         Scheduler.getInstance().add(new DrivePath(path));

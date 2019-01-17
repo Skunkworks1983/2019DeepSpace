@@ -34,7 +34,7 @@ public class Path extends Bezier
 
     private Bezier getSegment(double t)
     {
-        length = getLength() * t;
+        double length = getLength() * t;
         for(Bezier curve : path)
         {
             if(curve.getLength() <= length)
@@ -60,7 +60,7 @@ public class Path extends Bezier
     }
 
     @Override
-    public Pair approximateClosestPointOnCurve(Vector2 point)
+    public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = getSegment(closestT).evaluate(closestT);

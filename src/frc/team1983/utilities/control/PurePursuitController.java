@@ -18,18 +18,18 @@ public class PurePursuitController
         double[] output = new double[] {velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY};
 
         // find closest point on path to robot
-        Pair closest = path.approximateClosestPointOnCurve(pose.getPosition());
-        double closestT = (double) closest.value2;
-        Vector2 closestPoint = (Vector2) closest.value1;
+        Pair closest = path.evaluateClosestPoint(pose.getPosition());
+        double closestT = (double) closest.value1;
+        Vector2 closestPoint = (Vector2) closest.value2;
 
-        // find lookahead point
-        Vector2 lookahead = path.evaluate(closestT + LOOK_AHEAD_DISTANCE / path.getLength());
+        // find lookAhead point
+        Vector2 lookAhead = path.evaluate(Math.min(closestT + LOOK_AHEAD_DISTANCE / path.getLength(), 1.0));
 
         // find icc
         Vector2 icc = Line.cast(
                 new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
-                new Line(Vector2.findCenter(pose.getPosition(), lookahead),
-                         Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()).getNormalized(), 90.0))
+                new Line(Vector2.findCenter(pose.getPosition(), lookAhead),
+                         Vector2.rotate(Vector2.sub(lookAhead, pose.getPosition()).getNormalized(), 90.0))
         );
 
         if(icc == null)
@@ -42,8 +42,11 @@ public class PurePursuitController
         radius *= Math.signum(direction);
 
         // calculate output
-        output[0] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius;
-        output[1] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius;
+        double distanceToEnd = path.getLength() * (1 - closestT);
+        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
+
+        output[0] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
+        output[1] = velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
 
         return output;
     }

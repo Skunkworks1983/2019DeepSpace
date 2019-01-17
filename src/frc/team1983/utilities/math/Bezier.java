@@ -12,6 +12,11 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
+    public Bezier()
+    {
+        this.points = new Vector2[0];
+    }
+
     public Bezier(Vector2... points)
     {
         if(points.length < 2)
@@ -104,7 +109,7 @@ public class Bezier
         return evaluateRadiusOfCurvatuve(this, t);
     }
 
-    public static Pair approximateClosestPointOnCurve(Bezier curve, Vector2 point)
+    public static Pair evaluateClosestPoint(Bezier curve, Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = curve.evaluate(closestT);
@@ -123,8 +128,8 @@ public class Bezier
         return new Pair(closestT, closest);
     }
 
-    public Pair approximateClosestPointOnCurve(Vector2 point)
+    public Pair evaluateClosestPoint(Vector2 point)
     {
-        return approximateClosestPointOnCurve(this, point);
+        return evaluateClosestPoint(this, point);
     }
 }
