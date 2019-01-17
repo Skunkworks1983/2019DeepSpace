@@ -9,9 +9,9 @@ import frc.team1983.constants.MotorMap;
 
 public class Drivebase extends Subsystem
 {
-    public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0;
-    public static final double MAX_VELOCITY = 14; // feet / second
-    public static final double TRACK_WIDTH = 26.0 / 12.0; // feet
+    public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0; // feet / tick of wheel encoders
+    public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
+    public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
     private TalonSRX left1, left2, left3;
     private TalonSRX right1, right2, right3;
@@ -96,11 +96,13 @@ public class Drivebase extends Subsystem
 
     public double getLeftVelocity()
     {
+        // multiplied by 10 because getSelectedSensorVelocity returns u/100ms
         return toFeet(left1.getSelectedSensorVelocity() * 10);
     }
 
     public double getRightVelocity()
     {
+        // multiplied by 10 because getSelectedSensorVelocity returns u/100ms
         return toFeet(right1.getSelectedSensorVelocity() * 10);
     }
 
