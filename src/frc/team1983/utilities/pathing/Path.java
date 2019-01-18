@@ -4,16 +4,16 @@ import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
-public class Path extends Bezier
+public class Path
 {
     public static final double TANGENT_LENGTH = 2.0; // feet
 
-    private Bezier[] path;
-    private double length = 0;
+    protected Bezier[] curves;
+    protected double length = 0;
 
     public Path(Pose... poses)
     {
-        path = new Bezier[poses.length - 1];
+        curves = new Bezier[poses.length - 1];
 
         for(int i = 0; i < poses.length - 1; i++)
         {
@@ -23,7 +23,7 @@ public class Path extends Bezier
             Vector2 position1 = poses[i + 1].getPosition();
             double theta1 = Math.toRadians(poses[i + 1].getHeading());
 
-            path[i] = new Bezier(
+            curves[i] = new Bezier(
                 position0,
                 new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH, position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
                 new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH, position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
@@ -32,62 +32,76 @@ public class Path extends Bezier
         }
     }
 
-    private Bezier getSegment(double t)
-    {
-        double length = getLength() * t;
-        for(Bezier curve : path)
-        {
-            if(curve.getLength() <= length)
-                return curve;
-            length -= curve.getLength();
-        }
-        return path[path.length - 1];
-    }
-
-    @Override
     public double getLength()
     {
         if(length == 0)
-            for(Bezier curve : path)
+            for(Bezier curve : curves)
                 length += curve.getLength();
         return length;
     }
 
-    public static Vector2 evaluate(Path path, double t)
+    protected Bezier getCurve(double t)
     {
-        return path.getSegment(t).evaluate(t);
+        double desiredLength = getLength() * t;
+        for(Bezier curve : curves)
+        {
+            if(desiredLength <= curve.getLength())
+                return curve;
+            desiredLength -= curve.getLength();
+        }
+        return curves[curves.length - 1];
     }
 
-    @Override
+    protected double evaluateLengthToCurve(Bezier curve)
+    {
+        double desiredLength = 0;
+        for(Bezier pathCurve : curves)
+        {
+            if(pathCurve.equals(curve))
+                return desiredLength;
+            desiredLength += pathCurve.getLength();
+        }
+        return desiredLength;
+    }
+
+    protected double evaluateLengthTo(double t)
+    {
+        double desiredLength = getLength() * t;
+        double lengthBehind = 0;
+        for(Bezier curve : curves)
+        {
+            if(desiredLength <= curve.getLength())
+                return lengthBehind + desiredLength;
+            desiredLength -= curve.getLength();
+            lengthBehind += curve.getLength();
+        }
+        return desiredLength;
+    }
+
     public Vector2 evaluate(double t)
     {
-        return evaluate(this, t);
+        Bezier curve = getCurve(t);
+        return curve.evaluate((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
     }
 
-    public static Vector2 evaluateTangent(Path path, double t)
-    {
-        return path.getSegment(t).evaluateTangent(t);
-    }
-
-    @Override
     public Vector2 evaluateTangent(double t)
     {
-        return evaluateTangent(this, t);
+        Bezier curve = getCurve(t);
+        return curve.evaluateTangent((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
     }
 
-    @Override
     public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0;
-        Vector2 closest = getSegment(closestT).evaluate(closestT);
+        Vector2 closest = getCurve(closestT).evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
-        for(double i = 0; i <= RESOLUTION * path.length; i++)
+        for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
         {
-            Vector2 candidate = getSegment(closestT).evaluate(i / RESOLUTION);
+            Vector2 candidate = getCurve(closestT).evaluate(i / Bezier.RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
-                closestT = i / RESOLUTION;
+                closestT = i / Bezier.RESOLUTION;
                 closest = candidate;
                 closestDistance = candidateDistance;
             }

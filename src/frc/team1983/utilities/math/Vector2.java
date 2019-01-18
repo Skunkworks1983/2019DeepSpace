@@ -4,6 +4,8 @@ import frc.team1983.constants.Constants;
 
 public class Vector2
 {
+    public static final Vector2 ZERO = new Vector2(0, 0);
+
     private double x, y;
 
     public Vector2(double x, double y)
@@ -145,7 +147,8 @@ public class Vector2
     {
         Vector2 center = points[0];
         for(int i = 1; i < points.length; i++)
-            center = Vector2.scale(Vector2.add(center, points[i]), 1.0 / 2.0);
+            center.add(points[i]);
+        center.scale(1.0 / points.length);
         return center;
     }
 }

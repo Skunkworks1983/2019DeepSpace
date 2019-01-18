@@ -2,15 +2,21 @@ package frc.team1983.utilities.pathing;
 
 import frc.team1983.utilities.math.Vector2;
 
+/**
+ * Pose is a position-heading pair that represents the robot on the field.
+ * All heading measurements are in degrees.
+ */
 public class Pose
 {
+    public static final Pose ORIGIN = new Pose(0, 0, 90);
+
     private final Vector2 position, direction;
     private final double heading;
 
     public Pose(Vector2 position, Vector2 direction)
     {
         this.position = position;
-        this.direction = direction;
+        this.direction = direction.getNormalized();
         this.heading = Math.toDegrees(Math.atan2(direction.getY(), direction.getX()));
     }
 

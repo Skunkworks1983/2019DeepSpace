@@ -88,7 +88,9 @@ public class UT_Vector2
     public void centeringTest()
     {
         Vector2 center1 = Vector2.findCenter(new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0));
-        System.out.println(center1.toString());
+        assertThat(Vector2.equals(center1, new Vector2(1, 0)), equalTo(true));
 
+        Vector2 center2 = Vector2.findCenter(new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0));
+        assertThat(Vector2.equals(center2, Vector2.ZERO), equalTo(true));
     }
 }

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.control.PurePursuitController;
 import frc.team1983.utilities.pathing.Path;
 
@@ -32,10 +33,10 @@ public class DrivePath extends Command
     @Override
     public void execute()
     {
-        double[] output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 7);
+        Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 7);
 
-        drivebase.setLeft(ControlMode.PercentOutput, output[0]);
-        drivebase.setRight(ControlMode.PercentOutput, output[1]);
+        drivebase.setLeft(ControlMode.PercentOutput, (double) output.getValue1());
+        drivebase.setRight(ControlMode.PercentOutput, (double) output.getValue2());
     }
 
     @Override

@@ -7,63 +7,71 @@ import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
+/**
+ * Positive radius of curvature is to the right
+ * Negetive radius of curvature is to the left
+ */
 public class PurePursuitController
 {
     public static final double LOOK_AHEAD_DISTANCE = 3.5; // Feet
     public static final double SLOWDOWN_DISTANCE = 3;
-
-    // index 0 in returned array is left output, 1 is right
-    public static double[] evaluateOutput(Pose pose, Path path, double velocity)
+    // value1 in returned array is left output, value2 is right
+    public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
-        double[] output = new double[] {velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY};
+        Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
-        // find closest point on path to robot
-        Pair closest = path.evaluateClosestPoint(pose.getPosition());
-        double closestT = (double) closest.getValue1();
-        Vector2 closestPoint = (Vector2) closest.getValue2();
+        if(velocity < 0)
+            pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
-        // find lookAhead point
-        Vector2 lookAhead;
-        double t = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
-        if (t > 1.0)
-        {
-            Vector2 end = path.evaluate(1.0);
-            Vector2 tangent = path.evaluateTangent(1.0);
-            double distToEnd = Vector2.getDistance(pose.getPosition(), end);
-            double scalar;
-            if (closestT < 1.0) scalar = LOOK_AHEAD_DISTANCE - distToEnd;
-            else scalar = LOOK_AHEAD_DISTANCE + distToEnd;
-            lookAhead = Vector2.add(end, Vector2.scale(tangent, scalar));
-        }
-        else
-        {
-            lookAhead = path.evaluate(t);
-        }
-
-        // find icc
-        Vector2 icc = Line.cast(
-                new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
-                new Line(Vector2.findCenter(pose.getPosition(), lookAhead),
-                         Vector2.rotate(Vector2.sub(lookAhead, pose.getPosition()).getNormalized(), 90.0))
-        );
+        Vector2 lookAhead = evaluateLookAheadPoint(pose, path);
+        Vector2 icc = evaluateCenterOfCurvature(pose, lookAhead);
 
         if(icc == null)
             return output;
 
-        // calculate radius of curvature
-        double radius = Vector2.getDistance(pose.getPosition(), icc);
-        double direction = Vector2.dot(Vector2.rotate(pose.getDirection(), 90.0),
-                                       Vector2.sub(icc, pose.getPosition()).getNormalized());
-        radius *= Math.signum(direction);
+        double radius = evaluateRadiusOfCurvature(pose, icc);
+        double distanceToEnd = Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
 
-
-        // calculate output
-        double distanceToEnd = path.getLength() * (1 - closestT);
         velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
 
-        output[0] = velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
-        output[1] = velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY;
+        output.setValue1(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
+        output.setValue2(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
 
         return output;
+    }
+
+    protected static Vector2 evaluateLookAheadPoint(Pose pose, Path path)
+    {
+        // find closest point on path to robot
+        Pair closest = path.evaluateClosestPoint(pose.getPosition());
+        double closestT = (double) closest.getValue1();
+
+        // find lookAhead point
+        double lookaheadT = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
+        Vector2 lookAhead = path.evaluate(lookaheadT);
+
+        // if look ahead is outside of path bounds, evaluate along continuing tangent
+        if(lookaheadT > 1.0)
+            lookAhead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1) * LOOK_AHEAD_DISTANCE));
+
+        return lookAhead;
+    }
+
+    protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookAhead)
+    {
+        return Line.cast(
+                new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
+                new Line(Vector2.findCenter(pose.getPosition(), lookAhead),
+                         Vector2.rotate(Vector2.sub(lookAhead, pose.getPosition()).getNormalized(), 90.0))
+        );
+    }
+
+    protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
+    {
+        double radius = Vector2.getDistance(pose.getPosition(), icc);
+        double direction = Vector2.dot(Vector2.rotate(pose.getDirection(), -90.0), Vector2.sub(icc, pose.getPosition()).getNormalized());
+        radius *= Math.signum(direction);
+
+        return radius;
     }
 }
