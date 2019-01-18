@@ -32,7 +32,7 @@ public class DrivePath extends Command
     @Override
     public void execute()
     {
-        double[] output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 3);
+        double[] output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 7);
 
         drivebase.setLeft(ControlMode.PercentOutput, output[0]);
         drivebase.setRight(ControlMode.PercentOutput, output[1]);

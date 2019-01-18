@@ -14,4 +14,9 @@ public class Pigeon extends PigeonIMU
     {
         return getFusedHeading() + 90.0;
     }
+
+    public void reset()
+    {
+        setFusedHeading(90);
+    }
 }

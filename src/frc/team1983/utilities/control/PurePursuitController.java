@@ -23,7 +23,22 @@ public class PurePursuitController
         Vector2 closestPoint = (Vector2) closest.getValue2();
 
         // find lookAhead point
-        Vector2 lookAhead = path.evaluate(Math.min(closestT + LOOK_AHEAD_DISTANCE / path.getLength(), 1.0));
+        Vector2 lookAhead;
+        double t = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
+        if (t > 1.0)
+        {
+            Vector2 end = path.evaluate(1.0);
+            Vector2 tangent = path.evaluateTangent(1.0);
+            double distToEnd = Vector2.getDistance(pose.getPosition(), end);
+            double scalar;
+            if (closestT < 1.0) scalar = LOOK_AHEAD_DISTANCE - distToEnd;
+            else scalar = LOOK_AHEAD_DISTANCE + distToEnd;
+            lookAhead = Vector2.add(end, Vector2.scale(tangent, scalar));
+        }
+        else
+        {
+            lookAhead = path.evaluate(t);
+        }
 
         // find icc
         Vector2 icc = Line.cast(

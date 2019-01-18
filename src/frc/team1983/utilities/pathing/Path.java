@@ -53,10 +53,26 @@ public class Path extends Bezier
         return length;
     }
 
+    public static Vector2 evaluate(Path path, double t)
+    {
+        return path.getSegment(t).evaluate(t);
+    }
+
     @Override
     public Vector2 evaluate(double t)
     {
-        return getSegment(t).evaluate(t);
+        return evaluate(this, t);
+    }
+
+    public static Vector2 evaluateTangent(Path path, double t)
+    {
+        return path.getSegment(t).evaluateTangent(t);
+    }
+
+    @Override
+    public Vector2 evaluateTangent(double t)
+    {
+        return evaluateTangent(this, t);
     }
 
     @Override
