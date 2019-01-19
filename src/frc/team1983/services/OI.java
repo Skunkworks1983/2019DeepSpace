@@ -1,51 +1,79 @@
 package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import static java.lang.Math.abs;
 
 public class OI
 {
-    public static final double JOY_DEADZONE = 0.1;
-    public static final double SLIDER_SCALAR = 0.618726; //Scalar coefficient of the slider on the OIMap
-
-    private Map<Joysticks, JoystickWrapper> joyMap;
-
-    public OI()
-    {
-        joyMap = Map.of(
-                Joysticks.LEFT, new JoystickWrapper(Joysticks.LEFT.ordinal()),
-                Joysticks.RIGHT, new JoystickWrapper(Joysticks.RIGHT.ordinal()),
-                Joysticks.PANEL, new JoystickWrapper(Joysticks.PANEL.ordinal()));
-    }
-
-    public double getRawAxis(Joysticks joystick, Joystick.AxisType axis)
-    {
-        return joyMap.get(joystick).getRawAxis(axis.value);
-    }
-
-    public double getAxis(Joysticks joystick, Joystick.AxisType axis)
-    {
-        double raw = getRawAxis(joystick, axis);
-        return abs(raw) < JOY_DEADZONE ? 0 : raw * abs(raw);
-    }
-
-    //The 2017 slider was a joystick axis. All code taken from 2018 (which was taken from 2017)
-    public double getElevatorSliderPos()
-    {
-        double x = getRawAxis(Joysticks.PANEL, Joystick.AxisType.kX); //kX is 0
-        x = Math.pow(x, 10);
-        x = x / SLIDER_SCALAR;
-        x = 1 - x;
-        return x;
-    }
-
-    public enum Joysticks //ordinal is used, so order matters
+    public enum Joysticks //Ordinal used, so order is important
     {
         LEFT,
         RIGHT,
-        PANEL,
+        PANEL
+    }
+
+    private static final double JOYSTICK_DEADZONE = 0.15;
+
+    private Joystick left, right, panel;
+    private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
+
+    public OI(Joystick left, Joystick right, Joystick panel, HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons)
+    {
+        this.left = left;
+        this.right = right;
+        this.panel = panel;
+        this.buttons = buttons;
+    }
+
+    public OI()
+    {
+        this(new Joystick(Joysticks.LEFT.ordinal()),
+                new Joystick(Joysticks.RIGHT.ordinal()),
+                new Joystick(Joysticks.PANEL.ordinal()),
+                new HashMap<>()
+        );
+    }
+
+    public double getLeftY()
+    {
+        double raw = -left.getY();
+        return abs(raw) * raw;
+    }
+
+    public double getRightY()
+    {
+        double raw = -right.getY();
+        return abs(raw) * raw;
+    }
+
+    public JoystickButton getButton(Joysticks joystickPort, int button)
+    {
+        Joystick joystick;
+        switch(joystickPort)
+        {
+            case LEFT:
+                joystick = left;
+                break;
+            case RIGHT:
+                joystick = right;
+                break;
+            default: //If it wasn't the other two it must be panel. Java doesn't like it if we just do case PANEL.
+                joystick = panel;
+                break;
+        }
+
+        if(!buttons.containsKey(joystickPort))
+            buttons.put(joystickPort, new HashMap<>());
+        if(!buttons.get(joystickPort).containsKey(button))
+            buttons.get(joystickPort).put(button, new JoystickButton(joystick, button));
+
+        return buttons.get(joystickPort).get(button);
+    }
+
+    public void initializeBindings() {
     }
 }
