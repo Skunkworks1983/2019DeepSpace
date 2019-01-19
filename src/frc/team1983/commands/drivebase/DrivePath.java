@@ -15,25 +15,27 @@ public class DrivePath extends Command
     private Drivebase drivebase;
     private StateEstimator estimator;
     private Path path;
+    private double velocity;
 
-    public DrivePath(Drivebase drivebase, StateEstimator estimator, Path path)
+    public DrivePath(Drivebase drivebase, StateEstimator estimator, Path path, double velocity)
     {
         requires(drivebase);
 
         this.drivebase = drivebase;
         this.estimator = estimator;
         this.path = path;
+        this.velocity = velocity;
     }
 
-    public DrivePath(Path path)
+    public DrivePath(Path path, double velocity)
     {
-        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), path);
+        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), path, velocity);
     }
 
     @Override
     public void execute()
     {
-        Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, 7);
+        Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
 
         drivebase.setLeft(ControlMode.PercentOutput, (double) output.getValue1());
         drivebase.setRight(ControlMode.PercentOutput, (double) output.getValue2());

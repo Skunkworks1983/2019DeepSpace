@@ -11,7 +11,7 @@ import frc.team1983.utilities.sensors.Pigeon;
 // the driver station, and theta = 0 towards the x-axis.
 public class StateEstimator implements Runnable
 {
-    public static final int UPDATE_RATE = 30;
+    public static final int UPDATE_RATE = 20;
 
     private Drivebase drivebase;
     private Pigeon pigeon;

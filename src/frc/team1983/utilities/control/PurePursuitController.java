@@ -14,7 +14,7 @@ import frc.team1983.utilities.pathing.Pose;
 public class PurePursuitController
 {
     public static final double LOOK_AHEAD_DISTANCE = 3.5; // Feet
-    public static final double SLOWDOWN_DISTANCE = 3;
+    public static final double SLOWDOWN_DISTANCE = 5;
     // value1 in returned array is left output, value2 is right
     public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
@@ -34,8 +34,8 @@ public class PurePursuitController
 
         velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
 
-        output.setValue1(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
-        output.setValue2(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
 
         return output;
     }

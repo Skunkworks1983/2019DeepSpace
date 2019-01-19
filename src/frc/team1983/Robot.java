@@ -35,11 +35,7 @@ public class Robot extends TimedRobot
         oi = new OI();
 
         oi.initializeBindings();
-    }
 
-    @Override
-    public void robotInit()
-    {
         pigeon.reset();
     }
 
@@ -47,21 +43,16 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
-
         System.out.println(estimator.getPosition() + ", " + pigeon.getHeading());
-//        System.out.println(pigeon.getHeading());
     }
 
     @Override
     public void autonomousInit()
     {
-        Path path = new Path(
+        Scheduler.getInstance().add(new DrivePath(new Path(
                 new Pose(0, 0, 90),
-                new Pose(0, -10, 90),
-                new Pose(-5, -10, -90)
-        );
-
-        Scheduler.getInstance().add(new DrivePath(path));
+                new Pose(0, 40, 90)
+        ), 6));
     }
 
     public static Robot getInstance()

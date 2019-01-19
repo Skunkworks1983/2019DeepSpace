@@ -84,14 +84,24 @@ public class Drivebase extends Subsystem
         return -feet / FEET_PER_TICK;
     }
 
+    public double getLeftTicks()
+    {
+        return left1.getSelectedSensorPosition();
+    }
+
+    public double getRightTicks()
+    {
+        return right1.getSelectedSensorPosition();
+    }
+
     public double getLeftPosition()
     {
-        return toFeet(left1.getSelectedSensorPosition());
+        return toFeet(getLeftTicks());
     }
 
     public double getRightPosition()
     {
-        return toFeet(right1.getSelectedSensorPosition());
+        return toFeet(getRightTicks());
     }
 
     public double getLeftVelocity()

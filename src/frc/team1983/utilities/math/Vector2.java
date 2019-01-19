@@ -50,6 +50,16 @@ public class Vector2
         set(v.x, v.y);
     }
 
+    public static Vector2 copy(Vector2 vector)
+    {
+        return new Vector2(vector.x, vector.y);
+    }
+
+    public Vector2 copy()
+    {
+        return copy(this);
+    }
+
     public double getMagnitude()
     {
         return Math.sqrt(x * x + y * y);
@@ -145,7 +155,7 @@ public class Vector2
 
     public static Vector2 findCenter(Vector2... points)
     {
-        Vector2 center = points[0];
+        Vector2 center = points[0].copy();
         for(int i = 1; i < points.length; i++)
             center.add(points[i]);
         center.scale(1.0 / points.length);
