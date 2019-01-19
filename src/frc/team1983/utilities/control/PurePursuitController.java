@@ -9,7 +9,7 @@ import frc.team1983.utilities.pathing.Pose;
 
 /**
  * Positive radius of curvature is to the right
- * Negetive radius of curvature is to the left
+ * Negative radius of curvature is to the left
  */
 public class PurePursuitController
 {
