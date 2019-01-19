@@ -1,5 +1,8 @@
 package frc.team1983;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -8,9 +11,10 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
-import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
+import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.NavX;
 import frc.team1983.utilities.sensors.Pigeon;
 
 public class Robot extends TimedRobot
@@ -18,6 +22,7 @@ public class Robot extends TimedRobot
     private static Robot instance;
     private Drivebase drivebase;
     private Pigeon pigeon;
+    private NavX navx;
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
@@ -31,11 +36,17 @@ public class Robot extends TimedRobot
 
         drivebase = new Drivebase();
         pigeon = new Pigeon(drivebase.getPigeonTalon());
+        navx = new NavX();
         estimator = new StateEstimator();
+
         oi = new OI();
-
         oi.initializeBindings();
+    }
 
+    @Override
+    public void robotInit()
+    {
+        navx.reset();
         pigeon.reset();
     }
 
@@ -43,7 +54,8 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
-        System.out.println(estimator.getPosition() + ", " + pigeon.getHeading());
+        System.out.println(estimator.getPosition() + ", " + Math.round(navx.getHeading() % 360 * 10.0) / 10.0
+                                                   + ", " + Math.round(pigeon.getHeading() % 360 * 10.0) / 10.0);
     }
 
     @Override
@@ -67,9 +79,9 @@ public class Robot extends TimedRobot
         return drivebase;
     }
 
-    public Pigeon getPigeon()
+    public Gyro getGyro()
     {
-        return pigeon;
+        return navx;
     }
 
     public StateEstimator getEstimator()
