@@ -22,7 +22,7 @@ public class UT_PurePursuitController
             new Pose(0, 10, 90)
         );
 
-        assertThat(Vector2.getDistance(new Vector2(0, 8.85), PurePursuitController.evaluateLookAheadPoint(pose, path)) <= 0.01, equalTo(true));
+        assertThat(Vector2.getDistance(new Vector2(0, 8.5), PurePursuitController.evaluateLookAheadPoint(pose, path)) <= 0.01, equalTo(true));
     }
 
     @Test
