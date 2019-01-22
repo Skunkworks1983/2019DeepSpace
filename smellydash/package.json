@@ -1,0 +1,14 @@
+{
+  "name": "smellydash",
+  "version": "0.0.0",
+  "description": "Custom dashboard for FRC in the electron framework",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Erik Pratt for Skunk Works robotics team 1983",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^4.0.1"
+  }
+}
