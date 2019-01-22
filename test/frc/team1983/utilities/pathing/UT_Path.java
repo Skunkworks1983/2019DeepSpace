@@ -1,5 +1,6 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.utilities.math.Bezier;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -7,6 +8,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UT_Path
 {
+    @Test
+    public void evaluateTest()
+    {
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(-10, 10, 90),
+                new Pose(0, 20, 90),
+                new Pose(10, 25, 0)
+        );
+
+        for (int i = 0; i <= Bezier.RESOLUTION; i++)
+        {
+            double t = i / (double) Bezier.RESOLUTION;
+            System.out.println(path.evaluate(t).toString(true));
+        }
+    }
+
     @Test
     public void getCurveTest()
     {

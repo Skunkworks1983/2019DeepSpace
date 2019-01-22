@@ -14,9 +14,20 @@ public class Vector2
         this.y = y;
     }
 
+    public String toString(boolean csv)
+    {
+        String xStr = Double.toString(Math.round(x * 100.0) / 100.0);
+        String yStr = Double.toString(Math.round(y * 100.0) / 100.0);
+
+        if (csv)
+            return xStr + ", " + yStr;
+        else
+            return "<" + xStr + ", " + yStr + ">";
+    }
+
     public String toString()
     {
-        return "<" + Math.round(x * 100.0) / 100.0 + ", " + Math.round(y * 100.0) / 100.0 + ">";
+        return toString(false);
     }
 
     public double getX()

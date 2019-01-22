@@ -54,8 +54,7 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
-        System.out.println(estimator.getPosition() + ", " + Math.round(navx.getHeading() % 360 * 10.0) / 10.0
-                                                   + ", " + Math.round(pigeon.getHeading() % 360 * 10.0) / 10.0);
+//        System.out.println(estimator.getPosition() + ", " + Math.round(navx.getHeading() % 360 * 10.0) / 10.0);
     }
 
     @Override
@@ -63,8 +62,9 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().add(new DrivePath(new Path(
                 new Pose(0, 0, 90),
-                new Pose(0, 40, 90)
-        ), 6));
+                new Pose(-7, 7, 90),
+                new Pose(0, 14, 90)
+        ), 3));
     }
 
     public static Robot getInstance()

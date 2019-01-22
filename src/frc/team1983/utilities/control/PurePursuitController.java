@@ -8,13 +8,14 @@ import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
 /**
+ * PurePursuitController determines motor outputs from the current position, a path to follow, and following velocity.
  * Positive radius of curvature is to the right
  * Negative radius of curvature is to the left
  */
 public class PurePursuitController
 {
     public static final double LOOK_AHEAD_DISTANCE = 3.5; // Feet
-    public static final double SLOWDOWN_DISTANCE = 5;
+    public static final double SLOWDOWN_DISTANCE = 3;
     // value1 in returned array is left output, value2 is right
     public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
@@ -32,7 +33,8 @@ public class PurePursuitController
         double radius = evaluateRadiusOfCurvature(pose, icc);
         double distanceToEnd = Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
 
-        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
+//        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
+        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? 0 : velocity;
 
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
         output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
@@ -48,11 +50,14 @@ public class PurePursuitController
 
         // find lookAhead point
         double lookaheadT = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
-        Vector2 lookAhead = path.evaluate(lookaheadT);
+        System.out.println(closest.getValue2());
+        Vector2 lookAhead;
 
         // if look ahead is outside of path bounds, evaluate along continuing tangent
         if(lookaheadT > 1.0)
             lookAhead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1) * LOOK_AHEAD_DISTANCE));
+         else
+            lookAhead = path.evaluate(lookaheadT);
 
         return lookAhead;
     }

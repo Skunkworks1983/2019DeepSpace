@@ -4,9 +4,16 @@ import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
+/**
+ * Path creates an array of beziers based on given poses.
+ * Four points make one cubic bezier, the origin of one pose, two intermediate points, and the origin of the next pose.
+ * Intermediate control points for each bezier are determined by a constant tangent length.
+ * The tangent length is added on from the origin of pose points in a curve,
+ * and are subtracted from the pose of the next curve.
+ */
 public class Path
 {
-    public static final double TANGENT_LENGTH = 2.0; // feet
+    public static final double TANGENT_LENGTH = 5.0; // feet
 
     protected Bezier[] curves;
     protected double length = 0;
@@ -25,8 +32,10 @@ public class Path
 
             curves[i] = new Bezier(
                 position0,
-                new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH, position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
-                new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH, position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
+                new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH,
+                            position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
+                new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH,
+                            position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
                 position1
             );
         }
@@ -40,6 +49,7 @@ public class Path
         return length;
     }
 
+    // get which curve a certain value of t is on
     protected Bezier getCurve(double t)
     {
         double desiredLength = getLength() * t;
@@ -52,6 +62,7 @@ public class Path
         return curves[curves.length - 1];
     }
 
+    // get the length up until the start of a curve
     protected double evaluateLengthToCurve(Bezier curve)
     {
         double desiredLength = 0;
@@ -64,18 +75,20 @@ public class Path
         return desiredLength;
     }
 
+    // get the length up to a value of t
     protected double evaluateLengthTo(double t)
     {
         double desiredLength = getLength() * t;
         double lengthBehind = 0;
         for(Bezier curve : curves)
         {
-            if(desiredLength <= curve.getLength())
+            double curveLength = curve.getLength();
+            if(desiredLength <= curveLength)
                 return lengthBehind + desiredLength;
-            desiredLength -= curve.getLength();
-            lengthBehind += curve.getLength();
+            desiredLength -= curveLength;
+            lengthBehind += curveLength;
         }
-        return desiredLength;
+        return desiredLength + lengthBehind;
     }
 
     public Vector2 evaluate(double t)

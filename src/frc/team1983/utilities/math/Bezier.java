@@ -5,6 +5,9 @@ import frc.team1983.utilities.Pair;
 
 import java.util.Arrays;
 
+/**
+ * Bezier is a parametric function that follows a series of control points.
+ */
 public class Bezier
 {
     public static int RESOLUTION = 20;
