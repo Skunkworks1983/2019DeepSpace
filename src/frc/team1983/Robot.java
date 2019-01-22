@@ -1,7 +1,9 @@
 package frc.team1983;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
@@ -9,6 +11,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.control.StubbornThread;
 
 public class Robot extends TimedRobot
 {
@@ -18,6 +21,8 @@ public class Robot extends TimedRobot
     private PigeonIMU pigeon;
     private OI oi;
     private Logger logger;
+    private double stubbornInitialPos;
+    private StubbornThread stubbornThread;
 
     Robot()
     {
@@ -35,10 +40,22 @@ public class Robot extends TimedRobot
         //estimator = new StateEstimator();
         pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
         oi = new OI();
+        stubbornThread = new StubbornThread();
 
         //new Thread(estimator).start();
     }
-
+    @Override
+    public void teleopInit()
+    {
+        //stubbornInitialPos = new AnalogInput(0).getValue();
+        //System.out.println("initial position: "+stubbornInitialPos);
+        Scheduler.getInstance().add(stubbornThread);
+    }
+    @Override
+    public void teleopPeriodic()
+    {
+        Scheduler.getInstance().run();
+    }
     @Override
     public void robotPeriodic()
     {
