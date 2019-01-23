@@ -19,7 +19,8 @@ public class StateEstimator implements Runnable
     private Gyro gyro;
 
     private double lastLeftPosition, lastRightPosition;
-    private Vector2 position = new Vector2(0, 0);
+    // TODO: find real
+    private Vector2 position = new Vector2(32.0 / 12.0 / 2.0 + (105.0 / 12.0), 37.0 / 12.0 / 2.0);
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -63,7 +64,7 @@ public class StateEstimator implements Runnable
 
         SmartDashboard.putNumber("robotX", position.getX());
         SmartDashboard.putNumber("robotY", position.getY());
-        SmartDashboard.putNumber("robotAngle", angle);
+        SmartDashboard.putNumber("robotAngle", gyro.getHeading());
 
         lastLeftPosition = leftPosition;
         lastRightPosition = rightPosition;
