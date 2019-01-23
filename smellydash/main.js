@@ -1,18 +1,36 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow} = require('electron')
+const nt = require('wpilib-nt-client');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var win;
+var client;
 
 function createWindow () {
+  console.log("Loading splash image");
+
   let loadingWin = new BrowserWindow({ width: 317, height: 148, frame: false });
   loadingWin.loadFile('splash.png');
 
+  console.log("Loading NetworkTables client");
+  ntClient = new nt.Client();
+  ntClient.setReconnectDelay(20);
+
+  // Connects the client to the server on team 1983's roborio
+  // We do this as early as possible so it has time to connect while the
+  // renderer process loads
+  ntClient.start((isConnected, err) => {
+      // Displays the error and the state of connection
+      console.log({ isConnected, err });
+  }, 'roborio-1983.local');
+
+  console.log("Creating main window")
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600,
+  win = new BrowserWindow({width: 600, height: 600,
     backgroundColor: '#2e2c29', show: false})
 
+  console.log("Loading index.html");
   // and load the index.html of the app.
   win.loadFile('index.html');
 
@@ -20,6 +38,7 @@ function createWindow () {
   //win.webContents.openDevTools()
 
   win.once('ready-to-show', () => {
+    console.log("Window ready to show");
     loadingWin.destroy();
     win.show();
   })

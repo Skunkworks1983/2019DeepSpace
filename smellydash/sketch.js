@@ -1,28 +1,38 @@
 const remote = require('electron').remote;
 const con = remote.getGlobal('console');
-const windowBounds = remote.getCurrentWindow().webContents.getOwnerBrowserWindow().getBounds();
-const nt = require('wpilib-nt-client');
+con.log("Sketch.js got global console. All logs are now from here.");
+const ntClient = remote.getGlobal('ntClient');
 
-const client = new ntClient.Client()
+var img;
 
-// Connects the client to the server on team 1983's roborio
-client.start((isConnected, err) => {
-    // Displays the error and the state of connection
-    con.log({ isConnected, err });
-}, 'roborio-1983.local');
+const CANVAS_WIDTH = 590;
+const CANVAS_HEIGHT = 555;
+const PIXELS_PER_FOOT = 2;
 
-// Adds a listener to the client
-client.addListener((key, val, type, id) => {
-    con.log({ key, val, type, id });
-})
+function preload() {
+  con.log("preloading field image");
+  img = loadImage('cropped_field.png');
+}
 
 function setup() {
-  createCanvas(windowBounds.width, windowBounds.height);
-  framerate(50);
+  con.log("setup");
+  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+  img.resize(0, CANVAS_HEIGHT);
+  angleMode(DEGREES);
+  frameRate(50);
   con.log("setup completed");
 }
 
 function draw() {
-  // background(200);
-  ellipse(10,10,10,10);
+  var x = ntClient.getEntry(ntClient.getKeyID("robotX"));
+  var y = ntClient.getEntry(ntClient.getKeyID("robotY"));
+  var angle = ntClient.getEntry(ntClient.getKeyID("robotAngle"));
+  //con.log("x: " + x + ", y: " + y + " angle: " + angle);
+
+  clear();
+  image(img, 0, 0);
+  fill(255, 0, 0);
+  translate(x * PIXELS_PER_FOOT, CANVAS_HEIGHT - (y * PIXELS_PER_FOOT));
+  rotate(angle);
+  rect(-30, -30, 60, 60);
 }
