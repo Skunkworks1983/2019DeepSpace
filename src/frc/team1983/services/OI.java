@@ -74,6 +74,8 @@ public class OI
         return buttons.get(joystickPort).get(button);
     }
 
-    public void initializeBindings() {
+    public void initializeBindings()
+    {
+
     }
 }

@@ -1,32 +1,132 @@
 package frc.team1983.utilities.pathing;
 
-import frc.team1983.subsystems.Drivebase;
+import frc.team1983.constants.Constants;
+import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
+/**
+ * Path creates an array of beziers based on given poses.
+ * Four points make one cubic bezier, the origin of one pose, two intermediate points, and the origin of the next pose.
+ * Intermediate control points for each bezier are determined by a constant tangent length.
+ * The tangent length is added on from the origin of pose points in a curve,
+ * and are subtracted from the pose of the next curve.
+ */
 public class Path
 {
-    private Pose[] poses;
-    private Bezier[] path;
+    public static final double TANGENT_LENGTH = 5.0; // feet
+
+    protected Bezier[] curves;
+    protected double length = 0;
 
     public Path(Pose... poses)
     {
-        this.poses = poses;
-        path = new Bezier[poses.length - 1];
+        curves = new Bezier[poses.length - 1];
 
         for(int i = 0; i < poses.length - 1; i++)
         {
-            Pose current = poses[i];
-            double theta1 = Math.atan2(current.getDirection().getY(), current.getDirection().getX());
-            Pose next = poses[i + 1];
-            double theta2 = Math.atan2(next.getDirection().getY(), next.getDirection().getX());
+            Vector2 position0 = poses[i].getPosition();
+            double theta0 = Math.toRadians(poses[i].getHeading());
 
-            path[i] = new Bezier(
-                    current.getPosition(),
-                    Vector2.add(current.getPosition(), Vector2.scale(new Vector2(Math.cos(theta1), Math.sin(theta1)), Drivebase.PATHING_TANGENT_LENGTH)),
-                    Vector2.add(next.getPosition(), Vector2.scale(new Vector2(Math.cos(theta2), Math.sin(theta2)), -Drivebase.PATHING_TANGENT_LENGTH)),
-                    next.getPosition()
-            );
+            Vector2 position1 = poses[i + 1].getPosition();
+            double theta1 = Math.toRadians(poses[i + 1].getHeading());
+
+            boolean colinear = 1 - Vector2.dot(
+                    Vector2.sub(position1, position0).getNormalized(),
+                    poses[i].getDirection().getNormalized()
+            ) < Constants.EPSILON;
+
+            if(colinear)
+                curves[i] = new Bezier(position0, position1);
+            else
+                curves[i] = new Bezier(
+                        position0,
+                        new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH,
+                                position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
+                        new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH,
+                                position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
+                        position1);
         }
+    }
+
+    public double getLength()
+    {
+        if(length == 0)
+            for(Bezier curve : curves)
+                length += curve.getLength();
+        return length;
+    }
+
+    // get which curve a certain value of t is on
+    protected Bezier getCurve(double t)
+    {
+        double desiredLength = getLength() * t;
+        for(Bezier curve : curves)
+        {
+            if(desiredLength <= curve.getLength())
+                return curve;
+            desiredLength -= curve.getLength();
+        }
+        return curves[curves.length - 1];
+    }
+
+    // get the length up until the start of a curve
+    protected double evaluateLengthToCurve(Bezier curve)
+    {
+        double desiredLength = 0;
+        for(Bezier pathCurve : curves)
+        {
+            if(pathCurve.equals(curve))
+                return desiredLength;
+            desiredLength += pathCurve.getLength();
+        }
+        return desiredLength;
+    }
+
+    // get the length up to a value of t
+    protected double evaluateLengthTo(double t)
+    {
+        double desiredLength = getLength() * t;
+        double lengthBehind = 0;
+        for(Bezier curve : curves)
+        {
+            double curveLength = curve.getLength();
+            if(desiredLength <= curveLength)
+                return lengthBehind + desiredLength;
+            desiredLength -= curveLength;
+            lengthBehind += curveLength;
+        }
+        return desiredLength + lengthBehind;
+    }
+
+    public Vector2 evaluate(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluate((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    public Vector2 evaluateTangent(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateTangent((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    public Pair evaluateClosestPoint(Vector2 point)
+    {
+        double closestT = 0;
+        Vector2 closest = getCurve(closestT).evaluate(closestT);
+        double closestDistance = Vector2.getDistance(closest, point);
+        for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
+        {
+            Vector2 candidate = getCurve(closestT).evaluate(i / Bezier.RESOLUTION);
+            double candidateDistance = Vector2.getDistance(candidate, point);
+            if(candidateDistance < closestDistance)
+            {
+                closestT = i / Bezier.RESOLUTION;
+                closest = candidate;
+                closestDistance = candidateDistance;
+            }
+        }
+        return new Pair(closestT, closest);
     }
 }
