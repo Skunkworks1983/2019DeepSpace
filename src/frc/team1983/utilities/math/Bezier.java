@@ -15,16 +15,21 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
+
     public Bezier()
     {
         this.points = new Vector2[0];
     }
 
-    public Bezier(Vector2... points)
+    public Bezier(Vector2 point0, Vector2 point1, Vector2... points)
     {
-        if(points.length < 2)
-            throw new IllegalArgumentException("Cannot generate a Bezier curve with less than two points");
-        this.points = points;
+        this.points = new Vector2[points.length + 2];
+
+        this.points[0] = point0;
+        this.points[1] = point1;
+
+        for(int i = 0; i < points.length; i++)
+            this.points[i + 2] = points[i];
     }
 
     public static Vector2 evaluate(Bezier curve, double t)
@@ -33,8 +38,10 @@ public class Bezier
             return Vector2.add(curve.points[0], Vector2.scale(Vector2.sub(curve.points[1], curve.points[0]), t));
         else
             return new Bezier(
-                    new Bezier(Arrays.copyOfRange(curve.points, 0, curve.points.length - 1)).evaluate(t),
-                    new Bezier(Arrays.copyOfRange(curve.points, 1, curve.points.length)).evaluate(t)
+                    new Bezier(curve.points[0], curve.points[1],
+                               Arrays.copyOfRange(curve.points, 2, curve.points.length - 1)).evaluate(t),
+                    new Bezier(curve.points[1], curve.points[2],
+                               Arrays.copyOfRange(curve.points, 3, curve.points.length)).evaluate(t)
             ).evaluate(t);
     }
 
@@ -61,8 +68,12 @@ public class Bezier
         if(curve.points.length == 2)
             return Vector2.sub(curve.points[1], curve.points[0]).getNormalized();
         else
-            return Vector2.sub(new Bezier(Arrays.copyOfRange(curve.points, 1, curve.points.length)).evaluate(t),
-                    new Bezier(Arrays.copyOfRange(curve.points, 0, curve.points.length - 1)).evaluate(t)).getNormalized();
+            return Vector2.sub(
+                    new Bezier(curve.points[1], curve.points[2],
+                               Arrays.copyOfRange(curve.points, 3, curve.points.length)).evaluate(t),
+                    new Bezier(curve.points[0], curve.points[1],
+                               Arrays.copyOfRange(curve.points, 0, curve.points.length - 1)).evaluate(t)
+            ).getNormalized();
     }
 
     public Vector2 evaluateTangent(double t)

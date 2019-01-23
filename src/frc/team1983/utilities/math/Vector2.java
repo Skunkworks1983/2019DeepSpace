@@ -16,9 +16,11 @@ public class Vector2
 
     public String toString(boolean csv)
     {
+        // Multiplying and dividing by 100 to round to two decimal places
         String xStr = Double.toString(Math.round(x * 100.0) / 100.0);
         String yStr = Double.toString(Math.round(y * 100.0) / 100.0);
 
+        // Print with or without angle brackets for csv debugging
         if (csv)
             return xStr + ", " + yStr;
         else
