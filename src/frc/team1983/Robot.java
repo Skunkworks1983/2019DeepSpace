@@ -1,8 +1,5 @@
 package frc.team1983;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -54,7 +51,10 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+<<<<<<< HEAD
 //        System.out.println(estimator.getPosition() + ", " + Math.round(navx.getHeading() % 360 * 10.0) / 10.0);
+=======
+>>>>>>> 2f3331e26190c02c7cf796ad7d7b9d5c811f09cf
     }
 
     @Override

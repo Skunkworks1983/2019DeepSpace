@@ -1,5 +1,6 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.constants.Constants;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
@@ -30,6 +31,7 @@ public class Path
             Vector2 position1 = poses[i + 1].getPosition();
             double theta1 = Math.toRadians(poses[i + 1].getHeading());
 
+<<<<<<< HEAD
             curves[i] = new Bezier(
                 position0,
                 new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH,
@@ -38,6 +40,22 @@ public class Path
                             position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
                 position1
             );
+=======
+            boolean colinear = 1 - Vector2.dot(
+                    Vector2.sub(position1, position0).getNormalized(),
+                    poses[i].getDirection().getNormalized()
+            ) < Constants.EPSILON;
+
+            if(colinear)
+                curves[i] = new Bezier(position0, position1);
+            else
+                curves[i] = new Bezier(
+                    position0,
+                    new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH, position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
+                    new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH, position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
+                    position1
+                );
+>>>>>>> 2f3331e26190c02c7cf796ad7d7b9d5c811f09cf
         }
     }
 
