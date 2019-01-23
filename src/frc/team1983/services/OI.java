@@ -5,58 +5,66 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import java.util.HashMap;
 
+import static java.lang.Math.abs;
+
 public class OI
 {
-    public static class Map
+    public enum Joysticks //Ordinal used, so order is important
     {
-        public static final int LEFT = 0;
-        public static final int RIGHT = 1;
-        public static final int PANEL = 2;
+        LEFT,
+        RIGHT,
+        PANEL
     }
 
-    public static final double JOYSTICK_DEADZONE = 0.1;
-    public static final double JOYSTICK_EXPONENT = 2;
+    private static final double JOYSTICK_DEADZONE = 0.15;
 
     private Joystick left, right, panel;
-    private HashMap<Integer, HashMap<Integer, JoystickButton>> buttons;
+    private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
+
+    public OI(Joystick left, Joystick right, Joystick panel, HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons)
+    {
+        this.left = left;
+        this.right = right;
+        this.panel = panel;
+        this.buttons = buttons;
+    }
 
     public OI()
     {
-        left = new Joystick(Map.LEFT);
-        right = new Joystick(Map.RIGHT);
-        panel = new Joystick(Map.PANEL);
-
-        buttons = new HashMap<>();
+        this(new Joystick(Joysticks.LEFT.ordinal()),
+                new Joystick(Joysticks.RIGHT.ordinal()),
+                new Joystick(Joysticks.PANEL.ordinal()),
+                new HashMap<>()
+        );
     }
 
     public double getLeftY()
     {
-        return left.getY();
+        double raw = -left.getY();
+        return abs(raw) * raw;
     }
 
     public double getRightY()
     {
-        return right.getY();
+        double raw = -right.getY();
+        return abs(raw) * raw;
     }
 
-    public JoystickButton getButton(int joystickPort, int button)
+    public JoystickButton getButton(Joysticks joystickPort, int button)
     {
-        Joystick joystick = null;
+        Joystick joystick;
         switch(joystickPort)
         {
-            case Map.LEFT:
+            case LEFT:
                 joystick = left;
                 break;
-            case Map.RIGHT:
+            case RIGHT:
                 joystick = right;
                 break;
-            case Map.PANEL:
+            default: //If it wasn't the other two it must be panel. Java doesn't like it if we just do case PANEL.
                 joystick = panel;
                 break;
         }
-
-        if(joystick == null)
-            throw new IllegalArgumentException("Joystick on port " + joystickPort + " does not exist");
 
         if(!buttons.containsKey(joystickPort))
             buttons.put(joystickPort, new HashMap<>());
