@@ -4,6 +4,8 @@ import frc.team1983.constants.Constants;
 
 public class Vector2
 {
+    public static final Vector2 ZERO = new Vector2(0, 0);
+
     private double x, y;
 
     public Vector2(double x, double y)
@@ -12,9 +14,22 @@ public class Vector2
         this.y = y;
     }
 
+    public String toString(boolean csv)
+    {
+        // Multiplying and dividing by 100 to round to two decimal places
+        String xStr = Double.toString(Math.round(x * 100.0) / 100.0);
+        String yStr = Double.toString(Math.round(y * 100.0) / 100.0);
+
+        // Print with or without angle brackets for csv debugging
+        if (csv)
+            return xStr + ", " + yStr;
+        else
+            return "<" + xStr + ", " + yStr + ">";
+    }
+
     public String toString()
     {
-        return "<" + x + ", " + y + ">";
+        return toString(false);
     }
 
     public double getX()
@@ -46,6 +61,16 @@ public class Vector2
     public void set(Vector2 v)
     {
         set(v.x, v.y);
+    }
+
+    public static Vector2 copy(Vector2 vector)
+    {
+        return new Vector2(vector.x, vector.y);
+    }
+
+    public Vector2 copy()
+    {
+        return copy(this);
     }
 
     public double getMagnitude()
@@ -131,18 +156,22 @@ public class Vector2
         return Vector2.add(center, Vector2.scale(new Vector2(Math.cos(theta + degrees), Math.sin(theta + degrees)), r));
     }
 
+    public static Vector2 rotate(Vector2 point, double degrees)
+    {
+        return twist(point, new Vector2(0, 0), degrees);
+    }
+
     public void twist(Vector2 center, double degrees)
     {
         set(Vector2.twist(this, center, degrees));
     }
 
-    public static Vector2 opposite(Vector2 v)
+    public static Vector2 findCenter(Vector2... points)
     {
-        return new Vector2(-v.getX(), -v.getY());
-    }
-
-    public void opposite()
-    {
-        set(Vector2.opposite(this));
+        Vector2 center = points[0].copy();
+        for(int i = 1; i < points.length; i++)
+            center.add(points[i]);
+        center.scale(1.0 / points.length);
+        return center;
     }
 }
