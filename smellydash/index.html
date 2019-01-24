@@ -2,9 +2,24 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <link href="style.css" rel="stylesheet" type="text/css">
     <title>Smelly Dash</title>
   </head>
   <body>
+    <ul class="status">
+      <li id="connectionstatus">comms</li>
+      <li class="button" id="retryconnect">↺</li>
+    </ul>
+
+    <span id="coords"></span>
+
+    <ul class="status" id="pathbuttons">
+      <li class="button" id="sendpath">send path</li>
+      <li class="button" id="clearpath">clear path</li>
+    </ul>
+
+    <p/>
+
     <!-- All of the Node.js APIs are available in this renderer process. -->
     <script src="p5.min.js"></script>
     <script src="sketch.js"></script>
