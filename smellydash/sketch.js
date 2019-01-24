@@ -4,7 +4,7 @@ con.log("sketch.js got global console");
 const ntClient = remote.getGlobal('ntClient');
 
 var img;
-var points = [];
+var poses = [];
 
 var x = 0;
 var y = 0;
@@ -80,16 +80,16 @@ function preload() {
 
   document.getElementById("retryconnect").onclick = ntConnect;
   document.getElementById("sendpath").onclick = function () {
-    var pathString = x + "," + y;
+    var pathString = x + "," + y + "," + angle;
 
-    for(var i = 0; i < points.length; i++) {
-      pathString = pathString + "," + precise(points[i][0] / PIXELS_PER_FOOT) + "," +
-        precise((CANVAS_HEIGHT - points[i][1]) / PIXELS_PER_FOOT);
+    for(var i = 0; i < poses.length; i++) {
+      pathString = pathString + ":" + precise(poses[i][0] / PIXELS_PER_FOOT) + "," +
+        precise((CANVAS_HEIGHT - poses[i][1]) / PIXELS_PER_FOOT) + "," + precise(poses[i][2]);
     }
     con.log(pathString);
   };
   document.getElementById("clearpath").onclick = function () {
-    points = [];
+    poses = [];
 
     document.getElementById("pathbuttons").style.display = "none";
   };
@@ -123,17 +123,26 @@ function draw() {
   clear();
   image(img, 0, 0);
 
-  if(debounceMouse()) {
-    if(points.length === 0) {
+  var debounced = debounceMouse();
+
+  if(debounced) {
+    if(poses.length === 0) {
       document.getElementById("pathbuttons").style.display = "inline-block";
     }
-    points[points.length] = [mouseX, mouseY];
+    poses[poses.length] = [mouseX, mouseY];
+  }
+  if(!debounced && mouseIsPressed) {
+    pose = poses[poses.length - 1];
+    pose[2] = -atan2(mouseY - pose[1], mouseX - pose[0]);
+    con.log(pose[2]);
+    fill(0, 255, 0)
+    ellipse(mouseX, mouseY, 5);
   }
 
   fill(0, 0, 255);
 
-  for(var i = 0; i < points.length; i++) {
-    ellipse(points[i][0], points[i][1], 5);
+  for(var i = 0; i < poses.length; i++) {
+    ellipse(poses[i][0], poses[i][1], 5);
   }
 
   fill(255, 0, 0);
