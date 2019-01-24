@@ -28,13 +28,8 @@ public class RunTankDrive extends Command
     @Override
     public void execute()
     {
-        double leftStick = Math.abs(oi.getLeftY()) > OI.JOYSTICK_DEADZONE ? -oi.getLeftY() : 0;
-        double leftThrottle = Math.pow(Math.abs(leftStick), OI.JOYSTICK_EXPONENT) * Math.signum(leftStick);
-        drivebase.setLeft(ControlMode.PercentOutput, leftThrottle);
-
-        double rightStick = Math.abs(oi.getRightY()) > OI.JOYSTICK_DEADZONE ? -oi.getRightY() : 0;
-        double rightThrottle = Math.pow(Math.abs(rightStick), OI.JOYSTICK_EXPONENT) * Math.signum(rightStick);
-        drivebase.setRight(ControlMode.PercentOutput, rightThrottle);
+        drivebase.setLeft(ControlMode.PercentOutput, oi.getLeftY());
+        drivebase.setRight(ControlMode.PercentOutput, oi.getRightY());
     }
 
     @Override
