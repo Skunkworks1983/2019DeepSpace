@@ -1,6 +1,7 @@
 package frc.team1983.commands.drivebase;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.OI;
@@ -13,19 +14,15 @@ public class RunTankDrive extends Command
 
     public RunTankDrive(Drivebase drivebase, OI oi)
     {
+        requires(drivebase);
+
         this.drivebase = drivebase;
         this.oi = oi;
-        requires(drivebase);
     }
 
     public RunTankDrive()
     {
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getOI());
-    }
-
-    @Override
-    public void initialize()
-    {
     }
 
     @Override

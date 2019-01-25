@@ -1,12 +1,56 @@
 package frc.team1983.commands.drivebase;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team1983.Robot;
+import frc.team1983.services.StateEstimator;
+import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.Pair;
+import frc.team1983.utilities.control.PurePursuitController;
+import frc.team1983.utilities.pathing.Path;
 
 public class DrivePath extends Command
 {
-    @Override
-    public boolean isFinished()
+    private Drivebase drivebase;
+    private StateEstimator estimator;
+    private Path path;
+    private double velocity;
+
+    public DrivePath(Drivebase drivebase, StateEstimator estimator, Path path, double velocity)
     {
-        return true;
+        requires(drivebase);
+
+        this.drivebase = drivebase;
+        this.estimator = estimator;
+        this.path = path;
+        this.velocity = velocity;
+    }
+
+    public DrivePath(Path path, double velocity)
+    {
+        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), path, velocity);
+    }
+
+    @Override
+    public void execute()
+    {
+        Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
+
+        drivebase.setLeft(ControlMode.PercentOutput, (double) output.getValue1());
+        drivebase.setRight(ControlMode.PercentOutput, (double) output.getValue2());
+    }
+
+    @Override
+    protected boolean isFinished()
+    {
+        return false;
+    }
+
+    @Override
+    public void end()
+    {
+        drivebase.setLeft(ControlMode.PercentOutput, 0);
+        drivebase.setRight(ControlMode.PercentOutput, 0);
     }
 }

@@ -1,22 +1,26 @@
 package frc.team1983;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.team1983.constants.MotorMap;
+import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
-import frc.team1983.commands.collector.StubbornThread;
+import frc.team1983.utilities.pathing.Path;
+import frc.team1983.utilities.pathing.Pose;
+import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.NavX;
+import frc.team1983.utilities.sensors.Pigeon;
 
 public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
+    private Pigeon pigeon;
+    private NavX navx;
     private StateEstimator estimator;
-    private PigeonIMU pigeon;
     private OI oi;
     private Logger logger;
     private double stubbornInitialPos;
@@ -25,29 +29,29 @@ public class Robot extends TimedRobot
     Robot()
     {
         instance = this;
+
+        logger = Logger.getInstance();
+        logger.setGlobalLevel(Level.INFO);
+
+        drivebase = new Drivebase();
+        pigeon = new Pigeon(drivebase.getPigeonTalon());
+        navx = new NavX();
+        estimator = new StateEstimator();
+
+        oi = new OI();
+        oi.initializeBindings();
     }
+
 
     @Override
     public void robotInit()
     {
-        logger = Logger.getInstance();
-        logger.setGlobalLevel(Level.INFO);
-        logger.info("Logging test", getClass());
-
-        drivebase = new Drivebase();
-        //estimator = new StateEstimator();
-        pigeon = new PigeonIMU(MotorMap.Drivebase.LEFT_1);
-        oi = new OI();
-        stubbornThread = new StubbornThread();
-
-        //new Thread(estimator).start();
+        navx.reset();
+        pigeon.reset();
     }
     @Override
     public void teleopInit()
     {
-        //stubbornInitialPos = new AnalogInput(0).getValue();
-        //System.out.println("initial position: "+stubbornInitialPos);
-        Scheduler.getInstance().add(stubbornThread);
     }
     @Override
     public void teleopPeriodic()
@@ -58,6 +62,16 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+    }
+
+    @Override
+    public void autonomousInit()
+    {
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                new Pose(0, 0, 90),
+                new Pose(-7, 7, 90),
+                new Pose(0, 14, 90)
+        ), 3));
     }
 
     public static Robot getInstance()
@@ -72,14 +86,14 @@ public class Robot extends TimedRobot
         return drivebase;
     }
 
+    public Gyro getGyro()
+    {
+        return navx;
+    }
+
     public StateEstimator getEstimator()
     {
         return estimator;
-    }
-
-    public PigeonIMU getPigeon()
-    {
-        return pigeon;
     }
 
     public OI getOI()
