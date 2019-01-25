@@ -6,9 +6,9 @@ const ntClient = remote.getGlobal('ntClient');
 var img;
 var poses = [];
 
-var x = 0;
-var y = 0;
-var angle = 90;
+var x = 5;
+var y = 5;
+var angle = 45;
 
 const CANVAS_WIDTH = 590;
 const CANVAS_HEIGHT = 555;
@@ -28,7 +28,7 @@ function debounceMouse() {
   if(!wasPressed && mouseIsPressed) {
     wasPressed = true;
 
-    if(0 <= mouseX && mouseX <= CANVAS_WIDTH && 0 <= mouseY && mouseY <= CANVAS_HEIGHT) {
+    if(mouseIsInCanvas()) {
       return true
     }
   }
@@ -36,6 +36,10 @@ function debounceMouse() {
     wasPressed = false;
   }
   return false;
+}
+
+function mouseIsInCanvas() {
+  return 0 <= mouseX && mouseX <= CANVAS_WIDTH && 0 <= mouseY && mouseY <= CANVAS_HEIGHT
 }
 
 function ntConnect() {
@@ -86,13 +90,24 @@ function preload() {
       pathString = pathString + ":" + precise(poses[i][0] / PIXELS_PER_FOOT) + "," +
         precise((CANVAS_HEIGHT - poses[i][1]) / PIXELS_PER_FOOT) + "," + precise(poses[i][2]);
     }
+
     con.log(pathString);
+    ntClient.Update(ntClient.getKeyID("path"), pathString);
+    ntClient.Update(ntClient.getKeyID("gotPath"), false);
   };
   document.getElementById("clearpath").onclick = function () {
     poses = [];
 
     document.getElementById("pathbuttons").style.display = "none";
   };
+  document.getElementById("removepose").onclick = function () {
+    poses.splice(-1); //Delete last element
+
+    if(poses.length === 0) {
+        document.getElementById("pathbuttons").style.display = "none";
+    }
+  }
+
   document.getElementById("pathbuttons").style.display = "none";
 }
 
@@ -121,32 +136,45 @@ function draw() {
   }
 
   clear();
+  rectMode(CENTER);
   image(img, 0, 0);
 
-  var debounced = debounceMouse();
+  debounced = debounceMouse();
 
   if(debounced) {
     if(poses.length === 0) {
       document.getElementById("pathbuttons").style.display = "inline-block";
     }
-    poses[poses.length] = [mouseX, mouseY];
+    poses[poses.length] = [mouseX, mouseY, 0];
   }
-  if(!debounced && mouseIsPressed) {
-    pose = poses[poses.length - 1];
-    pose[2] = -atan2(mouseY - pose[1], mouseX - pose[0]);
-    con.log(pose[2]);
+  if(!debounced && mouseIsPressed && mouseIsInCanvas()) {
+    poses[poses.length - 1][2] = -atan2(mouseY - poses[poses.length - 1][1],
+      mouseX - poses[poses.length - 1][0]);
+    // con.log(poses[poses.length - 1][2]);
     fill(0, 255, 0)
     ellipse(mouseX, mouseY, 5);
   }
 
-  fill(0, 0, 255);
-
   for(var i = 0; i < poses.length; i++) {
-    ellipse(poses[i][0], poses[i][1], 5);
+    push();
+    rectMode(CENTER);
+    fill(0, 0, 255);
+    translate(poses[i][0], poses[i][1]);
+    rotate(-1 * (poses[i][2] + 90));
+    circle(0, 0, 10);
+    fill(0, 0, 0);
+    triangle(0, 10, -3, 7, 3, 7);
+    translate(-poses[i][0], -poses[i][1]);
+    rotate(poses[i][2] + 90);
+    pop();
   }
 
+  rectMode(CENTER);
   fill(255, 0, 0);
   translate(x * PIXELS_PER_FOOT, CANVAS_HEIGHT - (y * PIXELS_PER_FOOT));
-  rotate(-angle + 90);
-  rect(-ROBOT_WIDTH / 2, -ROBOT_HEIGHT / 2, ROBOT_WIDTH, ROBOT_HEIGHT);
+  rotate(-1 * (angle + 90));
+  rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
+
+  fill(0, 0, 0);
+  triangle(0, ROBOT_HEIGHT / 2, -3, ROBOT_HEIGHT / 2 - 3, 3, ROBOT_HEIGHT / 2 - 3)
 }

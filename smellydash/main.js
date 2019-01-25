@@ -18,14 +18,14 @@ function createWindow () {
 
   console.log("Creating main window")
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 700,
+  win = new BrowserWindow({width: 700, height: 700, icon: "numbers_icon.png",
     backgroundColor: '#2e2c29', show: false, title: "Smelly Dash"})
 
   // and load the index.html of the app.
   win.loadFile('index.html');
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   win.once('ready-to-show', () => {
     console.log("window ready to show");

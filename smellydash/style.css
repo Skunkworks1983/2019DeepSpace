@@ -20,7 +20,7 @@ li {
   user-select: none;
 }
 
-#retryconnect, #clearpath {
+#retryconnect, #clearpath, #removepose {
   border-left: 2px solid black;
 }
 

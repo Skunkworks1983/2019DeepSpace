@@ -13,14 +13,15 @@ public class SmellyDashListener extends Command
 {
     public SmellyDashListener()
     {
-        SmartDashboard.putBoolean("gotPath", false);
+        SmartDashboard.putBoolean("gotPath", true);
+        SmartDashboard.putString("path", "no path sent");
     }
 
     @Override
     public void execute()
     {
         String pathString;
-        if(SmartDashboard.getBoolean("gotPath", false))
+        if(!SmartDashboard.getBoolean("gotPath", true))
         {
             pathString = SmartDashboard.getString("path", "0,0,0:0,0,0");
 
