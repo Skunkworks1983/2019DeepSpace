@@ -1,9 +1,7 @@
 package frc.team1983;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
@@ -11,7 +9,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
-import frc.team1983.utilities.control.StubbornThread;
+import frc.team1983.commands.collector.StubbornThread;
 
 public class Robot extends TimedRobot
 {

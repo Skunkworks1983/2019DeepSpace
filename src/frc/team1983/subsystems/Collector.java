@@ -54,7 +54,9 @@ public class Collector extends Subsystem
     public static double toDegrees(double ticks){return ticks*CollectorConstants.WRIST_DEGREES_PER_TICK;}
     public static double toTicks(double degrees){return degrees/CollectorConstants.WRIST_DEGREES_PER_TICK;}
     public double getAngle(){return toDegrees(wristRight.getEncoder().getPosition());}
-
+    public CANSparkMax getWristRight(){
+        return wristRight;
+    }
     public boolean atSetpoint()
     {
         return Math.abs(getAngle()- targetPosition) < CollectorConstants.WRIST_ALLOWABLE_ERROR;

@@ -1,4 +1,4 @@
-package frc.team1983.utilities.control;
+package frc.team1983.commands.collector;
 
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
