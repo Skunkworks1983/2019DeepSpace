@@ -23,8 +23,6 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
-    private double stubbornInitialPos;
-    private StubbornThread stubbornThread;
 
     Robot()
     {
