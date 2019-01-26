@@ -28,6 +28,12 @@ public class Line
         return direction;
     }
 
+    /**
+     * Finds the intersection point of two lines
+     * @param left first line
+     * @param right second line
+     * @return point
+     */
     public static Vector2 cast(Line left, Line right)
     {
         if(Math.abs(Vector2.dot(left.direction, right.direction) - 1) < Constants.EPSILON)
@@ -39,6 +45,11 @@ public class Line
         return Vector2.add(left.origin, Vector2.scale(left.direction, t1));
     }
 
+    /**
+     * Finds the intersection point of this line and another
+     * @param other other line
+     * @return point
+     */
     public Vector2 cast(Line other)
     {
         return cast(this, other);
