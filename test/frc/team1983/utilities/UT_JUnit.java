@@ -1,12 +1,12 @@
 package frc.team1983.utilities;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
-public class JUnitTest
+public class UT_JUnit
 {
     @Test
-    public void testJUnit()
+    public void unitTestsRun()
     {
         Assert.assertTrue(true);
     }
