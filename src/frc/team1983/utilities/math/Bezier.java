@@ -15,12 +15,6 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
-
-    public Bezier()
-    {
-        this.points = new Vector2[0];
-    }
-
     public Bezier(Vector2 point0, Vector2 point1, Vector2... points)
     {
         this.points = new Vector2[points.length + 2];

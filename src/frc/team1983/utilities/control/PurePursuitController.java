@@ -17,7 +17,13 @@ public class PurePursuitController
     public static final double LOOK_AHEAD_DISTANCE = 3.5; // Feet
     public static final double SLOWDOWN_DISTANCE = 1;
 
-    // value1 in returned array is left output, value2 is right
+    /**
+     * Evaluates the motor output
+     * @param pose position of the robot
+     * @param path path to follow
+     * @param velocity the velocity to follow the path at
+     * @return motor velocities, value1 is left, value2 is right
+     */
     public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
@@ -45,6 +51,12 @@ public class PurePursuitController
         return output;
     }
 
+    /**
+     * Evaluate a point ahead of the robot follow
+     * @param pose position of the robot
+     * @param path path to follow
+     * @return look ahead point
+     */
     protected static Pair evaluateLookAheadPoint(Pose pose, Path path)
     {
         // find closest point on path to robot
@@ -64,6 +76,12 @@ public class PurePursuitController
         return new Pair(lookAheadT, lookAhead);
     }
 
+    /**
+     * Evaluates a point the robot needs to rotate about in order to reach the look ahead point
+     * @param pose position of the robot
+     * @param lookAhead look ahead point for the robot to target
+     * @return center of curvature
+     */
     protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookAhead)
     {
         return Line.cast(
@@ -73,6 +91,14 @@ public class PurePursuitController
         );
     }
 
+    /**
+     * Evaluates the radius that the center of curvature is from the robot
+     * Positive radius of curvature is to the right
+     * Negative radius of curvature is to the left
+     * @param pose position of the robot
+     * @param icc center of curvature
+     * @return radius of curvature
+     */
     protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
     {
         double radius = Vector2.getDistance(pose.getPosition(), icc);
@@ -82,6 +108,14 @@ public class PurePursuitController
         return radius;
     }
 
+    /**
+     * Evaluates the distance the robot is to the end of the path
+     * If the robot is past the end of the path, distance is zero
+     * @param pose position of the robot
+     * @param path path to follow
+     * @param lookAheadT t percentage [0, 1] of the look ahead point
+     * @return distance
+     */
     protected static double evaluateDistanceToEnd(Pose pose, Path path, double lookAheadT)
     {
         return (lookAheadT >= 1.0) ? 0.0 : Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
