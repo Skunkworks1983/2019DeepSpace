@@ -42,7 +42,7 @@ function debounceMouse() {
 }
 
 function mouseIsInCanvas() {
-  return 0 <= mouseX && mouseX <= CANVAS_WIDTH && 0 <= mouseY && mouseY <= CANVAS_HEIGHT
+  return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT
 }
 
 function ntConnect() {

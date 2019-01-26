@@ -26,7 +26,7 @@ function createWindow () {
   win.loadFile('index.html');
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   win.once('ready-to-show', () => {
     console.log("window ready to show");
