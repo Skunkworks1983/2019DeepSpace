@@ -148,6 +148,17 @@ public class Path
     }
 
     /**
+     * Evaluate a normalized perpendicular to the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return normalized vector
+     */
+    public Vector2 evaluateNormal(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateNormal((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
      * Evaluate the closest point and t of the closest point
      * @param point
      * @return closest point and t of closest point

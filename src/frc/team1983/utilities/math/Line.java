@@ -13,6 +13,11 @@ public class Line
         this.direction = direction.getNormalized();
     }
 
+    public Line(double originX, double originY, double directionX, double directionY)
+    {
+        this(new Vector2(originX, originY), new Vector2(directionX, directionY));
+    }
+
     public Vector2 getOrigin()
     {
         return origin;
