@@ -61,11 +61,6 @@ public class UT_Path
         assertThat(path.getCurve(0).equals(path.curves[0]), equalTo(true));
         assertThat(path.getCurve(0.5).equals(path.curves[0]), equalTo(true));
         assertThat(path.getCurve(1).equals(path.curves[1]), equalTo(true));
-
-        for(double i = 0; i <= Bezier.RESOLUTION; i++)
-        {
-            System.out.println(path.getCurve(i / Bezier.RESOLUTION));
-        }
     }
 
     @Test
