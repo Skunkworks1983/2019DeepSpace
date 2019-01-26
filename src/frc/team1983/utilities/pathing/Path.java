@@ -57,6 +57,12 @@ public class Path
         return length;
     }
 
+    // get the index of a curve that a value of t is on
+    protected int getCurveIndex(double t)
+    {
+        return (int) Math.min(Math.floor(t * curves.length), curves.length - 1);
+    }
+
     // get which curve a certain value of t is on
     protected Bezier getCurve(double t)
     {
@@ -96,7 +102,7 @@ public class Path
             desiredLength -= curveLength;
             lengthBehind += curveLength;
         }
-        return desiredLength + lengthBehind;
+        return lengthBehind + desiredLength;
     }
 
     public Vector2 evaluate(double t)
@@ -114,15 +120,19 @@ public class Path
     public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0;
-        Vector2 closest = getCurve(closestT).evaluate(closestT);
+        Vector2 closest = getCurve(getCurveIndex(closestT)).evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
         for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
         {
-            Vector2 candidate = getCurve(closestT).evaluate(i / Bezier.RESOLUTION);
+            double step = i / (Bezier.RESOLUTION * curves.length);
+            int index = getCurveIndex(step);
+            double bezierT = (step - index / (double) curves.length) * curves.length;
+
+            Vector2 candidate = getCurve(index).evaluate(bezierT);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
-                closestT = i / Bezier.RESOLUTION;
+                closestT = step;
                 closest = candidate;
                 closestDistance = candidateDistance;
             }

@@ -54,13 +54,20 @@ public class Robot extends TimedRobot
     }
 
     @Override
+    public void disabledInit()
+    {
+        drivebase.setBrake(false);
+    }
+
+    @Override
     public void autonomousInit()
     {
+        drivebase.setBrake(true);
+
         Scheduler.getInstance().add(new DrivePath(new Path(
                 new Pose(0, 0, 90),
-                new Pose(-7, 7, 90),
-                new Pose(0, 14, 90)
-        ), 3));
+                new Pose(-5, 10, 90)
+        ), 4));
     }
 
     public static Robot getInstance()

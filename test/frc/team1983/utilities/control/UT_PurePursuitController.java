@@ -17,12 +17,19 @@ public class UT_PurePursuitController
     public void lookAheadTest()
     {
         Pose pose = new Pose(0, 5, 90);
+
         Path path = new Path(
             new Pose(0, 0, 90),
             new Pose(0, 10, 90)
         );
 
-        assertThat(Vector2.getDistance(new Vector2(0, 8.5), PurePursuitController.evaluateLookAheadPoint(pose, path)) <= 0.01, equalTo(true));
+        assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOK_AHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookAheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
+
+        pose = new Pose(0, 9, 90);
+        assertThat(Vector2.getDistance(new Vector2(0, 9 + PurePursuitController.LOOK_AHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookAheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
+
+        pose = new Pose(0, 10, 90);
+        assertThat(Vector2.getDistance(new Vector2(0, 10 + PurePursuitController.LOOK_AHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookAheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
     }
 
     @Test

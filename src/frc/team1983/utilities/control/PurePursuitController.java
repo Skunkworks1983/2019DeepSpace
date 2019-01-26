@@ -15,7 +15,8 @@ import frc.team1983.utilities.pathing.Pose;
 public class PurePursuitController
 {
     public static final double LOOK_AHEAD_DISTANCE = 3.5; // Feet
-    public static final double SLOWDOWN_DISTANCE = 3;
+    public static final double SLOWDOWN_DISTANCE = 1;
+
     // value1 in returned array is left output, value2 is right
     public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
@@ -24,17 +25,19 @@ public class PurePursuitController
         if(velocity < 0)
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
-        Vector2 lookAhead = evaluateLookAheadPoint(pose, path);
-        Vector2 icc = evaluateCenterOfCurvature(pose, lookAhead);
+        Pair lookAhead = evaluateLookAheadPoint(pose, path);
+        double lookAheadT = (double) lookAhead.getValue1();
+        Vector2 lookAheadPoint = (Vector2) lookAhead.getValue2();
+        Vector2 icc = evaluateCenterOfCurvature(pose, lookAheadPoint);
 
         if(icc == null)
             return output;
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
-        double distanceToEnd = Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
+        double distanceToEnd = evaluateDistanceToEnd(pose, path, lookAheadT);
 
-//        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * distanceToEnd / SLOWDOWN_DISTANCE : velocity;
-        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? 0 : velocity;
+        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? velocity * (distanceToEnd / SLOWDOWN_DISTANCE) : velocity;
+//        velocity = distanceToEnd < SLOWDOWN_DISTANCE ? 0 : velocity;
 
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
         output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
@@ -42,24 +45,23 @@ public class PurePursuitController
         return output;
     }
 
-    protected static Vector2 evaluateLookAheadPoint(Pose pose, Path path)
+    protected static Pair evaluateLookAheadPoint(Pose pose, Path path)
     {
         // find closest point on path to robot
         Pair closest = path.evaluateClosestPoint(pose.getPosition());
         double closestT = (double) closest.getValue1();
 
         // find lookAhead point
-        double lookaheadT = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
-        System.out.println(closest.getValue2());
+        double lookAheadT = closestT + LOOK_AHEAD_DISTANCE / path.getLength();
         Vector2 lookAhead;
 
         // if look ahead is outside of path bounds, evaluate along continuing tangent
-        if(lookaheadT > 1.0)
-            lookAhead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1) * LOOK_AHEAD_DISTANCE));
-         else
-            lookAhead = path.evaluate(lookaheadT);
+        if(lookAheadT > 1.0)
+            lookAhead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookAheadT - 1.0) * path.getLength()));
+        else
+            lookAhead = path.evaluate(lookAheadT);
 
-        return lookAhead;
+        return new Pair(lookAheadT, lookAhead);
     }
 
     protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookAhead)
@@ -78,5 +80,10 @@ public class PurePursuitController
         radius *= Math.signum(direction);
 
         return radius;
+    }
+
+    protected static double evaluateDistanceToEnd(Pose pose, Path path, double lookAheadT)
+    {
+        return (lookAheadT >= 1.0) ? 0.0 : Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
     }
 }
