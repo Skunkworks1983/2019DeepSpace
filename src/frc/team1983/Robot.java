@@ -40,13 +40,22 @@ public class Robot extends TimedRobot
         oi.initializeBindings();
     }
 
+
     @Override
     public void robotInit()
     {
         navx.reset();
         pigeon.reset();
     }
-
+    @Override
+    public void teleopInit()
+    {
+    }
+    @Override
+    public void teleopPeriodic()
+    {
+        Scheduler.getInstance().run();
+    }
     @Override
     public void robotPeriodic()
     {
