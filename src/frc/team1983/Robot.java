@@ -3,6 +3,7 @@ package frc.team1983;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.commands.drivebase.DrivePath;
+import frc.team1983.commands.drivebase.SmellyDashListener;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
@@ -65,11 +66,12 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        Scheduler.getInstance().add(new DrivePath(new Path(
-                new Pose(0, 0, 90),
-                new Pose(-7, 7, 90),
-                new Pose(0, 14, 90)
-        ), 3));
+//        Scheduler.getInstance().add(new DrivePath(new Path(
+//                new Pose(0, 0, 90),
+//                new Pose(-7, 7, 90),
+//                new Pose(0, 14, 90)
+//        ), 3));
+        Scheduler.getInstance().add(new SmellyDashListener());
     }
 
     public static Robot getInstance()
