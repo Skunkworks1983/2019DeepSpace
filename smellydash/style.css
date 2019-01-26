@@ -1,0 +1,42 @@
+html {
+  font: small-caps bold 24px/1 sans-serif;
+}
+
+li {
+  border: 0;
+  background-color: rgba(0, 0, 0, 0);
+  display: inline-block;
+  padding-left: 5px;
+  padding-right:5px;
+}
+
+.status {
+  text-align: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 1px;
+  border: 2px solid black;
+  display: inline-block;
+  user-select: none;
+}
+
+#retryconnect, #clearpath, #removepose {
+  border-left: 2px solid black;
+}
+
+.button:hover {
+  background-color: gray;
+}
+
+.button:active {
+  box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+                inset 2px 2px 3px rgba(0, 0, 0, .6);
+}
+
+#connectionstatus {
+  background-color: red;
+}
+
+#retryconnect, #coords {
+  font-size: 20px;
+}

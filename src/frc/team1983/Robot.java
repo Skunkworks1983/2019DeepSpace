@@ -2,7 +2,9 @@ package frc.team1983;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
+import frc.team1983.commands.drivebase.SmellyDashListener;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
@@ -40,17 +42,29 @@ public class Robot extends TimedRobot
         oi.initializeBindings();
     }
 
+
     @Override
     public void robotInit()
     {
         navx.reset();
         pigeon.reset();
     }
-
+    @Override
+    public void teleopInit()
+    {
+    }
+    @Override
+    public void teleopPeriodic()
+    {
+        Scheduler.getInstance().run();
+    }
     @Override
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+        SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
+        SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
+        SmartDashboard.putNumber("robotAngle", Math.toDegrees(getGyro().getHeading()));
     }
 
     @Override
@@ -63,11 +77,7 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         drivebase.setBrake(true);
-
-        Scheduler.getInstance().add(new DrivePath(new Path(
-                new Pose(0, 0, 90),
-                new Pose(-5, 10, 90)
-        ), 4));
+        Scheduler.getInstance().add(new SmellyDashListener());
     }
 
     public static Robot getInstance()
