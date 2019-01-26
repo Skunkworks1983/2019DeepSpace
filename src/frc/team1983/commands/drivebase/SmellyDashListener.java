@@ -3,14 +3,15 @@ package frc.team1983.commands.drivebase;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class SmellyDashListener extends Command
 {
+    private Logger logger = Logger.getInstance();
     public SmellyDashListener()
     {
         SmartDashboard.putBoolean("gotPath", true);
@@ -23,6 +24,8 @@ public class SmellyDashListener extends Command
         String pathString;
         if(!SmartDashboard.getBoolean("gotPath", true))
         {
+            logger.info("Got a path", getClass());
+            SmartDashboard.putBoolean("gotPath", true);
             pathString = SmartDashboard.getString("path", "0,0,0:0,0,0");
 
             ArrayList<Pose> poses = new ArrayList<>();
@@ -36,7 +39,7 @@ public class SmellyDashListener extends Command
             }
 
             // The Pose[]::new thing is required for toArray to return an array of Poses, not Objects
-            new DrivePath(new Path(poses.toArray(Pose[]::new)), 4);
+            Scheduler.getInstance().add(new DrivePath(new Path(poses.toArray(Pose[]::new)), 4));
         }
     }
 

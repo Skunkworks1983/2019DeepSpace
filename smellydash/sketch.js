@@ -3,12 +3,16 @@ const con = remote.getGlobal('console');
 con.log("sketch.js got global console");
 const ntClient = remote.getGlobal('ntClient');
 
+//-------- Variable Init -------------
 var img;
 var poses = [];
 
 var x = 5;
 var y = 5;
 var angle = 45;
+
+var wasConnected = true; //true so it will trigger the reconnect
+var wasPressed = false;
 
 const CANVAS_WIDTH = 590;
 const CANVAS_HEIGHT = 555;
@@ -17,8 +21,7 @@ const PIXELS_PER_FOOT = CANVAS_HEIGHT / 27;
 const ROBOT_WIDTH = (32 / 12) * PIXELS_PER_FOOT;
 const ROBOT_HEIGHT = (37 / 12) * PIXELS_PER_FOOT;
 
-var wasConnected = true;
-var wasPressed = false;
+//-------- Misc Functions -------------
 
 function precise(num) {
   return Number.parseFloat(num).toFixed(2);
@@ -75,8 +78,10 @@ function notconnected() {
   }
 }
 
+//--------------- preload ----------------
+
 function preload() {
-  con.log("preloading field image");
+  con.log("preload...");
   img = loadImage('cropped_field.png');
 
   notconnected();
@@ -84,6 +89,7 @@ function preload() {
 
   document.getElementById("retryconnect").onclick = ntConnect;
   document.getElementById("sendpath").onclick = function () {
+    con.log("sending a path");
     var pathString = x + "," + y + "," + angle;
 
     for(var i = 0; i < poses.length; i++) {
@@ -91,9 +97,9 @@ function preload() {
         precise((CANVAS_HEIGHT - poses[i][1]) / PIXELS_PER_FOOT) + "," + precise(poses[i][2]);
     }
 
+    ntClient.Update(ntClient.getKeyID("/SmartDashboard/path"), pathString);
+    ntClient.Update(ntClient.getKeyID("/SmartDashboard/gotPath"), "false");
     con.log(pathString);
-    ntClient.Update(ntClient.getKeyID("path"), pathString);
-    ntClient.Update(ntClient.getKeyID("gotPath"), false);
   };
   document.getElementById("clearpath").onclick = function () {
     poses = [];
@@ -109,20 +115,26 @@ function preload() {
   }
 
   document.getElementById("pathbuttons").style.display = "none";
+
+  con.log("preload complete")
 }
 
+//------------ setup -----------------
+
 function setup() {
-  con.log("setup");
+  con.log("setup...");
   createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   img.resize(0, CANVAS_HEIGHT);
   angleMode(DEGREES);
   frameRate(50);
-  con.log("setup completed");
+  con.log("setup complete");
 }
 
 function draw() {
+
+  //------- nt getting and coord updating --------
   // con.log("draw");
-  if(ntClient.isConnected()){
+  if(ntClient.isConnected() && ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")) != undefined){
     connected();
     x = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val);
     y = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val);
@@ -172,7 +184,8 @@ function draw() {
   rectMode(CENTER);
   fill(255, 0, 0);
   translate(x * PIXELS_PER_FOOT, CANVAS_HEIGHT - (y * PIXELS_PER_FOOT));
-  rotate(-1 * (angle + 90));
+  angleMode(DEGREES);
+  rotate(-angle - 90);
   rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
 
   fill(0, 0, 0);

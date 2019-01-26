@@ -1,5 +1,6 @@
 package frc.team1983.services;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
@@ -59,6 +60,11 @@ public class StateEstimator implements Runnable
 
         double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
         position.add(Vector2.scale(new Vector2(Math.cos(angle), Math.sin(angle)), displacement));
+
+        SmartDashboard.putNumber("robotX", position.getX());
+        SmartDashboard.putNumber("robotY", position.getY());
+        SmartDashboard.putNumber("robotAngle", Math.toDegrees(angle));
+
 
         lastLeftPosition = leftPosition;
         lastRightPosition = rightPosition;

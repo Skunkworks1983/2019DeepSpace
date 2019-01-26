@@ -8,24 +8,25 @@ var win;
 var client;
 
 function createWindow () {
-  console.log("Loading splash image");
+  console.log("loading splash image");
 
   let loadingWin = new BrowserWindow({ width: 317, height: 148, frame: false });
   loadingWin.loadFile('splash.png');
 
-  console.log("Loading NetworkTables client");
+  console.log("loading NetworkTables client");
   ntClient = new nt.Client();
 
-  console.log("Creating main window")
+  console.log("creating main window")
   // Create the browser window.
   win = new BrowserWindow({width: 700, height: 700, icon: "numbers_icon.png",
     backgroundColor: '#2e2c29', show: false, title: "Smelly Dash"})
 
+  console.log("loading index.html");
   // and load the index.html of the app.
   win.loadFile('index.html');
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   win.once('ready-to-show', () => {
     console.log("window ready to show");
