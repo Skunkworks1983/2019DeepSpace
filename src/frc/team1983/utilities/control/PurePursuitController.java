@@ -17,7 +17,13 @@ public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 3.5; // feet
 
-    // value1 in returned array is left output, value2 is right
+    /**
+     * Evaluates the motor output
+     * @param pose position of the robot
+     * @param path path to follow
+     * @param velocity the velocity to follow the path at
+     * @return motor velocities, value1 is left, value2 is right
+     */
     public static Pair evaluateOutput(Pose pose, Path path, double velocity)
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
@@ -46,6 +52,12 @@ public class PurePursuitController
         return output;
     }
 
+    /**
+     * Evaluate a point ahead of the robot follow
+     * @param pose position of the robot
+     * @param path path to follow
+     * @return look ahead point
+     */
     protected static Vector2 evaluateLookaheadPoint(Pose pose, Path path)
     {
         // find closest point on path to robot
@@ -63,6 +75,12 @@ public class PurePursuitController
         return lookahead;
     }
 
+    /**
+     * Evaluates a point the robot needs to rotate about in order to reach the look ahead point
+     * @param pose position of the robot
+     * @param lookahead look ahead point for the robot to target
+     * @return center of curvature
+     */
     protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookahead)
     {
         return Line.cast(
@@ -72,6 +90,14 @@ public class PurePursuitController
         );
     }
 
+    /**
+     * Evaluates the radius that the center of curvature is from the robot
+     * Positive radius of curvature is to the right
+     * Negative radius of curvature is to the left
+     * @param pose position of the robot
+     * @param icc center of curvature
+     * @return radius of curvature
+     */
     protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
     {
         double radius = Vector2.getDistance(pose.getPosition(), icc);

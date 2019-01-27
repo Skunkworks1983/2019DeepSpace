@@ -14,7 +14,6 @@ public class UT_PurePursuitController
     @Test
     public void lookaheadTest()
     {
-        /*
         Pose pose = new Pose(0, 5, 90);
 
         Path path = new Path(
@@ -22,14 +21,13 @@ public class UT_PurePursuitController
             new Pose(0, 10, 90)
         );
 
-        assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOKAHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookaheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
+        assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
 
         pose = new Pose(0, 9, 90);
-        assertThat(Vector2.getDistance(new Vector2(0, 9 + PurePursuitController.LOOKAHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookaheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
+        assertThat(Vector2.getDistance(new Vector2(0, 9 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
 
         pose = new Pose(0, 10, 90);
-        assertThat(Vector2.getDistance(new Vector2(0, 10 + PurePursuitController.LOOKAHEAD_DISTANCE), (Vector2) PurePursuitController.evaluateLookaheadPoint(pose, path).getValue2()) <= 0.01, equalTo(true));
-        */
+        assertThat(Vector2.getDistance(new Vector2(0, 10 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
     }
 
     @Test
