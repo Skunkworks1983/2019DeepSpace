@@ -62,9 +62,10 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
-        SmartDashboard.putNumber("robotAngle", Math.toDegrees(getGyro().getHeading()));
+        SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
     }
 
     @Override
@@ -77,7 +78,12 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         drivebase.setBrake(true);
-        Scheduler.getInstance().add(new SmellyDashListener());
+
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90),
+                new Pose(10, 10, 0)
+        ), 3));
     }
 
     public static Robot getInstance()
