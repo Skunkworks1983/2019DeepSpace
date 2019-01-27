@@ -8,39 +8,39 @@ var win;
 var client;
 
 function createWindow () {
-  console.log("loading splash image");
+    console.log("loading splash image");
 
-  let loadingWin = new BrowserWindow({ width: 317, height: 148, frame: false });
-  loadingWin.loadFile('splash.png');
+    let loadingWin = new BrowserWindow({ width: 317, height: 148, frame: false });
+    loadingWin.loadFile('splash.png');
 
-  console.log("loading NetworkTables client");
-  ntClient = new nt.Client();
+    console.log("loading NetworkTables client");
+    ntClient = new nt.Client();
 
-  console.log("creating main window")
-  // Create the browser window.
-  win = new BrowserWindow({width: 700, height: 700, icon: "numbers_icon.png",
+    console.log("creating main window")
+    // Create the browser window.
+    win = new BrowserWindow({width: 700, height: 700, icon: "numbers_icon.png",
     backgroundColor: '#2e2c29', show: false, title: "Smelly Dash"})
 
-  console.log("loading index.html");
-  // and load the index.html of the app.
-  win.loadFile('index.html');
+    console.log("loading index.html");
+    // and load the index.html of the app.
+    win.loadFile('index.html');
 
-  // Open the DevTools.
-  // win.webContents.openDevTools()
+    // Open the DevTools.
+    // win.webContents.openDevTools()
 
-  win.once('ready-to-show', () => {
-    console.log("window ready to show");
-    loadingWin.destroy();
-    win.show();
-  })
+    win.once('ready-to-show', () => {
+        console.log("window ready to show");
+        loadingWin.destroy();
+        win.show();
+    })
 
-  // Emitted when the window is closed.
-  win.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    win = null
-  })
+    // Emitted when the window is closed.
+    win.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        win = null
+    })
 }
 
 

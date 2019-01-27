@@ -39,6 +39,8 @@ public class SmellyDashListener extends Command
             }
 
             // The Pose[]::new thing is required for toArray to return an array of Poses, not Objects
+            for(Pose pose : poses)
+                System.out.println(pose.getPosition().toString());
             Scheduler.getInstance().add(new DrivePath(new Path(poses.toArray(Pose[]::new)), 4));
         }
     }

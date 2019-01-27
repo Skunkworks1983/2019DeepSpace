@@ -2,6 +2,7 @@ package frc.team1983;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.SmellyDashListener;
 import frc.team1983.services.OI;
@@ -61,17 +62,28 @@ public class Robot extends TimedRobot
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
+
+        SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
+        SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
+        SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
+    }
+
+    @Override
+    public void disabledInit()
+    {
+        drivebase.setBrake(false);
     }
 
     @Override
     public void autonomousInit()
     {
-//        Scheduler.getInstance().add(new DrivePath(new Path(
-//                new Pose(0, 0, 90),
-//                new Pose(-7, 7, 90),
-//                new Pose(0, 14, 90)
-//        ), 3));
-        Scheduler.getInstance().add(new SmellyDashListener());
+        drivebase.setBrake(true);
+
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90),
+                new Pose(10, 10, 0)
+        ), 3));
     }
 
     public static Robot getInstance()

@@ -1,7 +1,5 @@
 package frc.team1983.utilities.control;
 
-import frc.team1983.utilities.Pair;
-import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
@@ -14,15 +12,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class UT_PurePursuitController
 {
     @Test
-    public void lookAheadTest()
+    public void lookaheadTest()
     {
         Pose pose = new Pose(0, 5, 90);
+
         Path path = new Path(
             new Pose(0, 0, 90),
             new Pose(0, 10, 90)
         );
 
-        assertThat(Vector2.getDistance(new Vector2(0, 8.5), PurePursuitController.evaluateLookAheadPoint(pose, path)) <= 0.01, equalTo(true));
+        assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
+
+        pose = new Pose(0, 9, 90);
+        assertThat(Vector2.getDistance(new Vector2(0, 9 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
+
+        pose = new Pose(0, 10, 90);
+        assertThat(Vector2.getDistance(new Vector2(0, 10 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
     }
 
     @Test
