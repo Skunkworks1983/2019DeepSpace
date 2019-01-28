@@ -4,10 +4,8 @@ console.log("sketch.js got global console");
 const ntClient = remote.getGlobal('ntClient');
 
 const Vector2 = require('./src/vector2');
-const Bezier = require('./src/curve');
+const Bezier = require('./src/bezier');
 const Pose = require('./src/pose');
-
-let p = new Pose();
 
 // ---------- Variable Init ----------
 var img; // Field image
@@ -159,7 +157,7 @@ function draw() {
 
         translate(pose.position.x, pose.position.y);
         rotate(-(pose.heading + 90));
-        rect(0, 0, (28 / 12) * PIXELS_PER_FOOT, (32 / 12) * PIXELS_PER_FOOT)
+        rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
 
         fill(0);
         triangle(0, 5, 5, 0, -5, 0);
@@ -178,12 +176,32 @@ function draw() {
             let cp0 = Vector2.scale(pose.forward, TANGENT_LENGTH * PIXELS_PER_FOOT);
             let cp1 = Vector2.scale(nextPose.forward, -TANGENT_LENGTH * PIXELS_PER_FOOT);
 
+            let points = [
+                new Vector2(pose.position.x, pose.position.y),
+                new Vector2(pose.position.x + cp0.x, pose.position.y + cp0.y),
+                new Vector2(nextPose.position.x + cp1.x, nextPose.position.y + cp1.y),
+                new Vector2(nextPose.position.x, nextPose.position.y)
+            ];
+
             bezier(
-                pose.position.x, pose.position.y,
-                pose.position.x + cp0.x, pose.position.y + cp0.y,
-                nextPose.position.x + cp1.x, nextPose.position.y + cp1.y,
-                nextPose.position.x, nextPose.position.y
+                points[0].x, points[0].y,
+                points[1].x, points[1].y,
+                points[2].x, points[2].y,
+                points[3].x, points[3].y
             );
+
+            // Draw track
+            let resolution = 20; // should be constant but test
+            for(let offset = -ROBOT_WIDTH/2; offset < ROBOT_WIDTH; offset += ROBOT_WIDTH/2) {
+                for(let index = 0; index < resolution; index++) {
+                    let t = index / resolution;
+
+                    let p0 = Bezier.offset(index / resolution, offset, points);
+                    let p1 = Bezier.offset((index + 1) / resolution, offset, points);
+
+                    line(p0.x, p0.y, p1.x, p1.y);
+                }
+            }
         }
     })
 
