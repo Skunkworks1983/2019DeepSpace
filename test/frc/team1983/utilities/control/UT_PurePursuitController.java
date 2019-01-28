@@ -6,7 +6,6 @@ import frc.team1983.utilities.pathing.Pose;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UT_PurePursuitController

@@ -19,6 +19,15 @@ public class Path
     protected Bezier[] curves;
     protected double length = 0;
 
+    /**
+     * Creates bezier curves between given poses
+     * If poses are collinear, create a linear bezier
+     * Otherwise, generate a cubic bezier starting at the first pose,
+     * a control point in the direction of the first pose and TANGENT_LENGTH distance away,
+     * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
+     * and ending at the next pose.
+     * @param poses
+     */
     public Path(Pose... poses)
     {
         curves = new Bezier[poses.length - 1];
@@ -31,12 +40,12 @@ public class Path
             Vector2 position1 = poses[i + 1].getPosition();
             double theta1 = Math.toRadians(poses[i + 1].getHeading());
 
-            boolean colinear = 1 - Vector2.dot(
+            boolean collinear = 1 - Vector2.dot(
                     Vector2.sub(position1, position0).getNormalized(),
                     poses[i].getDirection().getNormalized()
             ) < Constants.EPSILON;
 
-            if(colinear)
+            if(collinear)
                 curves[i] = new Bezier(position0, position1);
             else
                 curves[i] = new Bezier(

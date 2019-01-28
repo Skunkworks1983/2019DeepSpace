@@ -1,21 +1,31 @@
 package frc.team1983.services;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 import java.util.HashMap;
 public class OI
 {
-    public enum Joysticks //Ordinal used, so order is important
+    public enum Joysticks
     {
-        LEFT,
-        RIGHT,
-        PANEL
+        LEFT(0),
+        RIGHT(1),
+        PANEL(2);
+
+        private int port;
+        Joysticks(int port)
+        {
+            this.port = port;
+        }
+
+        public int getPort()
+        {
+            return port;
+        }
     }
 
-    private static final double JOYSTICK_DEADZONE = 0.15;
-    private static final double JOYSTICK_EXPONENT = 2;
+    protected static final double JOYSTICK_DEADZONE = 0.15;
+    protected static final double JOYSTICK_EXPONENT = 2;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -30,25 +40,27 @@ public class OI
 
     public OI()
     {
-        this(new Joystick(Joysticks.LEFT.ordinal()),
-                new Joystick(Joysticks.RIGHT.ordinal()),
-                new Joystick(Joysticks.PANEL.ordinal()),
+        this(new Joystick(Joysticks.LEFT.getPort()),
+                new Joystick(Joysticks.RIGHT.getPort()),
+                new Joystick(Joysticks.PANEL.getPort()),
                 new HashMap<>()
         );
     }
 
+    protected static double scale(double raw)
+    {
+        double deadZoned = Math.abs(raw) > JOYSTICK_DEADZONE ? -raw : 0;
+        return Math.pow(Math.abs(deadZoned), JOYSTICK_EXPONENT) * Math.signum(raw);
+    }
+
     public double getLeftY()
     {
-        double raw = Math.abs(left.getY()) > JOYSTICK_DEADZONE ? -left.getY() : 0;
-        raw = Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
-        return raw;
+        return scale(left.getY());
     }
 
     public double getRightY()
     {
-        double raw = Math.abs(right.getY()) > JOYSTICK_DEADZONE ? -right.getY() : 0;
-        raw = Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
-        return raw;
+        return scale(right.getY());
     }
 
     public JoystickButton getButton(Joysticks joystickPort, int button)
@@ -62,7 +74,7 @@ public class OI
             case RIGHT:
                 joystick = right;
                 break;
-            default: //If it wasn't the other two it must be panel. Java doesn't like it if we just do case PANEL.
+            default: // If it wasn't the other two it must be panel. Java doesn't like it if we just do case PANEL.
                 joystick = panel;
                 break;
         }

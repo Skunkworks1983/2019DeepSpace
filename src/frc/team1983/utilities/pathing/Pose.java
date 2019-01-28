@@ -17,6 +17,13 @@ public class Pose
     private final Vector2 position, direction;
     private final double heading;
 
+    /**
+     * Create a pose with position and direction
+     * Direction is always normalized
+     * Heading is created given the direction
+     * @param position
+     * @param direction
+     */
     public Pose(Vector2 position, Vector2 direction)
     {
         this.position = position;

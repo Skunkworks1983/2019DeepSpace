@@ -11,14 +11,14 @@ function createWindow () {
     console.log("loading splash image");
 
     let loadingWin = new BrowserWindow({ width: 317, height: 148, frame: false });
-    loadingWin.loadFile('splash.png');
+    loadingWin.loadFile('resources/splash.png');
 
     console.log("loading NetworkTables client");
     ntClient = new nt.Client();
 
     console.log("creating main window")
     // Create the browser window.
-    win = new BrowserWindow({width: 700, height: 700, icon: "numbers_icon.png",
+    win = new BrowserWindow({width: 700, height: 700, icon: "resources/numbers_icon.png",
     backgroundColor: '#2e2c29', show: false, title: "Smelly Dash"})
 
     console.log("loading index.html");
