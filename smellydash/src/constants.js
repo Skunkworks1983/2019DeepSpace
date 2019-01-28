@@ -1,5 +1,7 @@
 // ---------- Constants ----------
 
+const DRAG_DISTANCE = 1; // feet
+
 // Default starting pose of robot. These values are in feet and gyro heading
 const START_POS_X = 5;
 const START_POS_Y = 5;

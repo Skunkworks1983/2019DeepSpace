@@ -11,7 +11,7 @@ class Pose {
 
 Pose.prototype.toString = function toString() {
     return (this.position.x / PIXELS_PER_FOOT).toFixed(2) + "," +
-           (this.position.y / PIXELS_PER_FOOT).toFixed(2) + "," +
+           (27 - (this.position.y / PIXELS_PER_FOOT)).toFixed(2) + "," +
            this.heading.toFixed(2);
 }
 

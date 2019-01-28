@@ -13,6 +13,7 @@ var poses = []; // Pathing poses
 
 var wasConnected = true; // true so it will trigger the reconnect
 var wasPressed = false;
+var poseDragging = null;
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 // Functions when pressing buttons
@@ -129,23 +130,17 @@ function draw() {
     rectMode(CENTER);
     image(img, 0, 0);
 
-    debounced = debounceMouse();
-
-    // Create pose
-    if(debounced) {
-        if(poses.length === 0) {
-            document.getElementById("pathbuttons").style.display = "inline-block";
-        }
-        poses[poses.length] = new Pose(mouseX, mouseY, 0);
-    }
     // Rotate pose
-    if(!debounced && mouseIsPressed && mouseIsInCanvas()) {
-        poses[poses.length - 1].heading = -atan2(mouseY - poses[poses.length - 1].position.y,
-            mouseX - poses[poses.length - 1].position.x);
+    if(poseDragging && mouseIsInCanvas()) {
+        if(mouseButton === LEFT)
+            poseDragging.position = new Vector2(mouseX, mouseY);
 
-            // Draw mouse location
-            fill(0, 255, 0)
-            ellipse(mouseX, mouseY, 5);
+        if(mouseButton === RIGHT)
+            poseDragging.heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+
+        // Draw mouse location
+        fill(0, 255, 0)
+        ellipse(mouseX, mouseY, 5);
     }
 
     // Draw poses
@@ -191,7 +186,7 @@ function draw() {
             );
 
             // Draw track
-            let resolution = 20; // should be constant but test
+            let resolution = 50; // should be constant but test
             for(let offset = -ROBOT_WIDTH/2; offset < ROBOT_WIDTH; offset += ROBOT_WIDTH/2) {
                 for(let index = 0; index < resolution; index++) {
                     let t = index / resolution;
@@ -209,4 +204,38 @@ function draw() {
     fill(255);
     stroke(0);
     poses.forEach(pose => text(pose, pose.position.x, pose.position.y));
+}
+
+function mousePressed() {
+    // Do nothing if the mouse isn't in the canvas
+    if(!mouseIsInCanvas())
+        return;
+
+    if(poses.length > 0) {
+        // Create pose
+        let mousePosition = new Vector2(mouseX, mouseY);
+        let sorted = poses.slice(0);
+        sorted.sort((pose1, pose2) => {
+            return Vector2.distance(mousePosition, pose1.position) - Vector2.distance(mousePosition, pose2.position);
+        });
+
+        // If we left click, create a new pose. Otherwise, select the closest pose
+        if(mouseButton === LEFT && Vector2.distance(mousePosition, sorted[0].position) > DRAG_DISTANCE * PIXELS_PER_FOOT) {
+            poses[poses.length] = new Pose(mouseX, mouseY, 90);
+            poseDragging = poses[poses.length - 1];
+        } else {
+            poseDragging = sorted[0];
+        }
+    } else if(mouseButton === LEFT) {
+        // Show path buttons
+        document.getElementById("pathbuttons").style.display = "inline-block";
+
+        // Only create a new pose if we left click
+        poses[poses.length] = new Pose(mouseX, mouseY, 90);
+        poseDragging = poses[poses.length - 1];
+    }
+}
+
+function mouseReleased() {
+    poseDragging = null;
 }
