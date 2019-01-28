@@ -88,7 +88,7 @@ function preload() {
     document.getElementById("removepose").onclick = function () {
         poses.splice(-1); // Delete last element
 
-        if(poses.length < 2) {
+        if(poses.length === 0) {
             document.getElementById("pathbuttons").style.display = "none";
         }
     }
