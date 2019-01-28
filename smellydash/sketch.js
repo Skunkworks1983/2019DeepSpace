@@ -88,7 +88,7 @@ function preload() {
     document.getElementById("removepose").onclick = function () {
         poses.splice(-1); // Delete last element
 
-        if(poses.length === 0) {
+        if(poses.length < 2) {
             document.getElementById("pathbuttons").style.display = "none";
         }
     }
@@ -227,13 +227,14 @@ function mousePressed() {
             poseDragging = sorted[0];
         }
     } else if(mouseButton === LEFT) {
-        // Show path buttons
-        document.getElementById("pathbuttons").style.display = "inline-block";
-
         // Only create a new pose if we left click
         poses[poses.length] = new Pose(mouseX, mouseY, 90);
         poseDragging = poses[poses.length - 1];
     }
+
+    // Show path buttons
+    if(poses.length > 1)
+        document.getElementById("pathbuttons").style.display = "inline-block";
 }
 
 function mouseReleased() {
