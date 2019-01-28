@@ -1,7 +1,13 @@
 const remote = require('electron').remote;
-const con = remote.getGlobal('console');
-con.log("sketch.js got global console");
+const console = remote.getGlobal('console');
+console.log("sketch.js got global console");
 const ntClient = remote.getGlobal('ntClient');
+
+const Vector2 = require('./src/vector2');
+const Bezier = require('./src/curve');
+const Pose = require('./src/pose');
+
+let p = new Pose();
 
 // ---------- Variable Init ----------
 var img; // Field image
@@ -18,14 +24,14 @@ function mouseIsInCanvas() {
 
 // Trys to connect to the network tables
 function ntConnect() {
-    con.log("trying to connect");
+    console.log("trying to connect");
 
     // Connects the client to the server on team 1983's roborio
     // We do this as early as possible so it has time to connect while the
     // rendering process loads
     ntClient.start((isConnected, err) => {
         // Displays the error and the state of connection
-        con.log({ isConnected, err });
+        console.log({ isConnected, err });
     }, '10.19.83.2');
 }
 
@@ -33,7 +39,7 @@ function ntConnect() {
 function connected () {
     if(!wasConnected)
     {
-        con.log("connected!");
+        console.log("connected!");
         document.getElementById("retryconnect").style.display = "none";
         document.getElementById("connectionstatus").style.backgroundColor = "green";
         wasConnected = true;
@@ -44,7 +50,7 @@ function connected () {
 function notconnected() {
     if(wasConnected)
     {
-        con.log("disconnected :(")
+        console.log("disconnected :(")
         document.getElementById("retryconnect").style.display = "inline-block";
         document.getElementById("connectionstatus").style.backgroundColor = "red";
         document.getElementById("coords").textContent = " ";
@@ -56,7 +62,7 @@ function notconnected() {
 
 // Called before window even starts rendering
 function preload() {
-    con.log("preload...");
+    console.log("preload...");
     img = loadImage('resources/cropped_field.png');
 
     notconnected();
@@ -64,7 +70,7 @@ function preload() {
 
     document.getElementById("retryconnect").onclick = ntConnect;
     document.getElementById("sendpath").onclick = function () {
-        con.log("sending a path");
+        console.log("sending a path");
         var pathString = poses[0];
 
         for(var i = 1; i < poses.length; i++) {
@@ -73,7 +79,7 @@ function preload() {
 
         ntClient.Update(ntClient.getKeyID("/SmartDashboard/path"), pathString);
         ntClient.Update(ntClient.getKeyID("/SmartDashboard/gotPath"), "false");
-        con.log(pathString);
+        console.log(pathString);
     };
     document.getElementById("clearpath").onclick = function () {
         poses = [];
@@ -90,19 +96,19 @@ function preload() {
 
     document.getElementById("pathbuttons").style.display = "none";
 
-    con.log("preload complete")
+    console.log("preload complete")
 }
 
 // ---------- setup ----------
 
 // Called when window starts rendering
 function setup() {
-    con.log("setup...");
+    console.log("setup...");
     createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     img.resize(0, CANVAS_HEIGHT);
     angleMode(DEGREES);
     frameRate(50);
-    con.log("setup complete");
+    console.log("setup complete");
 }
 
 // Called every frame
@@ -136,8 +142,8 @@ function draw() {
     }
     // Rotate pose
     if(!debounced && mouseIsPressed && mouseIsInCanvas()) {
-        poses[poses.length - 1].heading = -atan2(mouseY - poses[poses.length - 1].pos.y,
-            mouseX - poses[poses.length - 1].pos.x);
+        poses[poses.length - 1].heading = -atan2(mouseY - poses[poses.length - 1].position.y,
+            mouseX - poses[poses.length - 1].position.x);
 
             // Draw mouse location
             fill(0, 255, 0)
@@ -148,19 +154,41 @@ function draw() {
     fill(0, 0, 255);
     stroke(0);
     strokeWeight(1);
-    for(var i = 0; i < poses.length; i++) {
-        poses[i].show();
-    }
+    poses.forEach(pose => {
+        push();
+
+        translate(pose.position.x, pose.position.y);
+        rotate(-(pose.heading + 90));
+        rect(0, 0, (28 / 12) * PIXELS_PER_FOOT, (32 / 12) * PIXELS_PER_FOOT)
+
+        fill(0);
+        triangle(0, 5, 5, 0, -5, 0);
+
+        pop();
+    });
 
     // Draw path
-    fill(0, 0);
-    stroke(0, 0, 255);
+    fill(0, 0, 0, 0);
     strokeWeight(2);
-    Path.show(poses);
+    poses.forEach(pose => {
+        let index = poses.indexOf(pose);
+        if(index < poses.length - 1) {
+            nextPose = poses[index + 1];
 
-    // Draw robot
-    fill(255, 0, 0);
+            let cp0 = Vector2.scale(pose.forward, TANGENT_LENGTH * PIXELS_PER_FOOT);
+            let cp1 = Vector2.scale(nextPose.forward, -TANGENT_LENGTH * PIXELS_PER_FOOT);
+
+            bezier(
+                pose.position.x, pose.position.y,
+                pose.position.x + cp0.x, pose.position.y + cp0.y,
+                nextPose.position.x + cp1.x, nextPose.position.y + cp1.y,
+                nextPose.position.x, nextPose.position.y
+            );
+        }
+    })
+
+    // Draw pose text
+    fill(255);
     stroke(0);
-    strokeWeight(1);
-    Robot.show(x, y, heading)
+    poses.forEach(pose => text(pose, pose.position.x, pose.position.y));
 }
