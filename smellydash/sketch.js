@@ -12,17 +12,18 @@ var img; // Field image
 var poses = []; // Pathing poses
 
 var wasConnected = true; // true so it will trigger the reconnect
-var wasPressed = false;
-var poseDragging = null;
+var wasPressed = false; // Whether the mouse was pressed last frame (for debounce)
+var poseDragging = null; // The pose that is being dragged
 
-var robot = new Pose(0, 0, 90);
+var robot = new Pose(5, 5, 45); // Default robot pose
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
-// Functions when pressing buttons
+//functions when pressing buttons
 function mouseIsInCanvas() {
     return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT;
 }
 
+// Only returns truee if mouse is in canvas and was not pressed in the previous call
 function debounceMouse() {
     if(!wasPressed && mouseIsPressed) {
         wasPressed = true;
@@ -85,10 +86,10 @@ function preload() {
     document.getElementById("retryconnect").onclick = ntConnect;
     document.getElementById("sendpath").onclick = function () {
         console.log("sending a path");
-        var pathString = poses[0];
+        var pathString = poses[0].toString();
 
         for(var i = 1; i < poses.length; i++) {
-            pathString = pathString + ":" + poses[i];
+            pathString = pathString + ":" + poses[i].toString();
         }
 
         ntClient.Update(ntClient.getKeyID("/SmartDashboard/path"), pathString);
@@ -108,6 +109,7 @@ function preload() {
         }
     }
 
+    // Only show if there are poses
     document.getElementById("pathbuttons").style.display = "none";
 
     console.log("preload complete")
@@ -269,7 +271,7 @@ function mousePressed() {
     }
 
     // Show path buttons
-    if(poses.length > 1)
+    if(poses.length > 0)
         document.getElementById("pathbuttons").style.display = "inline-block";
 }
 

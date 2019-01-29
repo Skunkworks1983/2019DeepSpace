@@ -1,6 +1,6 @@
 {
     "name": "smellydash",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "Custom dashboard for FRC in the electron framework",
     "main": "main.js",
     "scripts": {
