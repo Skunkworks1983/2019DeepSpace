@@ -79,11 +79,7 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
 
-        Scheduler.getInstance().add(new DrivePath(new Path(
-                new Pose(0, 0, 90),
-                new Pose(0, 10, 90),
-                new Pose(10, 10, 0)
-        ), 3));
+        Scheduler.getInstance().add(new SmellyDashListener());
     }
 
     public static Robot getInstance()

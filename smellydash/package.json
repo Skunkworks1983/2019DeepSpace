@@ -6,7 +6,7 @@
     "scripts": {
         "start": "electron ."
     },
-    "author": "Erik Pratt for Skunk Works robotics team 1983",
+    "author": "Erik Pratt, Nathan Tresham, Kai Nakamura for Skunk Works Robotics",
     "license": "ISC",
     "devDependencies": {
         "electron": "^4.0.1"

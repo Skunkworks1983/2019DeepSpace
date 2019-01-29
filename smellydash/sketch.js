@@ -15,6 +15,8 @@ var wasConnected = true; // true so it will trigger the reconnect
 var wasPressed = false;
 var poseDragging = null;
 
+var robot = new Pose(0, 0, 90);
+
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 // Functions when pressing buttons
 function mouseIsInCanvas() {
@@ -52,7 +54,6 @@ function notconnected() {
         console.log("disconnected :(")
         document.getElementById("retryconnect").style.display = "inline-block";
         document.getElementById("connectionstatus").style.backgroundColor = "red";
-        document.getElementById("coords").textContent = " ";
         wasConnected = false;
     }
 }
@@ -116,11 +117,9 @@ function draw() {
     // ---------- nt getting and coord updating ----------
     if(ntClient.isConnected() && ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")) != undefined) {
         connected();
-        x = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val);
-        y = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val);
-        heading = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val);
-        document.getElementById("coords").textContent = "X: " + x +
-        " Y: " + y + " \u0398: " + heading;
+        robot.position.x = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val;
+        robot.position.y = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val;
+        robot.heading = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val;
     }
     else {
         notconnected();
@@ -204,6 +203,29 @@ function draw() {
     fill(255);
     stroke(0);
     poses.forEach(pose => text(pose, pose.position.x, pose.position.y));
+
+    // draw robot
+    push();
+
+    fill(255, 0, 0);
+    stroke(0);
+    strokeWeight(1);
+
+    translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
+    rotate(-(robot.heading + 90));
+    rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+
+    fill(0);
+    triangle(0, 5, 5, 0, -5, 0);
+
+    pop();
+
+    fill(255);
+    stroke(0);
+    // broken cuz reasons
+    text(
+        robot.position.x.toFixed(2) + "," + robot.position.y.toFixed(2) + "," + robot.heading.toFixed(2)
+        , robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
 }
 
 function mousePressed() {
