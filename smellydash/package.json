@@ -1,17 +1,19 @@
 {
-    "name": "smellydash",
-    "version": "1.0.0",
-    "description": "Custom dashboard for FRC in the electron framework",
-    "main": "main.js",
-    "scripts": {
-        "start": "electron ."
-    },
-    "author": "Erik Pratt, Nathan Tresham, Kai Nakamura for Skunk Works Robotics",
-    "license": "ISC",
-    "devDependencies": {
-        "electron": "^4.0.1"
-    },
-    "dependencies": {
-        "wpilib-nt-client": "^1.7.1"
-    }
+  "name": "smellydash",
+  "version": "1.0.0",
+  "description": "Custom dashboard for FRC in the electron framework",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Erik Pratt, Nathan Tresham, Kai Nakamura for Skunk Works Robotics",
+  "license": "ISC",
+  "repository": "https://github.com/Skunkworks1983/2019DeepSpace",
+  "productName": "Smelly Dash",
+  "devDependencies": {
+    "electron": "^4.0.1"
+  },
+  "dependencies": {
+    "wpilib-nt-client": "^1.7.1"
+  }
 }

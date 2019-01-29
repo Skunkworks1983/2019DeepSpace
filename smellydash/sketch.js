@@ -78,7 +78,7 @@ function notconnected() {
 // Called before window even starts rendering
 function preload() {
     console.log("preload...");
-    img = loadImage('resources/cropped_field.png');
+    img = loadImage('resources/field.png');
 
     notconnected();
     ntConnect();
