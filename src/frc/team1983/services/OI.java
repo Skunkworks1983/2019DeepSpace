@@ -49,7 +49,7 @@ public class OI
 
     protected static double scale(double raw)
     {
-        double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? -raw : 0;
+        double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? raw : 0;
         return Math.pow(deadzoned, JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
