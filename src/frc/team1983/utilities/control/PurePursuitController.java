@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Line;
@@ -16,6 +15,7 @@ import frc.team1983.utilities.pathing.Pose;
 public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 3.5; // feet
+    public static final double VELOCITY_DEADZONE = 0.1; // feet
 
     /**
      * Evaluates the motor output
@@ -40,6 +40,9 @@ public class PurePursuitController
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
         double distanceToEnd = Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
+
+        if(distanceToEnd < VELOCITY_DEADZONE)
+            return new Pair(0.0, 0.0);
 
         boolean pastPath = (distanceToEnd < LOOKAHEAD_DISTANCE) &&
                             Vector2.dot(path.evaluateTangent(1.0), Vector2.sub(pose.getPosition(), path.evaluate(1.0)).getNormalized()) > 0;

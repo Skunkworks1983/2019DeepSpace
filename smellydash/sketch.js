@@ -23,6 +23,20 @@ function mouseIsInCanvas() {
     return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT;
 }
 
+function debounceMouse() {
+    if(!wasPressed && mouseIsPressed) {
+        wasPressed = true;
+
+        if(mouseIsInCanvas()) {
+            return true
+        }
+    }
+    else if(!mouseIsPressed) {
+        wasPressed = false;
+    }
+    return false;
+}
+
 // Trys to connect to the network tables
 function ntConnect() {
     console.log("trying to connect");

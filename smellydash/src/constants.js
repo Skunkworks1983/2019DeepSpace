@@ -17,20 +17,3 @@ const TANGENT_LENGTH = 3;
 // This is breakout, although it is only a visual thing
 const ROBOT_WIDTH = (32 / 12) * PIXELS_PER_FOOT;
 const ROBOT_HEIGHT = (37 / 12) * PIXELS_PER_FOOT;
-
-// ---------- Functions ----------
-
-// Only register mouse press on first frame it is pressed
-function debounceMouse() {
-    if(!wasPressed && mouseIsPressed) {
-        wasPressed = true;
-
-        if(mouseIsInCanvas()) {
-            return true
-        }
-    }
-    else if(!mouseIsPressed) {
-        wasPressed = false;
-    }
-    return false;
-}
