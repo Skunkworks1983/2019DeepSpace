@@ -3,9 +3,11 @@ package frc.team1983.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.MotorMap;
+import frc.team1983.utilities.control.Transmission;
 
 public class Drivebase extends Subsystem
 {
@@ -13,30 +15,32 @@ public class Drivebase extends Subsystem
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
-    private TalonSRX left1, left2, left3;
-    private TalonSRX right1, right2, right3;
+    private Transmission left, right;
 
     public Drivebase()
     {
-        left1 = new TalonSRX(MotorMap.Drivebase.LEFT_1);
+        WPI_TalonSRX left1 = new WPI_TalonSRX(MotorMap.Drivebase.LEFT_1);
         left1.setInverted(MotorMap.Drivebase.LEFT_1_REVERSED);
         left1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        left2 = new TalonSRX(MotorMap.Drivebase.LEFT_2);
+        WPI_TalonSRX left2 = new WPI_TalonSRX(MotorMap.Drivebase.LEFT_2);
         left2.setInverted(MotorMap.Drivebase.LEFT_2_REVERSED);
         left2.follow(left1);
-        left3 = new TalonSRX(MotorMap.Drivebase.LEFT_3);
+        WPI_TalonSRX left3 = new WPI_TalonSRX(MotorMap.Drivebase.LEFT_3);
         left3.setInverted(MotorMap.Drivebase.LEFT_3_REVERSED);
         left3.follow(left2);
 
-        right1 = new TalonSRX(MotorMap.Drivebase.RIGHT_1);
+        WPI_TalonSRX right1 = new WPI_TalonSRX(MotorMap.Drivebase.RIGHT_1);
         right1.setInverted(MotorMap.Drivebase.RIGHT_1_REVERSED);
         right1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        right2 = new TalonSRX(MotorMap.Drivebase.RIGHT_2);
+        WPI_TalonSRX right2 = new WPI_TalonSRX(MotorMap.Drivebase.RIGHT_2);
         right2.setInverted(MotorMap.Drivebase.RIGHT_2_REVERSED);
         right2.follow(right1);
-        right3 = new TalonSRX(MotorMap.Drivebase.RIGHT_3);
+        WPI_TalonSRX right3 = new WPI_TalonSRX(MotorMap.Drivebase.RIGHT_3);
         right3.setInverted(MotorMap.Drivebase.RIGHT_3_REVERSED);
         right3.follow(right2);
+
+        left = new Transmission(left1, left2, left3);
+        right = new Transmission(right1, right2, right3);
 
         zero();
     }
@@ -55,8 +59,8 @@ public class Drivebase extends Subsystem
 
     public void zero()
     {
-        left1.setSelectedSensorPosition(0);
-        right1.setSelectedSensorPosition(0);
+        left.setSelectedSensorPosition(0);
+        right.setSelectedSensorPosition(0);
     }
 
     public TalonSRX getPigeonTalon()
