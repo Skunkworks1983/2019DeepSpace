@@ -15,12 +15,12 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
-
-    public Bezier()
-    {
-        this.points = new Vector2[0];
-    }
-
+    /**
+     * Creates a bezier with at least two points
+     * @param point0 the first point, must be defined
+     * @param point1 the second point, must be defined
+     * @param points all other points
+     */
     public Bezier(Vector2 point0, Vector2 point1, Vector2... points)
     {
         this.points = new Vector2[points.length + 2];
@@ -32,105 +32,110 @@ public class Bezier
             this.points[i + 2] = points[i];
     }
 
-    public static Vector2 evaluate(Bezier curve, double t)
+    /**
+     * Evaluate a point on the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return point
+     */
+    public Vector2 evaluate(double t)
     {
-        if(curve.points.length == 2)
-            return Vector2.add(curve.points[0], Vector2.scale(Vector2.sub(curve.points[1], curve.points[0]), t));
+        if(points.length == 2)
+            return Vector2.add(points[0], Vector2.scale(Vector2.sub(points[1], points[0]), t));
         else
             return new Bezier(
-                    new Bezier(curve.points[0], curve.points[1],
-                               Arrays.copyOfRange(curve.points, 2, curve.points.length - 1)).evaluate(t),
-                    new Bezier(curve.points[1], curve.points[2],
-                               Arrays.copyOfRange(curve.points, 3, curve.points.length)).evaluate(t)
+                    new Bezier(points[0], points[1],
+                               Arrays.copyOfRange(points, 2, points.length - 1)).evaluate(t),
+                    new Bezier(points[1], points[2],
+                               Arrays.copyOfRange(points, 3, points.length)).evaluate(t)
             ).evaluate(t);
     }
 
-    public Vector2 evaluate(double t)
-    {
-        return evaluate(this, t);
-    }
-
-    public static double getLength(Bezier curve)
-    {
-        if(curve.length == 0)
-            for(double i = 0; i < RESOLUTION; i++)
-                curve.length += curve.evaluate(i / RESOLUTION).getDistanceTo(curve.evaluate((i + 1) / RESOLUTION));
-        return curve.length;
-    }
-
+    /**
+     * Sums the length of all curves in this path
+     * @return the length
+     */
     public double getLength()
     {
-        return getLength(this);
+        if(length == 0)
+            for(double i = 0; i < RESOLUTION; i++)
+                length += evaluate(i / RESOLUTION).getDistanceTo(evaluate((i + 1) / RESOLUTION));
+        return length;
     }
 
-    public static Vector2 evaluateTangent(Bezier curve, double t)
+    /**
+     * Evaluate a normalized tangent to the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return normalized vector
+     */
+    public Vector2 evaluateTangent(double t)
     {
-        if(curve.points.length == 2)
-            return Vector2.sub(curve.points[1], curve.points[0]).getNormalized();
+        if(points.length == 2)
+            return Vector2.sub(points[1], points[0]).getNormalized();
         else
             return Vector2.sub(
-                    new Bezier(curve.points[1], curve.points[2],
-                               Arrays.copyOfRange(curve.points, 3, curve.points.length)).evaluate(t),
-                    new Bezier(curve.points[0], curve.points[1],
-                               Arrays.copyOfRange(curve.points, 0, curve.points.length - 1)).evaluate(t)
+                    new Bezier(points[1], points[2],
+                               Arrays.copyOfRange(points, 3, points.length)).evaluate(t),
+                    new Bezier(points[0], points[1],
+                               Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t)
             ).getNormalized();
     }
 
-    public Vector2 evaluateTangent(double t)
+    /**
+     * Evaluate a normalized perpendicular to the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return normalized vector
+     */
+    public Vector2 evaluateNormal(double t)
     {
-        return evaluateTangent(this, t);
-    }
-
-    public static Vector2 evaluateNormal(Bezier curve, double t)
-    {
-        Vector2 tangent = curve.evaluateTangent(t);
+        Vector2 tangent = evaluateTangent(t);
         return new Vector2(-tangent.getY(), tangent.getX());
     }
 
-    public Vector2 evaluateNormal(double t)
-    {
-        return evaluateNormal(this, t);
-    }
-
-    public static Vector2 offset(Bezier curve, double t, double offset)
-    {
-        return Vector2.add(curve.evaluate(t), Vector2.scale(curve.evaluateNormal(t), offset));
-    }
-
+    /**
+     * Evaluate a point that is offset a distance along the normal at B(t)
+     * @param t the percentage along the curve [0, 1]
+     * @param offset
+     * @return point
+     */
     public Vector2 offset(double t, double offset)
     {
-        return offset(this, t, offset);
+        return Vector2.add(evaluate(t), Vector2.scale(evaluateNormal(t), offset));
     }
 
-    public static Vector2 evaluateCenterOfCurvature(Bezier curve, double t)
-    {
-        return Line.cast(new Line(curve.evaluate(t - Constants.EPSILON), curve.evaluateNormal(t - Constants.EPSILON)),
-                new Line(curve.evaluate(t + Constants.EPSILON), curve.evaluateNormal(t + Constants.EPSILON)));
-    }
-
+    /**
+     * Evaluates the center of curvature to generate motion profiles
+     * @param t the percentage along the curve [0, 1]
+     * @return center of curvature
+     */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return evaluateCenterOfCurvature(this, t);
+        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)),
+                new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
     }
 
-    public static double evaluateRadiusOfCurvatuve(Bezier curve, double t)
-    {
-        return Vector2.getDistance(curve.evaluate(t), curve.evaluateCenterOfCurvature(t));
-    }
-
+    /**
+     * Evaluates the distance of the center of curvature
+     * @param t the percentage along the curve [0, 1]
+     * @return radius of curvature
+     */
     public double evaluateRadiusOfCurvatuve(double t)
     {
-        return evaluateRadiusOfCurvatuve(this, t);
+        return Vector2.getDistance(evaluate(t), evaluateCenterOfCurvature(t));
     }
 
-    public static Pair evaluateClosestPoint(Bezier curve, Vector2 point)
+    /**
+     * Evaluate the closest point and t of the closest point
+     * @param point
+     * @return closest point and t of closest point
+     */
+    public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0;
-        Vector2 closest = curve.evaluate(closestT);
+        Vector2 closest = evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
         for(double i = 0; i <= RESOLUTION; i++)
         {
-            Vector2 candidate = curve.evaluate(i / RESOLUTION);
+            Vector2 candidate = evaluate(i / RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
@@ -140,10 +145,5 @@ public class Bezier
             }
         }
         return new Pair(closestT, closest);
-    }
-
-    public Pair evaluateClosestPoint(Vector2 point)
-    {
-        return evaluateClosestPoint(this, point);
     }
 }

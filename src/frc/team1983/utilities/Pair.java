@@ -1,6 +1,8 @@
 package frc.team1983.utilities;
 
-// Represents a pair of two arbitrary types and values.
+/**
+ * Represents a pair of two arbitrary types and values
+ */
 public class Pair<Type1, Type2>
 {
     private Type1 value1;

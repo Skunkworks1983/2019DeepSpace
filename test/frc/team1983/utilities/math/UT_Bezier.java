@@ -1,7 +1,5 @@
 package frc.team1983.utilities.math;
 
-import frc.team1983.utilities.math.Bezier;
-import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

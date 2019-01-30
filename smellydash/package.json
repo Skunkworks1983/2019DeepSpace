@@ -1,13 +1,15 @@
 {
   "name": "smellydash",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Custom dashboard for FRC in the electron framework",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "author": "Erik Pratt for Skunk Works robotics team 1983",
+  "author": "Erik Pratt, Nathan Tresham, Kai Nakamura for Skunk Works Robotics",
   "license": "ISC",
+  "repository": "https://github.com/Skunkworks1983/2019DeepSpace",
+  "productName": "Smelly Dash",
   "devDependencies": {
     "electron": "^4.0.1"
   },

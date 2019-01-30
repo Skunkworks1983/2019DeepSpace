@@ -19,6 +19,15 @@ public class Path
     protected Bezier[] curves;
     protected double length = 0;
 
+    /**
+     * Creates bezier curves between given poses
+     * If poses are collinear, create a linear bezier
+     * Otherwise, generate a cubic bezier starting at the first pose,
+     * a control point in the direction of the first pose and TANGENT_LENGTH distance away,
+     * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
+     * and ending at the next pose.
+     * @param poses
+     */
     public Path(Pose... poses)
     {
         curves = new Bezier[poses.length - 1];
@@ -31,12 +40,12 @@ public class Path
             Vector2 position1 = poses[i + 1].getPosition();
             double theta1 = Math.toRadians(poses[i + 1].getHeading());
 
-            boolean colinear = 1 - Vector2.dot(
+            boolean collinear = 1 - Vector2.dot(
                     Vector2.sub(position1, position0).getNormalized(),
                     poses[i].getDirection().getNormalized()
             ) < Constants.EPSILON;
 
-            if(colinear)
+            if(collinear)
                 curves[i] = new Bezier(position0, position1);
             else
                 curves[i] = new Bezier(
@@ -49,6 +58,10 @@ public class Path
         }
     }
 
+    /**
+     * Sums the length of all curves in this path
+     * @return the length
+     */
     public double getLength()
     {
         if(length == 0)
@@ -57,7 +70,21 @@ public class Path
         return length;
     }
 
-    // get which curve a certain value of t is on
+    /**
+     * Get the index of the curve that a value of t is on
+     * @param t the percentage along the curve [0, 1]
+     * @return index
+     */
+    protected int getCurveIndex(double t)
+    {
+        return (int) Math.min(Math.floor(t * curves.length), curves.length - 1);
+    }
+
+    /**
+     * Get which curve a certain value of t is on
+     * @param t the percentage along the curve [0, 1]
+     * @return curve
+     */
     protected Bezier getCurve(double t)
     {
         double desiredLength = getLength() * t;
@@ -70,7 +97,11 @@ public class Path
         return curves[curves.length - 1];
     }
 
-    // get the length up until the start of a curve
+    /**
+     * Get the length up until the start of a curve
+     * @param curve
+     * @return length
+     */
     protected double evaluateLengthToCurve(Bezier curve)
     {
         double desiredLength = 0;
@@ -83,7 +114,11 @@ public class Path
         return desiredLength;
     }
 
-    // get the length up to a value of t
+    /**
+     * Get the length up to a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return length
+     */
     protected double evaluateLengthTo(double t)
     {
         double desiredLength = getLength() * t;
@@ -96,33 +131,63 @@ public class Path
             desiredLength -= curveLength;
             lengthBehind += curveLength;
         }
-        return desiredLength + lengthBehind;
+        return lengthBehind + desiredLength;
     }
 
+    /**
+     * Evaluate a point on the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return point
+     */
     public Vector2 evaluate(double t)
     {
         Bezier curve = getCurve(t);
         return curve.evaluate((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
     }
 
+    /**
+     * Evaluate a normalized tangent to the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return normalized vector
+     */
     public Vector2 evaluateTangent(double t)
     {
         Bezier curve = getCurve(t);
         return curve.evaluateTangent((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
     }
 
+    /**
+     * Evaluate a normalized perpendicular to the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return normalized vector
+     */
+    public Vector2 evaluateNormal(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateNormal((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
+     * Evaluate the closest point and t of the closest point
+     * @param point
+     * @return closest point and t of closest point
+     */
     public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0;
-        Vector2 closest = getCurve(closestT).evaluate(closestT);
+        Vector2 closest = getCurve(getCurveIndex(closestT)).evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
         for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
         {
-            Vector2 candidate = getCurve(closestT).evaluate(i / Bezier.RESOLUTION);
+            double step = i / (Bezier.RESOLUTION * curves.length);
+            int index = getCurveIndex(step);
+            double bezierT = (step - index / (double) curves.length) * curves.length;
+
+            Vector2 candidate = getCurve(index).evaluate(bezierT);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
-                closestT = i / Bezier.RESOLUTION;
+                closestT = step;
                 closest = candidate;
                 closestDistance = candidateDistance;
             }

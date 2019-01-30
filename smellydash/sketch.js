@@ -1,215 +1,280 @@
 const remote = require('electron').remote;
-const con = remote.getGlobal('console');
-con.log("sketch.js got global console");
+const console = remote.getGlobal('console');
+console.log("sketch.js got global console");
 const ntClient = remote.getGlobal('ntClient');
 
-//-------- Variable Init -------------
-var img; //Field image
-var poses = []; //Pathing poses
+const Vector2 = require('./src/vector2');
+const Bezier = require('./src/bezier');
+const Pose = require('./src/pose');
 
-//Poses is a 2d array, with the second dimension being x,y,angle
-const xIndex = 0; //x is in pixels
-const yIndex = 1; //y is in pixels
-const angleIndex = 2; //angle is irl gyro heading
+// ---------- Variable Init ----------
+var img; // Field image
+var poses = []; // Pathing poses
 
-//Default starting pose of robot. These values are in feet and irl gyro heading
-var x = 5;
-var y = 5;
-var angle = 45;
+var wasConnected = true; // true so it will trigger the reconnect
+var wasPressed = false; // Whether the mouse was pressed last frame (for debounce)
+var poseDragging = null; // The pose that is being dragged
 
-var wasConnected = true; //true so it will trigger the reconnect
-var wasPressed = false;
+var robot = new Pose(5, 5, 45); // Default robot pose
 
-const CANVAS_WIDTH = 590;
-const CANVAS_HEIGHT = 555;
-const PIXELS_PER_FOOT = CANVAS_HEIGHT / 27;
-
-//This is breakout, although it is only a visual thing
-const ROBOT_WIDTH = (32 / 12) * PIXELS_PER_FOOT;
-const ROBOT_HEIGHT = (37 / 12) * PIXELS_PER_FOOT;
-
-//-------- Misc Functions -------------
-
-//round() is a p5 function, and rounds to integer, which is not ideal
-function precise(num) {
-  return Number.parseFloat(num).toFixed(2);
-}
-
-// Only register mouse press on first frame it is pressed
-function debounceMouse() {
-  if(!wasPressed && mouseIsPressed) {
-    wasPressed = true;
-
-    if(mouseIsInCanvas()) {
-      return true
-    }
-  }
-  else if(!mouseIsPressed) {
-    wasPressed = false;
-  }
-  return false;
-}
-
-//Detects if the mouse is currently in the canvas, to prevent triggering pathing
-// functions when pressing buttons
+// Detects if the mouse is currently in the canvas, to prevent triggering pathing
+//functions when pressing buttons
 function mouseIsInCanvas() {
-  return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT
+    return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT;
+}
+
+// Only returns truee if mouse is in canvas and was not pressed in the previous call
+function debounceMouse() {
+    if(!wasPressed && mouseIsPressed) {
+        wasPressed = true;
+
+        if(mouseIsInCanvas()) {
+            return true
+        }
+    }
+    else if(!mouseIsPressed) {
+        wasPressed = false;
+    }
+    return false;
 }
 
 // Trys to connect to the network tables
 function ntConnect() {
-  con.log("trying to connect");
+    console.log("trying to connect");
 
-  // Connects the client to the server on team 1983's roborio
-  // We do this as early as possible so it has time to connect while the
-  // rendering process loads
-  ntClient.start((isConnected, err) => {
-      // Displays the error and the state of connection
-      con.log({ isConnected, err });
-  }, '10.19.83.2');
+    // Connects the client to the server on team 1983's roborio
+    // We do this as early as possible so it has time to connect while the
+    // rendering process loads
+    ntClient.start((isConnected, err) => {
+        // Displays the error and the state of connection
+        console.log({ isConnected, err });
+    }, '10.19.83.2');
 }
 
-//Called when we successfully connect to the network table. Updates buttons
+// Called when we successfully connect to the network table. Updates buttons
 function connected () {
-  if(!wasConnected)
-  {
-    con.log("connected!");
-    document.getElementById("retryconnect").style.display = "none";
-    document.getElementById("connectionstatus").style.backgroundColor = "green";
-    wasConnected = true;
-  }
+    if(!wasConnected)
+    {
+        console.log("connected!");
+        document.getElementById("retryconnect").style.display = "none";
+        document.getElementById("connectionstatus").style.backgroundColor = "green";
+        wasConnected = true;
+    }
 }
 
-//Called when we disconnect to the network table. Updates buttons
+// Called when we disconnect to the network table. Updates buttons
 function notconnected() {
-  if(wasConnected)
-  {
-    con.log("disconnected :(")
-    document.getElementById("retryconnect").style.display = "inline-block";
-    document.getElementById("connectionstatus").style.backgroundColor = "red";
-    document.getElementById("coords").textContent = " ";
-    wasConnected = false;
-  }
+    if(wasConnected)
+    {
+        console.log("disconnected :(")
+        document.getElementById("retryconnect").style.display = "inline-block";
+        document.getElementById("connectionstatus").style.backgroundColor = "red";
+        wasConnected = false;
+    }
 }
 
-//--------------- preload ----------------
+// ---------- preload ----------
 
-//Called before window even starts rendering
+// Called before window even starts rendering
 function preload() {
-  con.log("preload...");
-  img = loadImage('cropped_field.png');
+    console.log("preload...");
+    img = loadImage('resources/field.png');
 
-  notconnected();
-  ntConnect();
+    notconnected();
+    ntConnect();
 
-  document.getElementById("retryconnect").onclick = ntConnect;
-  document.getElementById("sendpath").onclick = function () {
-    con.log("sending a path");
-    var pathString = x + "," + y + "," + angle;
+    document.getElementById("retryconnect").onclick = ntConnect;
+    document.getElementById("sendpath").onclick = function () {
+        console.log("sending a path");
+        var pathString = poses[0].toString();
 
-    for(var i = 0; i < poses.length; i++) {
-      pathString = pathString + ":" + precise(poses[i][0] / PIXELS_PER_FOOT) + "," +
-        precise((CANVAS_HEIGHT - poses[i][1]) / PIXELS_PER_FOOT) + "," + precise(poses[i][2]);
-    }
+        for(var i = 1; i < poses.length; i++) {
+            pathString = pathString + ":" + poses[i].toString();
+        }
 
-    ntClient.Update(ntClient.getKeyID("/SmartDashboard/path"), pathString);
-    ntClient.Update(ntClient.getKeyID("/SmartDashboard/gotPath"), "false");
-    con.log(pathString);
-  };
-  document.getElementById("clearpath").onclick = function () {
-    poses = [];
+        ntClient.Update(ntClient.getKeyID("/SmartDashboard/path"), pathString);
+        ntClient.Update(ntClient.getKeyID("/SmartDashboard/gotPath"), "false");
+        console.log(pathString);
+    };
+    document.getElementById("clearpath").onclick = function () {
+        poses = [];
 
-    document.getElementById("pathbuttons").style.display = "none";
-  };
-  document.getElementById("removepose").onclick = function () {
-    poses.splice(-1); //Delete last element
-
-    if(poses.length === 0) {
         document.getElementById("pathbuttons").style.display = "none";
+    };
+    document.getElementById("removepose").onclick = function () {
+        poses.splice(-1); // Delete last element
+
+        if(poses.length === 0) {
+            document.getElementById("pathbuttons").style.display = "none";
+        }
     }
-  }
 
-  document.getElementById("pathbuttons").style.display = "none";
+    // Only show if there are poses
+    document.getElementById("pathbuttons").style.display = "none";
 
-  con.log("preload complete")
+    console.log("preload complete")
 }
 
-//------------ setup -----------------
+// ---------- setup ----------
 
-//Called when window starts rendering
+// Called when window starts rendering
 function setup() {
-  con.log("setup...");
-  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  img.resize(0, CANVAS_HEIGHT);
-  angleMode(DEGREES);
-  frameRate(50);
-  con.log("setup complete");
+    console.log("setup...");
+    createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+    img.resize(0, CANVAS_HEIGHT);
+    angleMode(DEGREES);
+    frameRate(50);
+    console.log("setup complete");
 }
 
-//Called every frame
+// Called every frame
 function draw() {
 
-  //------- nt getting and coord updating --------
-  // con.log("draw");
-  if(ntClient.isConnected() && ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")) != undefined){
-    connected();
-    x = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val);
-    y = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val);
-    angle = precise(ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val);
-    document.getElementById("coords").textContent = "X: " + x +
-      " Y: " + y + " \u0398: " + angle;
-    // con.log("x: " + x + ", y: " + y + " angle: " + angle);
-  }
-  else{
-    notconnected();
-  }
-
-  clear();
-  rectMode(CENTER);
-  image(img, 0, 0);
-
-  debounced = debounceMouse();
-
-  //Create pose
-  if(debounced) {
-    if(poses.length === 0) {
-      document.getElementById("pathbuttons").style.display = "inline-block";
+    // ---------- nt getting and coord updating ----------
+    if(ntClient.isConnected() && ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")) != undefined) {
+        connected();
+        robot.position.x = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val;
+        robot.position.y = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val;
+        robot.heading = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val;
     }
-    poses[poses.length] = [mouseX, mouseY, 0];
-  }
-  //Rotate pose
-  if(!debounced && mouseIsPressed && mouseIsInCanvas()) {
-    poses[poses.length - 1][2] = -atan2(mouseY - poses[poses.length - 1][1],
-      mouseX - poses[poses.length - 1][0]);
-    // con.log(poses[poses.length - 1][2]);
-    fill(0, 255, 0)
-    ellipse(mouseX, mouseY, 5);
-  }
+    else {
+        notconnected();
+    }
 
-  //Render poses
-  for(var i = 0; i < poses.length; i++) {
-    push();
+    clear();
     rectMode(CENTER);
+    image(img, 0, 0);
+
+    // Rotate pose
+    if(poseDragging && mouseIsInCanvas()) {
+        if(mouseButton === LEFT)
+            poseDragging.position = new Vector2(mouseX, mouseY);
+
+        if(mouseButton === RIGHT)
+            poseDragging.heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+
+        // Draw mouse location
+        fill(0, 255, 0)
+        ellipse(mouseX, mouseY, 5);
+    }
+
+    // Draw poses
     fill(0, 0, 255);
-    translate(poses[i][0], poses[i][1]);
-    rotate(-1 * (poses[i][2] + 90));
-    circle(0, 0, 10);
-    fill(0, 0, 0);
-    triangle(0, 10, -3, 7, 3, 7);
-    translate(-poses[i][0], -poses[i][1]);
-    rotate(poses[i][2] + 90);
+    stroke(0);
+    strokeWeight(1);
+    poses.forEach(pose => {
+        push();
+
+        translate(pose.position.x, pose.position.y);
+        rotate(-(pose.heading + 90));
+        rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+
+        fill(0);
+        triangle(0, 5, 5, 0, -5, 0);
+
+        pop();
+    });
+
+    // Draw path
+    fill(0, 0, 0, 0);
+    strokeWeight(2);
+    poses.forEach(pose => {
+        let index = poses.indexOf(pose);
+        if(index < poses.length - 1) {
+            nextPose = poses[index + 1];
+
+            let cp0 = Vector2.scale(pose.forward, TANGENT_LENGTH * PIXELS_PER_FOOT);
+            let cp1 = Vector2.scale(nextPose.forward, -TANGENT_LENGTH * PIXELS_PER_FOOT);
+
+            let points = [
+                new Vector2(pose.position.x, pose.position.y),
+                new Vector2(pose.position.x + cp0.x, pose.position.y + cp0.y),
+                new Vector2(nextPose.position.x + cp1.x, nextPose.position.y + cp1.y),
+                new Vector2(nextPose.position.x, nextPose.position.y)
+            ];
+
+            bezier(
+                points[0].x, points[0].y,
+                points[1].x, points[1].y,
+                points[2].x, points[2].y,
+                points[3].x, points[3].y
+            );
+
+            // Draw track
+            let resolution = 50; // should be constant but test
+            for(let offset = -ROBOT_WIDTH/2; offset < ROBOT_WIDTH; offset += ROBOT_WIDTH/2) {
+                for(let index = 0; index < resolution; index++) {
+                    let t = index / resolution;
+
+                    let p0 = Bezier.offset(index / resolution, offset, points);
+                    let p1 = Bezier.offset((index + 1) / resolution, offset, points);
+
+                    line(p0.x, p0.y, p1.x, p1.y);
+                }
+            }
+        }
+    })
+
+    // Draw pose text
+    fill(255);
+    stroke(0);
+    poses.forEach(pose => text(pose, pose.position.x, pose.position.y));
+
+    // draw robot
+    push();
+
+    fill(255, 0, 0);
+    stroke(0);
+    strokeWeight(1);
+
+    translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
+    rotate(-(robot.heading + 90));
+    rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+
+    fill(0);
+    triangle(0, 5, 5, 0, -5, 0);
+
     pop();
-  }
 
-  //Draw robot
-  rectMode(CENTER);
-  fill(255, 0, 0);
-  translate(x * PIXELS_PER_FOOT, CANVAS_HEIGHT - (y * PIXELS_PER_FOOT));
-  angleMode(DEGREES);
-  rotate(-angle - 90);
-  rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT);
+    fill(255);
+    stroke(0);
+    // broken cuz reasons
+    text(
+        robot.position.x.toFixed(2) + "," + robot.position.y.toFixed(2) + "," + robot.heading.toFixed(2)
+        , robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
+}
 
-  //Draw heading
-  fill(0, 0, 0);
-  triangle(0, ROBOT_HEIGHT / 2, -3, ROBOT_HEIGHT / 2 - 3, 3, ROBOT_HEIGHT / 2 - 3)
+function mousePressed() {
+    // Do nothing if the mouse isn't in the canvas
+    if(!mouseIsInCanvas())
+        return;
+
+    if(poses.length > 0) {
+        // Create pose
+        let mousePosition = new Vector2(mouseX, mouseY);
+        let sorted = poses.slice(0);
+        sorted.sort((pose1, pose2) => {
+            return Vector2.distance(mousePosition, pose1.position) - Vector2.distance(mousePosition, pose2.position);
+        });
+
+        // If we left click, create a new pose. Otherwise, select the closest pose
+        if(mouseButton === LEFT && Vector2.distance(mousePosition, sorted[0].position) > DRAG_DISTANCE * PIXELS_PER_FOOT) {
+            poses[poses.length] = new Pose(mouseX, mouseY, 90);
+            poseDragging = poses[poses.length - 1];
+        } else {
+            poseDragging = sorted[0];
+        }
+    } else if(mouseButton === LEFT) {
+        // Only create a new pose if we left click
+        poses[poses.length] = new Pose(mouseX, mouseY, 90);
+        poseDragging = poses[poses.length - 1];
+    }
+
+    // Show path buttons
+    if(poses.length > 0)
+        document.getElementById("pathbuttons").style.display = "inline-block";
+}
+
+function mouseReleased() {
+    poseDragging = null;
 }

@@ -2,6 +2,7 @@ package frc.team1983.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
@@ -116,4 +117,11 @@ public class Drivebase extends Subsystem
         return toFeet(right1.getSelectedSensorVelocity() * 10);
     }
 
+    public void setBrake(boolean brake)
+    {
+        TalonSRX[] talons = {left1, left2, left3, right1, right2, right3};
+
+        for(TalonSRX talon : talons)
+            talon.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
+    }
 }

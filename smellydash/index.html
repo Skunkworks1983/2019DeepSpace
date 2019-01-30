@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
     <link href="style.css" rel="stylesheet" type="text/css">
     <title>Smelly Dash</title>
-  </head>
-  <body>
+</head>
+<body>
     <ul class="status">
-      <li id="connectionstatus">comms</li>
-      <li class="button" id="retryconnect">↺</li>
+        <li id="connectionstatus">comms</li>
+        <li class="button" id="retryconnect">↺</li>
     </ul>
 
     &nbsp;
 
     <ul class="status" id="pathbuttons">
-      <li class="button" id="sendpath">send path</li>
-      <li class="button" id="clearpath">clear path</li>
-      <li class="button" id="removepose">remove pose</li>
+        <li class="button" id="sendpath">send path</li>
+        <li class="button" id="clearpath">clear path</li>
+        <li class="button" id="removepose">remove pose</li>
     </ul>
 
     <p/>
 
-    <span id="coords"></span>
-
-    <p/>
-
     <!-- All of the Node.js APIs are available in this renderer process. -->
-    <script src="p5.min.js"></script>
+    <script src="lib/p5.min.js"></script>
+    <script src="src/constants.js"></script>
     <script src="sketch.js"></script>
-  </body>
+</body>
 </html>
