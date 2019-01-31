@@ -30,7 +30,6 @@ public class PurePursuitController
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
-        Vector2 endPerpendicular = endTangent.getRight();
 
         if(velocity < 0)
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
@@ -45,20 +44,7 @@ public class PurePursuitController
 
         double distanceToEnd = Vector2.getDistance(pose.getPosition(), end);
 
-        // Stop robot if within VELOCITY_DEADZONE of end
-        double deadzoneT = VELOCITY_DEADZONE / path.getLength();
-
-        Vector2 pointAhead = Vector2.add(end, Vector2.scale(endTangent, deadzoneT * path.getLength()));
-        Vector2 pointBehind = Vector2.add(end, Vector2.scale(endTangent, -deadzoneT * path.getLength()));
-        Vector2 pointClosest = Line.cast(new Line(pose.getPosition(), endPerpendicular), new Line(end, endTangent));
-
-        double closeToEnd = path.evaluateClosestT(pose.getPosition());
-
-        boolean inDeadzone = closeToEnd > 1.0 - deadzoneT * 2 &&
-                             Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                             Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
-
-        if(inDeadzone)
+        if(PurePursuitController.inDeadzone(pose, path))
             return new Pair(0.0, 0.0);
 
         // Reverse velocity if past end of path
@@ -75,7 +61,7 @@ public class PurePursuitController
 
     /**
      * Evaluate a point ahead of the robot follow
-     * @param pose position of the robot
+     * @param pose pose of the robot
      * @param path path to follow
      * @return look ahead point
      */
@@ -99,7 +85,7 @@ public class PurePursuitController
 
     /**
      * Evaluates a point the robot needs to rotate about in order to reach the look ahead point
-     * @param pose position of the robot
+     * @param pose pose of the robot
      * @param lookahead look ahead point for the robot to target
      * @return center of curvature
      */
@@ -116,7 +102,7 @@ public class PurePursuitController
      * Evaluates the radius that the center of curvature is from the robot
      * Positive radius of curvature is to the right
      * Negative radius of curvature is to the left
-     * @param pose position of the robot
+     * @param pose pose of the robot
      * @param icc center of curvature
      * @return radius of curvature
      */
@@ -127,5 +113,29 @@ public class PurePursuitController
         radius *= Math.signum(direction);
 
         return radius;
+    }
+
+    /**
+     * Find out if the robot is within a deadzone from the end point
+     * @param pose pose of the robot
+     * @param path path to follow
+     * @return in deadzone
+     */
+    protected static boolean inDeadzone(Pose pose, Path path)
+    {
+        Vector2 end = path.evaluate(1.0);
+        Vector2 endTangent = path.evaluateTangent(1.0);
+
+        double deadzoneT = VELOCITY_DEADZONE / path.getLength();
+
+        Vector2 pointAhead = Vector2.add(end, Vector2.scale(endTangent, deadzoneT * path.getLength()));
+        Vector2 pointBehind = Vector2.add(end, Vector2.scale(endTangent, -deadzoneT * path.getLength()));
+        Vector2 pointClosest = Line.closest(new Line(end, endTangent), pose.getPosition());
+
+        double closeToEnd = path.evaluateClosestT(pose.getPosition());
+
+        return closeToEnd > 1.0 - deadzoneT * 2 &&
+                Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
+                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
     }
 }
