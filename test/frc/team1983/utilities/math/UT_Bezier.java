@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class UT_Bezier
 {
@@ -72,5 +73,12 @@ public class UT_Bezier
     public void closestPointTest()
     {
 
+    }
+
+    @Test
+    public void equalBeziersAreEqual()
+    {
+        assertEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10)),
+                new Bezier(new Vector2(0.0, 0.0), new Vector2(10.0, 10.0)));
     }
 }

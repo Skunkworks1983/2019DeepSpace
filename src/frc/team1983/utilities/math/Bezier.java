@@ -146,4 +146,26 @@ public class Bezier
         }
         return new Pair(closestT, closest);
     }
+
+    /**
+     * Tests if another object (presumable another Bezier) are made up of the same points
+     * @param o another object to compare to this object
+     * @return if the two beziers share the same point values
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Bezier)
+        {
+            Vector2[] oPoints = ((Bezier) o).points;
+            if(oPoints.length != points.length) return false;
+
+            for(int i = 0; i < points.length; i++)
+            {
+                if(!points[i].equals(oPoints[i])) return false;
+            }
+
+            return true;
+        }
+        else return false;
+    }
 }

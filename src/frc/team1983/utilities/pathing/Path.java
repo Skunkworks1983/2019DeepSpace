@@ -194,4 +194,25 @@ public class Path
         }
         return new Pair(closestT, closest);
     }
+
+    /**
+     * Test if another object (presumably another Path) is made up of the same Beziers
+     * @param o another object to compare to this one
+     * @return if the passed object is made up of the same bezier curves as this one
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Path)
+        {
+            Bezier[] oCurves = ((Path) o).curves;
+            if(oCurves.length != curves.length) return false;
+
+            for(int i = 0; i < curves.length; i++)
+            {
+                if(!curves[i].equals(oCurves[i])) return false;
+            }
+            return true;
+        }
+        else return false;
+    }
 }

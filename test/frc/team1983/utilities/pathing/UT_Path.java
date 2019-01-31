@@ -4,6 +4,7 @@ import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -130,5 +131,14 @@ public class UT_Path
 
         assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
         assertThat(closestT, equalTo(0.75));
+    }
+
+    @Test
+    public void equalPathsAreEqual()
+    {
+        assertEquals(new Path(new Pose(1, 2, 3)),
+                new Path(new Pose(1.0,2.0, 3.0)));
+        assertEquals(new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
+                new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
     }
 }

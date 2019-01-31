@@ -64,7 +64,7 @@ public class Logger {
 
         if(level.PRIORITY >= minPriority)
         {
-            System.out.println(LocalTime.now() + objectClass.toString() + " " + level.name() + ": " + message);
+            System.out.println(LocalTime.now() + " " + objectClass.getSimpleName() + " " + level.name() + ": " + message);
         }
     }
 }
