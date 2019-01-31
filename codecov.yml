@@ -1,11 +1,9 @@
 coverage:
   status:
     project:
-      robotcode:
-        target: 80%
-        flags: robotcode
-
-flags:
-  robotcode:
-    paths:
-      - src/
+      target: 80%
+      threshold: null
+      base: auto
+      paths:
+      - !smellydash
+      - !src/frc/team1983/constants
