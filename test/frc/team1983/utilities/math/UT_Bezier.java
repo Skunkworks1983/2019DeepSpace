@@ -8,6 +8,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class UT_Bezier
 {
     @Test
+    public void testTest()
+    {
+        assertThat(Bezier.test1(), equalTo(true));
+    }
+
+    @Test
+    public void testTest2()
+    {
+        assertThat(true, equalTo(true));
+    }
+
+    @Test
     public void evaluateTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));

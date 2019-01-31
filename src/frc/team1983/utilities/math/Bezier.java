@@ -15,7 +15,7 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
-    public boolean test1()
+    public static boolean test1()
     {
         return true;
     }
