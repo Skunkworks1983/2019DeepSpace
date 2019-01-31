@@ -18,7 +18,7 @@ function createWindow () {
 
     console.log("creating main window")
     // Create the browser window.
-    win = new BrowserWindow({width: 700, height: 700, icon: "resources/numbers_icon.png",
+    win = new BrowserWindow({width: 700, height: 700, icon: "resources/icon.png",
     backgroundColor: '#2e2c29', show: false, title: "Smelly Dash"})
 
     console.log("loading index.html");
