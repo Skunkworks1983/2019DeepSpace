@@ -15,6 +15,11 @@ public class Bezier
     private final Vector2[] points;
     private double length = 0;
 
+    public boolean test1()
+    {
+        return true;
+    }
+
     /**
      * Creates a bezier with at least two points
      * @param point0 the first point, must be defined
