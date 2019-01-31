@@ -3,8 +3,11 @@ coverage:
     patch:
       default:
         target: 80%
+        threshold: null
+        base: auto
     project:
       default:
+        target: auto
         threshold: null
         base: auto
         paths:
