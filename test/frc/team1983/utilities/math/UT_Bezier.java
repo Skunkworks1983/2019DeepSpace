@@ -57,13 +57,13 @@ public class UT_Bezier
     }
 
     @Test
-    public void radiusOfCurvatureTest()
+    public void centerOfCurvatureTest()
     {
 
     }
 
     @Test
-    public void centerOfCurvatureTest()
+    public void radiusOfCurvatureTest()
     {
 
     }
@@ -71,6 +71,13 @@ public class UT_Bezier
     @Test
     public void closestPointTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
 
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(-1, 0)), new Vector2(0, 0)), equalTo(true));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(1, 2)), new Vector2(1, 1)), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(1, 0));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(0.5, -2)), new Vector2(0.5, 0)), equalTo(true));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(0.5, 2)), new Vector2(0.5, 0)), equalTo(true));
     }
 }

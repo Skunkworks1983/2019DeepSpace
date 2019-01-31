@@ -11,6 +11,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class UT_PurePursuitController
 {
     @Test
+    public void outputTest()
+    {
+
+    }
+
+    @Test
     public void lookaheadTest()
     {
         Pose pose = new Pose(0, 5, 90);
@@ -30,19 +36,13 @@ public class UT_PurePursuitController
     }
 
     @Test
-    public void outOfBoundsTangentTest()
+    public void centerOfCurvatureTest()
     {
 
     }
 
     @Test
-    public void outputTest()
-    {
-
-    }
-
-    @Test
-    public void radiusTest()
+    public void radiusOfCurvatureTest()
     {
         Vector2 icc = new Vector2(0, 5);
 
@@ -50,5 +50,39 @@ public class UT_PurePursuitController
         assertThat(PurePursuitController.evaluateRadiusOfCurvature(pose, icc) < 0, equalTo(true));
 
         pose = new Pose(-5, 0, 90);
-        assertThat(PurePursuitController.evaluateRadiusOfCurvature(pose, icc) > 0, equalTo(true));    }
+        assertThat(PurePursuitController.evaluateRadiusOfCurvature(pose, icc) > 0, equalTo(true));
+    }
+
+    @Test
+    public void inDeadzoneTest()
+    {
+        double DEADZONE = PurePursuitController.VELOCITY_DEADZONE;
+
+        Pose pose = new Pose(0, 10, 90);
+
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
+
+        pose = new Pose(0, 10 + DEADZONE - 1e-3, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
+
+        pose = new Pose(0, 10 - DEADZONE + 1e-3, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
+
+        pose = new Pose(0, 10 + DEADZONE + 1e-3, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        pose = new Pose(0, 10 - DEADZONE - 1e-3, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        pose = new Pose(0, 0, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        pose = new Pose(0, 20, 90);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+    }
 }
