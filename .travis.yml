@@ -5,7 +5,7 @@ jdk:
 
 env:
   global:
-    - CODECOV_TOKEN=:37886b44-e6b6-4c27-9058-6a8a4b653a3a
+    - CODECOV_TOKEN=37886b44-e6b6-4c27-9058-6a8a4b653a3a
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -17,4 +17,4 @@ cache:
 
 after_success:
   - gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash) -t CODECOV_TOKEN
+  - bash <(curl -s https://codecov.io/bash) -t 37886b44-e6b6-4c27-9058-6a8a4b653a3a
