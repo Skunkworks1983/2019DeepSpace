@@ -42,8 +42,7 @@ public class Bezier
     {
         if (points.length == 2) return Vector2.add(points[0], Vector2.scale(Vector2.sub(points[1], points[0]), t));
         else
-            return new Bezier(new Bezier(points[0], points[1], Arrays.copyOfRange(points, 2, points.length - 1)).evaluate(t),
-                    new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t)).evaluate(t);
+            return new Bezier(new Bezier(points[0], points[1], Arrays.copyOfRange(points, 2, points.length - 1)).evaluate(t), new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t)).evaluate(t);
     }
 
     /**
@@ -67,8 +66,7 @@ public class Bezier
     {
         if (points.length == 2) return Vector2.sub(points[1], points[0]).getNormalized();
         else
-            return Vector2.sub(new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t),
-                    new Bezier(points[0], points[1], Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t)).getNormalized();
+            return Vector2.sub(new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t), new Bezier(points[0], points[1], Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t)).getNormalized();
     }
 
     /**
@@ -102,8 +100,7 @@ public class Bezier
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)),
-                new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
+        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)), new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
     }
 
     /**
@@ -126,14 +123,17 @@ public class Bezier
     public Pair evaluateClosestPoint(Vector2 point)
     {
         double closestT = 0; Vector2 closest = evaluate(closestT);
-        double closestDistance = Vector2.getDistance(closest, point); for (double i = 0; i <= RESOLUTION; i++)
-    {
-        Vector2 candidate = evaluate(i / RESOLUTION); double candidateDistance = Vector2.getDistance(candidate, point);
-        if (candidateDistance < closestDistance)
+        double closestDistance = Vector2.getDistance(closest, point);
+        for (double i = 0; i <= RESOLUTION; i++)
         {
-            closestT = i / RESOLUTION; closest = candidate; closestDistance = candidateDistance;
-        }
-    } return new Pair(closestT, closest);
+            Vector2 candidate = evaluate(i / RESOLUTION);
+            double candidateDistance = Vector2.getDistance(candidate, point);
+            if (candidateDistance < closestDistance)
+            {
+                closestT = i / RESOLUTION; closest = candidate; closestDistance = candidateDistance;
+            }
+        } 
+        return new Pair(closestT, closest);
     }
 
     /**
