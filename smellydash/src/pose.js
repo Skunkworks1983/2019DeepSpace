@@ -7,6 +7,23 @@ class Pose {
     get forward() {
         return new Vector2(cos(-this.heading), sin(-this.heading));
     }
+
+    show() {
+      push();
+
+      translate(this.position.x, this.position.y);
+      rotate(-(this.heading + 90));
+      rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+
+      fill(0);
+      triangle(0, 5, 5, 0, -5, 0);
+
+      pop();
+    }
+
+    showText() {
+      text(this, this.position.x, this.position.y)
+    }
 }
 
 Pose.prototype.toString = function toString() {

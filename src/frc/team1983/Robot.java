@@ -53,11 +53,13 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
     }
+
     @Override
     public void teleopPeriodic()
     {
         Scheduler.getInstance().run();
     }
+
     @Override
     public void robotPeriodic()
     {
