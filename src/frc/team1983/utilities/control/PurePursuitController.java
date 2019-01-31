@@ -14,8 +14,8 @@ import frc.team1983.utilities.pathing.Pose;
  */
 public class PurePursuitController
 {
-    public static final double LOOKAHEAD_DISTANCE = 3.5; // feet
-    public static final double VELOCITY_DEADZONE = 0.1; // feet
+    public static final double LOOKAHEAD_DISTANCE = 3.0; // feet
+    public static final double VELOCITY_DEADZONE = 0.15; // feet
 
     /**
      * Evaluates the motor output
@@ -28,6 +28,10 @@ public class PurePursuitController
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
+        Vector2 end = path.evaluate(1.0);
+        Vector2 endTangent = path.evaluateTangent(1.0);
+        Vector2 endPerpendicular = endTangent.getRight();
+
         if(velocity < 0)
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
@@ -39,13 +43,27 @@ public class PurePursuitController
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
-        double distanceToEnd = Vector2.getDistance(pose.getPosition(), path.evaluate(1.0));
+        double distanceToEnd = Vector2.getDistance(pose.getPosition(), end);
 
-        if(distanceToEnd < VELOCITY_DEADZONE)
+        // Stop robot if within VELOCITY_DEADZONE of end
+        double deadzoneT = VELOCITY_DEADZONE / path.getLength();
+
+        Vector2 pointAhead = Vector2.add(end, Vector2.scale(endTangent, deadzoneT * path.getLength()));
+        Vector2 pointBehind = Vector2.add(end, Vector2.scale(endTangent, -deadzoneT * path.getLength()));
+        Vector2 pointClosest = Line.cast(new Line(pose.getPosition(), endPerpendicular), new Line(end, endTangent));
+
+        double closeToEnd = path.evaluateClosestT(pose.getPosition());
+
+        boolean inDeadzone = closeToEnd > 1.0 - deadzoneT * 2 &&
+                             Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
+                             Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
+
+        if(inDeadzone)
             return new Pair(0.0, 0.0);
 
+        // Reverse velocity if past end of path
         boolean pastPath = (distanceToEnd < LOOKAHEAD_DISTANCE) &&
-                            Vector2.dot(path.evaluateTangent(1.0), Vector2.sub(pose.getPosition(), path.evaluate(1.0)).getNormalized()) > 0;
+                            Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
 
@@ -64,16 +82,17 @@ public class PurePursuitController
     protected static Vector2 evaluateLookaheadPoint(Pose pose, Path path)
     {
         // find closest point on path to robot
-        Pair closest = path.evaluateClosestPoint(pose.getPosition());
-        double closestT = (double) closest.getValue1();
+        double closestT = path.evaluateClosestT(pose.getPosition());
 
         // find lookAhead point
         double lookaheadT = closestT + LOOKAHEAD_DISTANCE / path.getLength();
 
         // if look ahead is outside of path bounds, evaluate along continuing tangent
-        Vector2 lookahead = path.evaluate(lookaheadT);
+        Vector2 lookahead;
         if(lookaheadT > 1.0)
             lookahead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1.0) * path.getLength()));
+        else
+             lookahead = path.evaluate(lookaheadT);
 
         return lookahead;
     }

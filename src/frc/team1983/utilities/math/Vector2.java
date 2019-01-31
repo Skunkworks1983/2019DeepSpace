@@ -117,6 +117,24 @@ public class Vector2
     }
 
     /**
+     * Finds the 90 degree left of a vector
+     * @return left
+     */
+    public Vector2 getLeft()
+    {
+        return new Vector2(-y, x);
+    }
+
+    /**
+     * Finds the 90 degree right of a vector
+     * @return right
+     */
+    public Vector2 getRight()
+    {
+        return new Vector2(y, -x);
+    }
+
+    /**
      * Evaluates the distance between two vectors
      * @param vector1
      * @param vector2

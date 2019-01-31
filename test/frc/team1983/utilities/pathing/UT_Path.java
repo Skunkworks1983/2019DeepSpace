@@ -103,30 +103,24 @@ public class UT_Path
 
         Vector2 point = new Vector2(0, -10);
 
-        Pair pair = path.evaluateClosestPoint(point);
-
-        double closestT = (double) pair.getValue1();
-        Vector2 closestPoint = (Vector2) pair.getValue2();
+        double closestT = path.evaluateClosestT(point);
+        Vector2 closestPoint = path.evaluateClosestPoint(point);
 
         assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
         assertThat(closestT, equalTo(0.0));
 
         point = new Vector2(0, 2);
 
-        pair = path.evaluateClosestPoint(point);
-
-        closestT = (double) pair.getValue1();
-        closestPoint = (Vector2) pair.getValue2();
+        closestT = path.evaluateClosestT(point);
+        closestPoint = path.evaluateClosestPoint(point);
 
         assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
         assertThat(closestT, equalTo(0.5));
 
         point = new Vector2(0, 3);
 
-        pair = path.evaluateClosestPoint(point);
-
-        closestT = (double) pair.getValue1();
-        closestPoint = (Vector2) pair.getValue2();
+        closestT = path.evaluateClosestT(point);
+        closestPoint = path.evaluateClosestPoint(point);
 
         assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
         assertThat(closestT, equalTo(0.75));

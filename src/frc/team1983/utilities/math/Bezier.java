@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class Bezier
 {
-    public static int RESOLUTION = 20;
+    public static int RESOLUTION = 50;
 
     private final Vector2[] points;
     private double length = 0;

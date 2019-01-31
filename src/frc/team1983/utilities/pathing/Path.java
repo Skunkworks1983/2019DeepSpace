@@ -168,11 +168,11 @@ public class Path
     }
 
     /**
-     * Evaluate the closest point and t of the closest point
+     * Evaluate the closest point and t from another point
      * @param point
      * @return closest point and t of closest point
      */
-    public Pair evaluateClosestPoint(Vector2 point)
+    protected Pair evaluateClosestPointAndT(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = getCurve(getCurveIndex(closestT)).evaluate(closestT);
@@ -193,5 +193,25 @@ public class Path
             }
         }
         return new Pair(closestT, closest);
+    }
+
+    /**
+     * Evaluate the closest point from another point
+     * @param point
+     * @return closest point
+     */
+    public Vector2 evaluateClosestPoint(Vector2 point)
+    {
+        return (Vector2) evaluateClosestPointAndT(point).getValue2();
+    }
+
+    /**
+     * Evaluate the closest t from another point
+     * @param point
+     * @return closest t the percentage along the curve [0, 1]
+     */
+    public double evaluateClosestT(Vector2 point)
+    {
+        return (double) evaluateClosestPointAndT(point).getValue1();
     }
 }
