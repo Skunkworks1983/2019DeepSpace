@@ -1,13 +1,12 @@
 package frc.team1983.utilities.pathing;
 
 import frc.team1983.utilities.Pair;
-import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class UT_Path
 {
