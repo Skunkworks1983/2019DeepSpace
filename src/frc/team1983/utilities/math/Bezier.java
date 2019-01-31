@@ -132,7 +132,7 @@ public class Bezier
             {
                 closestT = i / RESOLUTION; closest = candidate; closestDistance = candidateDistance;
             }
-        } 
+        }
         return new Pair(closestT, closest);
     }
 
