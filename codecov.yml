@@ -1,0 +1,15 @@
+coverage:
+  status:
+    patch:
+      default:
+        target: 80%
+        threshold: null
+        base: auto
+    project:
+      default:
+        target: auto
+        threshold: null
+        base: auto
+        paths:
+          - !smellydash
+          - !src/frc/team1983/constants
