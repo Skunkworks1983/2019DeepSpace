@@ -49,16 +49,6 @@ public class Robot extends TimedRobot
         navx.reset();
         pigeon.reset();
     }
-    @Override
-    public void teleopInit()
-    {
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-        Scheduler.getInstance().run();
-    }
 
     @Override
     public void robotPeriodic()
