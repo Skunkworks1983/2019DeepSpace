@@ -48,7 +48,7 @@ public class PurePursuitController
             return new Pair(0.0, 0.0);
 
         // Reverse velocity if past end of path
-        boolean pastPath = (distanceToEnd < LOOKAHEAD_DISTANCE) &&
+        boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
                             Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
