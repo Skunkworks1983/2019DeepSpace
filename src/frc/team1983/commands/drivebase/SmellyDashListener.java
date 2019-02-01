@@ -44,7 +44,8 @@ public class SmellyDashListener extends Command
             Logger.getInstance().info(pose.getPosition().toString() + pose.getHeading(), SmellyDashListener.class);
 
         // The Pose[]::new thing is required for toArray to return an array of Poses, not generic Objects
-        return new Path(poses.get(0), poses.get(1), poses.subList(2, poses.size() - 1).toArray(Pose[]::new));
+        if(poses.size() > 2) return new Path(poses.get(0), poses.get(1), poses.subList(2, poses.size() - 1).toArray(Pose[]::new));
+        return new Path(poses.get(0), poses.get(1));
     }
 
     @Override

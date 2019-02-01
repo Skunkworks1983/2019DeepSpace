@@ -33,9 +33,10 @@ public class Path
      */
     public Path(Pose pose1, Pose pose2, Pose... morePoses)
     {
-        ArrayList<Pose> poses = (ArrayList<Pose>) Arrays.asList(morePoses);
-        poses.add(0, pose2);
-        poses.add(0, pose1);
+        ArrayList<Pose> poses = new ArrayList<>();
+        poses.add(pose1);
+        poses.add(pose2);
+        poses.addAll(Arrays.asList(morePoses));
 
         curves = new Bezier[poses.size() - 1];
 

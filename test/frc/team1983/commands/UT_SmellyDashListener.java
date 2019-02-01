@@ -21,6 +21,7 @@ public class UT_SmellyDashListener
     @Test
     public void constructPathFromStringCorrectlyDeserializesPathString()
     {
-        assertEquals(SmellyDashListener.constructPathFromString("0,0,0:10,10,10"), new Path(new Pose(0.0, 0.0, 0.0), new Pose(10.0, 10.0, 10.0)));
+        assertEquals(SmellyDashListener.constructPathFromString("0,0,0:10,10,10"),
+                new Path(new Pose(0.0, 0.0, 0.0), new Pose(10.0, 10.0, 10.0)));
     }
 }
