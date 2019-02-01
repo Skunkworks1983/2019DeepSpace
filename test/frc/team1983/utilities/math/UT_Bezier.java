@@ -95,6 +95,8 @@ public class UT_Bezier
     {
         assertNotEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10)),
                 new Bezier(new Vector2(10.0, 10.0), new Vector2(0.0, 0.0)));
+        assertNotEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10), new Vector2(10, 10)),
+                new Bezier(new Vector2(0, 0), new Vector2(10, 10)));
     }
 
     @Test

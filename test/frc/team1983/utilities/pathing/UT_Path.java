@@ -130,8 +130,8 @@ public class UT_Path
     @Test
     public void equalPathsAreEqual()
     {
-        assertEquals(new Path(new Pose(1, 2, 3)),
-                new Path(new Pose(1.0,2.0, 3.0)));
+        assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7)));
         assertEquals(new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
                 new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
     }
@@ -139,8 +139,10 @@ public class UT_Path
     @Test
     public void notEqualBeziersAreNotEqual()
     {
-        assertNotEquals(new Path(new Pose(10, 20, 30)),
-                new Path(new Pose(1.0,2.0, 3.0)));
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(0.0, 0.0, 0.0)));
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(2, 3, 1)));
         assertNotEquals(new Path(new Pose(0.5, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
                 new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
     }
@@ -148,6 +150,6 @@ public class UT_Path
     @Test
     public void notBezierIsNotEqualToBeizer()
     {
-        assertNotEquals(new String(), new Path(new Pose(10, 20, 30)));
+        assertNotEquals(new String(), new Path(new Pose(10, 20, 30), new Pose(1, 1, 1)));
     }
 }
