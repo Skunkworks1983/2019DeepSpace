@@ -100,7 +100,8 @@ public class Bezier
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)), new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
+        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)),
+                new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
     }
 
     /**
@@ -122,15 +123,18 @@ public class Bezier
      */
     public Pair evaluateClosestPoint(Vector2 point)
     {
-        double closestT = 0; Vector2 closest = evaluate(closestT);
+        double closestT = 0;
+        Vector2 closest = evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
-        for (double i = 0; i <= RESOLUTION; i++)
+        for(double i = 0; i <= RESOLUTION; i++)
         {
             Vector2 candidate = evaluate(i / RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
-            if (candidateDistance < closestDistance)
+            if(candidateDistance < closestDistance)
             {
-                closestT = i / RESOLUTION; closest = candidate; closestDistance = candidateDistance;
+                closestT = i / RESOLUTION;
+                closest = candidate;
+                closestDistance = candidateDistance;
             }
         }
         return new Pair(closestT, closest);

@@ -143,7 +143,7 @@ public class UT_Path
     }
 
     @Test
-    public void notEqualBeziersAreNotEqual()
+    public void notEqualPathsAreNotEqual()
     {
         assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
                 new Path(new Pose(1.0,2.0, 3.0), new Pose(0.0, 0.0, 0.0)));
@@ -154,7 +154,7 @@ public class UT_Path
     }
 
     @Test
-    public void notBezierIsNotEqualToBeizer()
+    public void notPathIsNotEqualToPath()
     {
         assertNotEquals(new String(), new Path(new Pose(10, 20, 30), new Pose(1, 1, 1)));
     }

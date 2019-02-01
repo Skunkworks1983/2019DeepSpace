@@ -21,7 +21,11 @@ public class UT_SmellyDashListener
     @Test
     public void constructPathFromStringCorrectlyDeserializesPathString()
     {
+        //Two points
         assertEquals(SmellyDashListener.constructPathFromString("0,0,0:10,10,10"),
                 new Path(new Pose(0.0, 0.0, 0.0), new Pose(10.0, 10.0, 10.0)));
+        //More than two points
+        assertEquals(SmellyDashListener.constructPathFromString("0,0,0:10,10,10:4,4,4"),
+                new Path(new Pose(0.0, 0.0, 0.0), new Pose(10.0, 10.0, 10.0), new Pose(4,4,4)));
     }
 }
