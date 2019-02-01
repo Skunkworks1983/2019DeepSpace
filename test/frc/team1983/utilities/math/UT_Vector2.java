@@ -1,6 +1,5 @@
 package frc.team1983.utilities.math;
 
-import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -8,6 +7,76 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class UT_Vector2
 {
+    @Test
+    public void toStringTest()
+    {
+        Vector2 v = new Vector2(10, 5);
+
+        assertThat(v.toString().equals("<10.0, 5.0>"), equalTo(true));
+        assertThat(v.toString(true).equals("10.0, 5.0"), equalTo(true));
+
+        v = new Vector2(-5, -10);
+
+        assertThat(v.toString().equals("<-5.0, -10.0>"), equalTo(true));
+        assertThat(v.toString(true).equals("-5.0, -10.0"), equalTo(true));
+    }
+
+    @Test
+    public void normalizeTest()
+    {
+        Vector2 v = new Vector2(0, 10);
+
+        assertThat(v.getNormalized().equals(new Vector2(0, 1)), equalTo(true));
+
+        v = new Vector2(-10, 0);
+        assertThat(v.getNormalized().equals(new Vector2(-1, 0)), equalTo(true));
+
+        v = new Vector2(10, 10);
+        assertThat(v.getNormalized().equals(new Vector2(Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0)), equalTo(true));
+    }
+
+    @Test
+    public void negativeTest()
+    {
+        Vector2 v = new Vector2(10, 10);
+
+        assertThat(v.getNegative().equals(new Vector2(-10, -10)), equalTo(true));
+
+        v = new Vector2(-10, -10);
+        assertThat(v.getNegative().equals(new Vector2(10, 10)), equalTo(true));
+    }
+
+    @Test
+    public void leftTest()
+    {
+        Vector2 v = new Vector2(5, 10);
+
+        assertThat(v.getLeft().equals(new Vector2(-10, 5)), equalTo(true));
+
+        v = new Vector2(10, 5);
+        assertThat(v.getLeft().equals(new Vector2(-5, 10)), equalTo(true));
+    }
+
+    @Test
+    public void rightTest()
+    {
+        Vector2 v = new Vector2(5, 10);
+
+        assertThat(v.getRight().equals(new Vector2(10, -5)), equalTo(true));
+
+        v = new Vector2(10, 5);
+        assertThat(v.getRight().equals(new Vector2(5, -10)), equalTo(true));
+    }
+
+    @Test
+    public void equalsTest()
+    {
+        Vector2 v1 = new Vector2(10.0, 10.0);
+        Vector2 v2 = new Vector2(10.0, 10.0);
+
+        assertThat(v1.equals(v2), equalTo(true));
+    }
+
     @Test
     public void additionTest()
     {
@@ -20,6 +89,12 @@ public class UT_Vector2
                 Vector2.add(new Vector2(-5, 6), new Vector2(3, -4)),
                 new Vector2(-2, 2)),
                 equalTo(true));
+
+        Vector2 v1 = new Vector2(1, 2);
+        Vector2 v2 = new Vector2(3, 4);
+        v1.add(v2);
+
+        assertThat(v1.equals(new Vector2(4, 6)), equalTo(true));
     }
 
     @Test
@@ -34,6 +109,12 @@ public class UT_Vector2
                 Vector2.sub(new Vector2(9, -3), new Vector2(-5, 9)),
                 new Vector2(14, -12)),
                 equalTo(true));
+
+        Vector2 v1 = new Vector2(1, 2);
+        Vector2 v2 = new Vector2(3, 4);
+        v1.sub(v2);
+
+        assertThat(v1.equals(new Vector2(-2, -2)), equalTo(true));
     }
 
     @Test
@@ -82,6 +163,12 @@ public class UT_Vector2
         assertThat(Vector2.equals(Vector2.twist(new Vector2(0, 1), new Vector2(0, 0), 90), new Vector2(-1, 0)), equalTo(true));
         assertThat(Vector2.equals(Vector2.twist(new Vector2(-1, 0), new Vector2(0, 0), 90), new Vector2(0, -1)), equalTo(true));
         assertThat(Vector2.equals(Vector2.twist(new Vector2(0, 0), new Vector2(1, 0), -90), new Vector2(1, 1)), equalTo(true));
+
+        Vector2 v1 = new Vector2(1, 0);
+        Vector2 v2 = new Vector2(0, 0);
+        v1.twist(v2, 90);
+
+        assertThat(v1.equals(new Vector2(0, 1)), equalTo(true));
     }
 
     @Test

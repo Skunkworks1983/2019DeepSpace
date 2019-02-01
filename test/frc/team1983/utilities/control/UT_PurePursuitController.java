@@ -1,5 +1,6 @@
 package frc.team1983.utilities.control;
 
+import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
@@ -13,7 +14,26 @@ public class UT_PurePursuitController
     @Test
     public void outputTest()
     {
+        Pose pose = new Pose(0, 5, 90);
 
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        Pair output = PurePursuitController.evaluateOutput(pose, path, 1);
+        double lv = (double) output.getValue1();
+        double rv = (double) output.getValue2();
+        assertThat(lv > 0, equalTo(true));
+        assertThat(rv > 0, equalTo(true));
+
+        pose = new Pose(0, 15, 90);
+
+        output = PurePursuitController.evaluateOutput(pose, path, 1);
+        lv = (double) output.getValue1();
+        rv = (double) output.getValue2();
+        assertThat(lv < 0, equalTo(true));
+        assertThat(rv < 0, equalTo(true));
     }
 
     @Test
@@ -38,7 +58,10 @@ public class UT_PurePursuitController
     @Test
     public void centerOfCurvatureTest()
     {
+        Pose pose = new Pose(0, 0, 90);
+        Vector2 lookAhead = new Vector2(0, 10);
 
+        assertThat(PurePursuitController.evaluateCenterOfCurvature(pose, lookAhead), equalTo(null));
     }
 
     @Test
