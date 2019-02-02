@@ -25,10 +25,18 @@ public class SmellyDashListener extends Command
         {
             logger.info("Got a path", getClass()); SmartDashboard.putBoolean("gotPath", true);
 
-            Scheduler.getInstance().add(new DrivePath(constructPathFromString(SmartDashboard.getString("path", "0,0,0:0,0,0")), 4));
+            Path pathFromString = constructPathFromString(SmartDashboard.getString("path", "-1,-1,-1:-1,-1, -1"));
+            if(pathFromString.equals(new Path(new Pose(-1, -1, -1), new Pose(-1, -1, -1))))
+                return;
+
+            Scheduler.getInstance().add(new DrivePath(pathFromString, 4));
         }
     }
 
+    /**
+     * @param pathString A path in the format of "x,y,heading:x,y,heading..."
+     * @return The constructed path, or a path of "-1,-1,-1:-1,-1,-1" to indicate an error
+     */
     public static Path constructPathFromString(String pathString)
     {
         try
@@ -49,10 +57,11 @@ public class SmellyDashListener extends Command
             if (poses.size() > 3) return new Path(poses.get(0), poses.get(1), poses.subList(2, poses.size()).toArray(Pose[]::new));
             if (poses.size() > 2) return new Path(poses.get(0), poses.get(1), poses.get(2));
             return new Path(poses.get(0), poses.get(1));
-        } catch(Exception e)
+        }
+        catch(Exception e)
         {
-            System.out.println(e);
-            return new Path(new Pose(1,1,1), new Pose(1,1,1));
+            Logger.getInstance().error("Exception when parsing Smelly Dash path string " + e, SmellyDashListener.class);
+            return new Path(new Pose(-1, -1, -1), new Pose(-1, -1, -1));
         }
     }
 

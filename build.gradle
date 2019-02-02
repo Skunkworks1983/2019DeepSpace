@@ -72,3 +72,25 @@ jacocoTestReport {
         html.enabled false
     }
 }
+
+task codecovlinux {
+    dependsOn build
+    dependsOn jacocoTestReport
+    doLast {
+        exec {
+            workingDir '.'
+            commandLine './uploadcodecov.bat' //Linux
+        }
+    }
+}
+
+task codecov {
+    dependsOn build
+    dependsOn jacocoTestReport
+    doLast {
+        exec {
+            workingDir '.'
+            commandLine 'cmd', '/c', 'uploadcodecov.bat' //Windows
+        }
+    }
+}

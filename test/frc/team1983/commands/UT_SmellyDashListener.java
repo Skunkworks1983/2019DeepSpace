@@ -50,4 +50,20 @@ public class UT_SmellyDashListener
         System.out.println(path2.getLength());
         assertEquals(path1, path2);
     }
+
+    @Test
+    public void passingNegative1AsAllPosesReturnsCorrectPath()
+    {
+        Path path1 = new Path(new Pose(-1, -1, -1), new Pose(-1, -1, -1));
+        Path path2 = SmellyDashListener.constructPathFromString("-1,-1,-1:-1,-1,-1");
+        assertEquals(path1, path2);
+    }
+
+    @Test
+    public void badPathStringReturnAPathOfAllNegativeOne()
+    {
+        Path path1 = new Path(new Pose(-1, -1, -1), new Pose(-1, -1, -1));
+        Path path2 = SmellyDashListener.constructPathFromString("0,0:0,0,0,0:a,-100000000");
+        assertEquals(path1, path2);
+    }
 }
