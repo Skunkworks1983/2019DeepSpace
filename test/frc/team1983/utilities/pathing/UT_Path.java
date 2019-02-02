@@ -1,6 +1,7 @@
 package frc.team1983.utilities.pathing;
 
 import frc.team1983.utilities.Pair;
+import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
@@ -138,6 +139,9 @@ public class UT_Path
     {
         assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7)),
                 new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7)));
+        Pose[] poses = {new Pose(6, 6, 6), new Pose(1, 3, 5)};
+        assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7), poses),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7), poses));
         assertEquals(new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
                 new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
     }
@@ -157,5 +161,14 @@ public class UT_Path
     public void notPathIsNotEqualToPath()
     {
         assertNotEquals(new String(), new Path(new Pose(10, 20, 30), new Pose(1, 1, 1)));
+    }
+
+    @Test
+    public void constructingWithMoreThanTwoPosesCreatesTheCorrectNumberOfBeziers()
+    {
+        assertEquals(2, new Path(new Pose(0, 0, 0), new Pose(5, 5, 5), new Pose(10, 10, 10)).curves.length);
+
+        Pose[] poses = {new Pose(3, 3, 3), new Pose(1, 1, 1)};
+        assertEquals(3, new Path(new Pose(0, 0, 0), new Pose(2, 2, 2), poses).curves.length);
     }
 }

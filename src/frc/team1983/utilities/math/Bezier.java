@@ -151,7 +151,8 @@ public class Bezier
     {
         if (o instanceof Bezier)
         {
-            Vector2[] oPoints = ((Bezier) o).points; if (oPoints.length != points.length) return false;
+            Vector2[] oPoints = ((Bezier) o).points;
+            if (oPoints.length != points.length) return false;
 
             for (int i = 0; i < points.length; i++)
             {

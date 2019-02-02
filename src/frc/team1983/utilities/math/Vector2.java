@@ -156,7 +156,8 @@ public class Vector2
     @Override
     public boolean equals(Object other)
     {
-        if(other instanceof Vector2) return Vector2.equals(this, (Vector2) other);
+        if(other instanceof Vector2)
+            return Vector2.equals(this, (Vector2) other);
         return false;
     }
 
