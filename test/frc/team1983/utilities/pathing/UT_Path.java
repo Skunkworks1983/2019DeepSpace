@@ -1,12 +1,13 @@
 package frc.team1983.utilities.pathing;
 
 import frc.team1983.utilities.Pair;
-import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class UT_Path
 {
@@ -160,5 +161,31 @@ public class UT_Path
         assertThat(closestPoint.getY() < 30.0, equalTo(true));
         assertThat(closestT > 0.33, equalTo(true));
         assertThat(closestT > 0.66, equalTo(true));
+    }
+
+    @Test
+    public void equalPathsAreEqual()
+    {
+        assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7)));
+        assertEquals(new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
+                new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
+    }
+
+    @Test
+    public void notEqualBeziersAreNotEqual()
+    {
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(0.0, 0.0, 0.0)));
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(2, 3, 1)));
+        assertNotEquals(new Path(new Pose(0.5, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
+                new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
+    }
+
+    @Test
+    public void notBezierIsNotEqualToBeizer()
+    {
+        assertNotEquals(new String(), new Path(new Pose(10, 20, 30), new Pose(1, 1, 1)));
     }
 }

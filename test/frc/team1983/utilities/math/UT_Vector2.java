@@ -2,8 +2,10 @@ package frc.team1983.utilities.math;
 
 import org.junit.Test;
 
+import static frc.team1983.constants.Constants.EPSILON;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class UT_Vector2
 {
@@ -182,5 +184,13 @@ public class UT_Vector2
 
         Vector2 center2 = Vector2.findCenter(new Vector2(-1, 0), new Vector2(0, 0), new Vector2(1, 0));
         assertThat(Vector2.equals(center2, Vector2.ZERO), equalTo(true));
+    }
+
+    @Test
+    public void equalVectorsAreEqual()
+    {
+        assertEquals(new Vector2(10, 10), new Vector2(10, 10));
+        assertEquals(new Vector2(10 + EPSILON, 10), new Vector2(10, 10));
+        assertEquals(new Vector2(10, 10 - EPSILON), new Vector2(10 + EPSILON, 10));
     }
 }

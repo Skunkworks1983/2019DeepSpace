@@ -11,38 +11,41 @@ import java.util.ArrayList;
 
 public class SmellyDashListener extends Command
 {
-    private Logger logger = Logger.getInstance();
+    private Logger logger;
+
     public SmellyDashListener()
     {
-        SmartDashboard.putBoolean("gotPath", true);
-        SmartDashboard.putString("path", "no path sent");
+        logger = Logger.getInstance();
     }
 
     @Override
     public void execute()
     {
-        String pathString;
-        if(!SmartDashboard.getBoolean("gotPath", true))
+        if (!SmartDashboard.getBoolean("gotPath", true))
         {
-            logger.info("Got a path", getClass());
-            SmartDashboard.putBoolean("gotPath", true);
-            pathString = SmartDashboard.getString("path", "0,0,0:0,0,0");
+            logger.info("Got a path", getClass()); SmartDashboard.putBoolean("gotPath", true);
 
-            ArrayList<Pose> poses = new ArrayList<>();
-
-            for (String poseString : pathString.split(":"))
-            {
-                String[] coords = poseString.split(",");
-
-                poses.add(new Pose(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]),
-                        Double.parseDouble(coords[2])));
-            }
-
-            // The Pose[]::new thing is required for toArray to return an array of Poses, not Objects
-            for(Pose pose : poses)
-                System.out.println(pose.getPosition().toString());
-            Scheduler.getInstance().add(new DrivePath(new Path(poses.toArray(Pose[]::new)), 4));
+            Scheduler.getInstance().add(new DrivePath(constructPathFromString(SmartDashboard.getString("path", "0,0,0:0,0,0")), 4));
         }
+    }
+
+    public static Path constructPathFromString(String pathString)
+    {
+        ArrayList<Pose> poses = new ArrayList<>();
+
+        for (String poseString : pathString.split(":"))
+        {
+            String[] coords = poseString.split(",");
+
+            poses.add(new Pose(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), Double.parseDouble(coords[2])));
+        }
+
+        for (Pose pose : poses)
+            Logger.getInstance().info(pose.getPosition().toString() + pose.getHeading(), SmellyDashListener.class);
+
+        // The Pose[]::new thing is required for toArray to return an array of Poses, not generic Objects
+        if(poses.size() > 2) return new Path(poses.get(0), poses.get(1), poses.subList(2, poses.size() - 1).toArray(Pose[]::new));
+        return new Path(poses.get(0), poses.get(1));
     }
 
     @Override
