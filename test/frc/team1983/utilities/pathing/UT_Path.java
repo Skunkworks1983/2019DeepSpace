@@ -93,36 +93,72 @@ public class UT_Path
     }
 
     @Test
+    public void evaluateNormalTest()
+    {
+
+    }
+
+    @Test
     public void evaluateClosestPointTest()
     {
+//        Path path = new Path(
+//                new Pose(0, 0, 90),
+//                new Pose(0, 2, 90),
+//                new Pose(0, 4, 90)
+//        );
+//
+//        Vector2 point = new Vector2(0, -10);
+//
+//        double closestT = path.evaluateClosestT(point);
+//        Vector2 closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.0));
+//
+//        point = new Vector2(0, 2);
+//
+//        closestT = path.evaluateClosestT(point);
+//        closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.5));
+//
+//        point = new Vector2(0, 3);
+//
+//        closestT = path.evaluateClosestT(point);
+//        closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.75));
+
+
         Path path = new Path(
                 new Pose(0, 0, 90),
-                new Pose(0, 2, 90),
-                new Pose(0, 4, 90)
+                new Pose(10, 10, 90),
+                new Pose(0, 20, 90),
+                new Pose(10, 30, 90)
         );
 
-        Vector2 point = new Vector2(0, -10);
+        Vector2 point = new Vector2(5, 15);
 
         double closestT = path.evaluateClosestT(point);
         Vector2 closestPoint = path.evaluateClosestPoint(point);
 
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.0));
+//        System.out.println(closestT + ", " + closestPoint);
+        assertThat(closestPoint.getY() > 10.0, equalTo(true));
+        assertThat(closestPoint.getY() < 20.0, equalTo(true));
+        assertThat(closestT > 0.0, equalTo(true));
+        assertThat(closestT > 0.33, equalTo(true));
 
-        point = new Vector2(0, 2);
-
-        closestT = path.evaluateClosestT(point);
-        closestPoint = path.evaluateClosestPoint(point);
-
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.5));
-
-        point = new Vector2(0, 3);
+        point = new Vector2(0, 25);
 
         closestT = path.evaluateClosestT(point);
         closestPoint = path.evaluateClosestPoint(point);
 
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.75));
+//        System.out.println(closestT + ", " + closestPoint);
+        assertThat(closestPoint.getY() > 20.0, equalTo(true));
+        assertThat(closestPoint.getY() < 30.0, equalTo(true));
+        assertThat(closestT > 0.33, equalTo(true));
+        assertThat(closestT > 0.66, equalTo(true));
     }
 }

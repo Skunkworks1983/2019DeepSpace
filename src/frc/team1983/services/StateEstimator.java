@@ -20,8 +20,8 @@ public class StateEstimator implements Runnable
 
     private double lastLeftPosition, lastRightPosition;
     // TODO: find real
-    private Vector2 position = new Vector2(0, 0);
-//    private Vector2 position = new Vector2(32.0 / 12.0 / 2.0 + (105.0 / 12.0), 37.0 / 12.0 / 2.0);
+//    private Vector2 position = new Vector2(0, 0);
+    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {

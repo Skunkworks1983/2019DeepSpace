@@ -180,10 +180,9 @@ public class Path
         for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
         {
             double step = i / (Bezier.RESOLUTION * curves.length);
-            int index = getCurveIndex(step);
-            double bezierT = (step - index / (double) curves.length) * curves.length;
+            double bezierT = (step - evaluateLengthToCurve(getCurve(step)) / getLength()) * curves.length;
 
-            Vector2 candidate = getCurve(index).evaluate(bezierT);
+            Vector2 candidate = getCurve(step).evaluate(bezierT);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {

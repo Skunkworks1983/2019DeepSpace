@@ -55,12 +55,12 @@ public class OI
 
     public double getLeftY()
     {
-        return scale(left.getY());
+        return scale(-left.getY());
     }
 
     public double getRightY()
     {
-        return scale(right.getY());
+        return scale(-right.getY());
     }
 
     public JoystickButton getButton(Joysticks joystickPort, int button)

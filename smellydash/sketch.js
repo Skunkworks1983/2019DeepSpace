@@ -16,7 +16,9 @@ var wasConnected = true; // true so it will trigger the reconnect
 var wasPressed = false; // Whether the mouse was pressed last frame (for debounce)
 var poseDragging = null; // The pose that is being dragged
 
-var robot = new Pose(5, 5, 45); // Default robot pose
+var robot = new Pose(0, 0, 90); // Default robot pose
+var lookahead = new Vector2(0, 0);
+var closestPoint = new Vector2(0, 0);
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 //functions when pressing buttons
@@ -122,6 +124,18 @@ function draw() {
         robot.position.x = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val;
         robot.position.y = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val;
         robot.heading = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val;
+
+        let entryLookaheadX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadX"));
+        lookahead.x = typeof entryLookaheadX == 'undefined' ? 0 : entryLookaheadX.val;
+        let entryLookaheadY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadY"));
+        lookahead.y = typeof entryLookaheadY == 'undefined' ? 0 : entryLookaheadY.val;
+
+        let entryClosestPointX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointX"));
+        closestPoint.x = typeof entryClosestPointX == 'undefined' ? 0 : entryClosestPointX.val;
+        let entryClosestPointY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointY"));
+        closestPoint.y = typeof entryClosestPointY == 'undefined' ? 0 : entryClosestPointY.val;
+
+        console.log(closestPoint.x + ", " + closestPoint.y);
     }
     else {
         notconnected();
@@ -160,6 +174,7 @@ function draw() {
     // Draw pose text
     fill(255);
     stroke(0);
+    strokeWeight(2);
     poses.forEach(pose => pose.showText());
 
     // draw robot
@@ -178,9 +193,41 @@ function draw() {
 
     pop();
 
+    // Draw lookahead
+    push();
+
+    fill(0, 255, 0);
+    stroke(0);
+    strokeWeight(1);
+    translate(lookahead.x * PIXELS_PER_FOOT, (27 - lookahead.y) * PIXELS_PER_FOOT);
+    ellipse(0, 0, 10);
+
+    // stroke(0, 255, 0);
+    // strokeWeight(5);
+    // line(0, 0, robot.position.x * PIXELS_PER_FOOT, robot.position.y * PIXELS_PER_FOOT);
+
+    pop();
+
+    // Draw closest point
+    push();
+
+    fill(0, 0, 255);
+    stroke(0);
+    strokeWeight(1);
+    translate(closestPoint.x * PIXELS_PER_FOOT, (27 - closestPoint.y) * PIXELS_PER_FOOT);
+    ellipse(0, 0, 10);
+
+    // stroke(0, 255, 0);
+    // strokeWeight(5);
+    // line(0, 0, robot.position.x * PIXELS_PER_FOOT, robot.position.y * PIXELS_PER_FOOT);
+
+    pop();
+
+    // broken cuz reasons
     fill(255);
     stroke(0);
-    // broken cuz reasons
+    strokeWeight(1);
+
     text(
         robot.position.x.toFixed(2) + "," + robot.position.y.toFixed(2) + "," + robot.heading.toFixed(2)
         , robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
