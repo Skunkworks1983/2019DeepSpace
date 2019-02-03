@@ -7,4 +7,5 @@ public interface Motor
 {
     void set(double output);
     double get();
+    void setBrake(boolean brake);
 }

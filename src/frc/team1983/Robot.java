@@ -17,7 +17,6 @@ public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
-    private Pigeon pigeon;
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
@@ -31,7 +30,6 @@ public class Robot extends TimedRobot
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
-        pigeon = new Pigeon(drivebase.getPigeonTalon());
         navx = new NavX();
         estimator = new StateEstimator();
 
@@ -44,7 +42,6 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         navx.reset();
-        pigeon.reset();
     }
 
     @Override
