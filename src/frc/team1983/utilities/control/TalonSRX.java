@@ -10,21 +10,19 @@ public class TalonSRX extends com.ctre.phoenix.motorcontrol.can.TalonSRX impleme
         setInverted(reversed);
     }
 
+    public double getPositionTicks()
+    {
+        return getSelectedSensorPosition();
+    }
+
+    public double getVelocityTicks()
+    {
+        return getSelectedSensorVelocity();
+    }
+
     @Override
     public void setBrake(boolean brake)
     {
         setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
-    }
-
-    @Override
-    public void set(double output)
-    {
-
-    }
-
-    @Override
-    public double get()
-    {
-        return 0;
     }
 }

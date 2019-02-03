@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.MotorMap;
+import frc.team1983.utilities.control.CANSparkMax;
 import frc.team1983.utilities.control.Motor;
 import frc.team1983.utilities.control.TalonSRX;
 import frc.team1983.utilities.control.Transmission;
