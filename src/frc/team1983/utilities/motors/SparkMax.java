@@ -16,7 +16,7 @@ public class SparkMax extends com.revrobotics.CANSparkMax implements Motor
     @Override
     public void set(ControlMode mode, double output)
     {
-        if(mode == ControlMode.PERCENT_OUTPUT) super.set(output);
+        if(mode == ControlMode.PercentOutput) super.set(output);
     }
 
     @Override

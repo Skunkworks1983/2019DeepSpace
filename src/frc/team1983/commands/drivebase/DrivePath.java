@@ -1,13 +1,12 @@
 package frc.team1983.commands.drivebase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.control.PurePursuitController;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.pathing.Path;
 
 public class DrivePath extends Command

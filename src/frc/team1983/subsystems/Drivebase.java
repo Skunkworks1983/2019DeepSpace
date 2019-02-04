@@ -1,11 +1,11 @@
 package frc.team1983.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.MotorMap;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.Talon;
-import frc.team1983.utilities.motors.TalonTransmission;
+import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
@@ -13,17 +13,17 @@ public class Drivebase extends Subsystem
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
-    private TalonTransmission left, right;
+    private Transmission left, right;
 
     public Drivebase()
     {
-        left = new TalonTransmission(
+        left = new Transmission(
                 new Talon(MotorMap.Drivebase.LEFT_1, MotorMap.Drivebase.LEFT_1_REVERSED),
                 new Talon(MotorMap.Drivebase.LEFT_2, MotorMap.Drivebase.LEFT_2_REVERSED),
                 new Talon(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        right = new TalonTransmission(
+        right = new Transmission(
                 new Talon(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)

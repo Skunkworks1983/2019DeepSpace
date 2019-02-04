@@ -1,11 +1,10 @@
 package frc.team1983.commands.drivebase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.OI;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.motors.ControlMode;
 
 public class RunTankDrive extends Command
 {

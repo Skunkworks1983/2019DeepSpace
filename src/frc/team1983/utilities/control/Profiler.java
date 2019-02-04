@@ -35,7 +35,7 @@ public class Profiler
     }
 
     /**
-     * @param key A string that can be used to access this feed forward term
+     * @param key      A string that can be used to access this feed forward term
      * @param function A lambda which takes in the current position of the system and returns a percentoutput
      *                 that will be added to the output
      */
@@ -60,7 +60,7 @@ public class Profiler
         double currentVel = transmission.getTicksPerSecond();
         double currentTime = System.currentTimeMillis();
         double currentPos = transmission.getPositionTicks();
-        
+
         double error = target - currentVel; // Current error
         double de = currentVel - prevVel; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
@@ -76,7 +76,10 @@ public class Profiler
             output += feedForward.apply(currentPos);
         }
 
-        transmission.set(ControlMode.PERCENT_OUTPUT, output);
+        transmission.set(ControlMode.PercentOutput, output);
+
+        prevVel = currentVel;
+        prevTime = currentTime;
     }
 
     public void setkP(double kP)
