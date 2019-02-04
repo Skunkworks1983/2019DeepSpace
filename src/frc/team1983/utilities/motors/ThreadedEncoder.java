@@ -1,6 +1,7 @@
 package frc.team1983.utilities.motors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import frc.team1983.services.logging.Logger;
 
 public class ThreadedEncoder extends Thread implements Encoder
 {
@@ -11,6 +12,8 @@ public class ThreadedEncoder extends Thread implements Encoder
 
     private int prevPos;
     private long prevTime;
+
+    private Logger logger = Logger.getInstance();
 
     public ThreadedEncoder(int port)
     {
@@ -38,6 +41,10 @@ public class ThreadedEncoder extends Thread implements Encoder
 
         //(double) casts ints to doubles, preventing integer division
         velocity = (((double) (currentPos - prevPos)) / ((double) (currentTime - prevTime)));
+
+        logger.debug("Current velocity:" + velocity, this.getClass());
+        logger.debug("Current position:" + currentPos, this.getClass());
+        logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~", this.getClass());
 
         prevPos = currentPos;
         prevTime = currentTime;

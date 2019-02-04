@@ -13,13 +13,17 @@ public class Transmission
     private double encoderOffset; // added to encoder value for manual encoder zeroing
 
     private Encoder encoder;
+    private final String name; //For logging purposes
 
     /**
      * The constructor for using TalonSRXs
+     * @param name The name of the system (for logging purposes)
      * @param master The motor controller with the encoder
      * @param moreMotors Any more controllers that this transmission should have
      */
-    public Transmission(Talon master, Motor... moreMotors) {
+    public Transmission(String name, Talon master, Motor... moreMotors) {
+        this.name = name;
+
         motors = new ArrayList<>();
         motors.add(master);
         motors.addAll(Arrays.asList(moreMotors));
@@ -30,12 +34,15 @@ public class Transmission
 
     /**
      * The constructor for using CANSparkMaxes
+     * @param name The name of the system (for logging purposes)
      * @param encoderPort The encoder port
      * @param master The motor controller with the encoder
      * @param moreMotors Any more controllers that this transmission should have
      */
-    public Transmission(int encoderPort, SparkMax master, Motor... moreMotors)
+    public Transmission(String name, int encoderPort, SparkMax master, Motor... moreMotors)
     {
+        this.name = name;
+
         ThreadedEncoder encoder = new ThreadedEncoder(encoderPort);
         encoder.start();
         this.encoder = encoder;
@@ -130,5 +137,10 @@ public class Transmission
     public double getInchesPerSecond()
     {
         return toInches(getTicksPerSecond());
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }
