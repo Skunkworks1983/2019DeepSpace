@@ -4,10 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.MotorMap;
-import frc.team1983.utilities.control.CANSparkMax;
-import frc.team1983.utilities.control.Motor;
-import frc.team1983.utilities.control.TalonSRX;
-import frc.team1983.utilities.control.Transmission;
+import frc.team1983.utilities.motors.Talon;
+import frc.team1983.utilities.motors.TalonTransmission;
 
 public class Drivebase extends Subsystem
 {
@@ -15,20 +13,20 @@ public class Drivebase extends Subsystem
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
-    private Transmission left, right;
+    private TalonTransmission left, right;
 
     public Drivebase()
     {
-        left = new Transmission(
-                new TalonSRX(MotorMap.Drivebase.LEFT_1, MotorMap.Drivebase.LEFT_1_REVERSED),
-                new TalonSRX(MotorMap.Drivebase.LEFT_2, MotorMap.Drivebase.LEFT_2_REVERSED),
-                new TalonSRX(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
+        left = new TalonTransmission(
+                new Talon(MotorMap.Drivebase.LEFT_1, MotorMap.Drivebase.LEFT_1_REVERSED),
+                new Talon(MotorMap.Drivebase.LEFT_2, MotorMap.Drivebase.LEFT_2_REVERSED),
+                new Talon(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        right = new Transmission(
-                new TalonSRX(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
-                new TalonSRX(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
-                new TalonSRX(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)
+        right = new TalonTransmission(
+                new Talon(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
+                new Talon(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
+                new Talon(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)
         );
 
         // todo: configure reduction of transmissions

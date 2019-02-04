@@ -1,5 +1,7 @@
 package frc.team1983.utilities.control;
 
+import frc.team1983.utilities.motors.Transmission;
+
 import java.util.ArrayList;
 import java.util.function.Function;
 
