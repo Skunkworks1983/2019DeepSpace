@@ -5,6 +5,9 @@ import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Path creates an array of beziers based on given poses.
  * Four points make one cubic bezier, the origin of one pose, two intermediate points, and the origin of the next pose.
@@ -26,23 +29,28 @@ public class Path
      * a control point in the direction of the first pose and TANGENT_LENGTH distance away,
      * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
      * and ending at the next pose.
-     * @param poses
+     * @param morePoses More poses that the path should have
      */
-    public Path(Pose... poses)
+    public Path(Pose pose1, Pose pose2, Pose... morePoses)
     {
-        curves = new Bezier[poses.length - 1];
+        ArrayList<Pose> poses = new ArrayList<>();
+        poses.add(pose1);
+        poses.add(pose2);
+        poses.addAll(Arrays.asList(morePoses));
 
-        for(int i = 0; i < poses.length - 1; i++)
+        curves = new Bezier[poses.size() - 1];
+
+        for(int i = 0; i < poses.size() - 1; i++)
         {
-            Vector2 position0 = poses[i].getPosition();
-            double theta0 = Math.toRadians(poses[i].getHeading());
+            Vector2 position0 = poses.get(i).getPosition();
+            double theta0 = Math.toRadians(poses.get(i).getHeading());
 
-            Vector2 position1 = poses[i + 1].getPosition();
-            double theta1 = Math.toRadians(poses[i + 1].getHeading());
+            Vector2 position1 = poses.get(i + 1).getPosition();
+            double theta1 = Math.toRadians(poses.get(i + 1).getHeading());
 
             boolean collinear = 1 - Vector2.dot(
                     Vector2.sub(position1, position0).getNormalized(),
-                    poses[i].getDirection().getNormalized()
+                    poses.get(i).getDirection().getNormalized()
             ) < Constants.EPSILON;
 
             if(collinear)
@@ -193,5 +201,26 @@ public class Path
             }
         }
         return new Pair(closestT, closest);
+    }
+
+    /**
+     * Test if another object (presumably another Path) is made up of the same Beziers
+     * @param o another object to compare to this one
+     * @return if the passed object is made up of the same bezier curves as this one
+     */
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Path)
+        {
+            Bezier[] oCurves = ((Path) o).curves;
+            if(oCurves.length != curves.length) return false;
+
+            for(int i = 0; i < curves.length; i++)
+            {
+                if(!curves[i].equals(oCurves[i])) return false;
+            }
+            return true;
+        }
+        else return false;
     }
 }

@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class UT_Bezier
 {
@@ -72,5 +74,28 @@ public class UT_Bezier
     public void closestPointTest()
     {
 
+    }
+
+    @Test
+    public void equalBeziersAreEqual()
+    {
+        assertEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10)),
+                new Bezier(new Vector2(0.0, 0.0), new Vector2(10.0, 10.0)));
+    }
+
+    @Test
+    public void notEqualBeziersAreNotEqual()
+    {
+        assertNotEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10)),
+                new Bezier(new Vector2(10.0, 10.0), new Vector2(0.0, 0.0)));
+        assertNotEquals(new Bezier(new Vector2(0, 0), new Vector2(10, 10), new Vector2(10, 10)),
+                new Bezier(new Vector2(0, 0), new Vector2(10, 10)));
+    }
+
+    @Test
+    public void notBezierIsNotEqualToBeizer()
+    {
+        assertNotEquals(new Vector2(0, 0), new Bezier(new Vector2(0, 0), new Vector2(10, 10)));
+        assertNotEquals(new String(), new Bezier(new Vector2(3, 3), new Vector2(1, 3)));
     }
 }
