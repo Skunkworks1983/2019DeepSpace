@@ -3,7 +3,6 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.MotorMap;
-import frc.team1983.utilities.control.Profiler;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.Talon;
 import frc.team1983.utilities.motors.Transmission;
