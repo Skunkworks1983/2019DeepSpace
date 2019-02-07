@@ -64,7 +64,7 @@ public class PIDFController extends Thread
                         this.getClass());
                 return;
             }
-            target = motionProfile.calcVel(time);
+            target = feedbackType == FeedbackType.POSITION ? motionProfile.calcPos(time) : motionProfile.calcVel(time);
         }
         transmission.set(ControlMode.Throttle, calculate(target));
     }

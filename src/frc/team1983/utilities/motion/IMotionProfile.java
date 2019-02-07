@@ -90,7 +90,6 @@ public interface IMotionProfile
                 @Override
                 public double calcPos(double time)
                 {
-                    //TODO optimize variable storing
                     if (time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
                     if (time < maxTriangleLength + rectangleLength)
                         return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
