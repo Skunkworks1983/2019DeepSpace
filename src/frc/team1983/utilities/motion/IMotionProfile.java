@@ -2,9 +2,9 @@ package frc.team1983.utilities.motion;
 
 public interface IMotionProfile
 {
-    double calculate(double time);
+    double calcVel(double time);
 
-    double calculatePosition(double time);
+    double calcPos(double time);
 
     double getLength();
 
@@ -20,7 +20,7 @@ public interface IMotionProfile
     {
         // Distance the system will travel (difference between current and desired position)
         double distance = Math.abs(endpoint - startpoint);
-        int velocitySign = endpoint < startpoint ? 1 : -1;
+        int velocitySign = endpoint > startpoint ? 1 : -1;
 
         // Remember: The maximum height of the motion profile is cruiseVelocity, and the maximum slop is acceleration
         // The maximum length of one of the triangles (cruiseVelocity / t = acceleration -> cruiseVelocity / acceleration = t)
@@ -32,6 +32,7 @@ public interface IMotionProfile
 
         if (profileIsTriangular)
         {
+            System.out.println("Profile is triangular");
             // Calculating the profile's max velocity and total time involves solving a system of equations.
             // The equations are:
             // maxVelocity / (.5 * profileLength) = acceleration
@@ -47,17 +48,17 @@ public interface IMotionProfile
             return new IMotionProfile()
             {
                 @Override
-                public double calculate(double time)
+                public double calcVel(double time)
                 {
                     return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
                 }
 
                 @Override
-                public double calculatePosition(double time)
+                public double calcPos(double time)
                 {
-                    return time < .5 * profileLength ? startpoint + (velocitySign * time * time * acceleration) :
-                            startpoint + (velocitySign * distance / 2) +
-                                    (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
+                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) :
+                            startpoint + (velocitySign * (distance -
+                                    (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override
@@ -79,7 +80,7 @@ public interface IMotionProfile
             return new IMotionProfile()
             {
                 @Override
-                public double calculate(double time)
+                public double calcVel(double time)
                 {
                     if (time < maxTriangleLength) return velocitySign * time * acceleration;
                     if (time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
@@ -87,14 +88,14 @@ public interface IMotionProfile
                 }
 
                 @Override
-                public double calculatePosition(double time)
+                public double calcPos(double time)
                 {
                     //TODO optimize variable storing
-                    if (time < maxTriangleLength) return startpoint + (velocitySign * time * time * acceleration);
+                    if (time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
                     if (time < maxTriangleLength + rectangleLength)
-                        return startpoint + (velocitySign * maxTriangleSize) + (velocitySign * time * cruiseVelocity);
-                    return startpoint + (velocitySign * maxTriangleSize) +
-                            (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
+                        return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
+                    return startpoint + (velocitySign *
+                            (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override
