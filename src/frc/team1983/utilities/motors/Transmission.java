@@ -20,13 +20,15 @@ public class Transmission
 
     /**
      * The constructor for using TalonSRXs
-     * @param name The name of the system (for logging purposes)
-     * @param maxVelocity The maximum safe velocity of this system
+     *
+     * @param name            The name of the system (for logging purposes)
+     * @param maxVelocity     The maximum safe velocity of this system
      * @param maxAcceleration The maximum safe acceleration of this system
-     * @param master The motor controller with the encoder
-     * @param moreMotors Any more controllers that this transmission should have
+     * @param master          The motor controller with the encoder
+     * @param moreMotors      Any more controllers that this transmission should have
      */
-    public Transmission(String name, double maxVelocity, double maxAcceleration, Talon master, Motor... moreMotors) {
+    public Transmission(String name, double maxVelocity, double maxAcceleration, Talon master, Motor... moreMotors)
+    {
         this.name = name;
         this.maxVelocity = maxVelocity;
         this.maxAcceleration = maxAcceleration;
@@ -41,12 +43,13 @@ public class Transmission
 
     /**
      * The constructor for using CANSparkMaxes
-     * @param name The name of the system (for logging purposes)
-     * @param maxVelocity The maximum safe velocity of this system
+     *
+     * @param name            The name of the system (for logging purposes)
+     * @param maxVelocity     The maximum safe velocity of this system
      * @param maxAcceleration The maximum safe acceleration of this system
-     * @param encoderPort The analog input port that this system's encoder is on
-     * @param master The motor controller with the encoder
-     * @param moreMotors Any more controllers that this transmission should have
+     * @param encoderPort     The analog input port that this system's encoder is on
+     * @param master          The motor controller with the encoder
+     * @param moreMotors      Any more controllers that this transmission should have
      */
     public Transmission(String name, double maxVelocity, double maxAcceleration, int encoderPort, SparkMax master, Motor... moreMotors)
     {
@@ -81,6 +84,7 @@ public class Transmission
 
     /**
      * Convert inches to ticks
+     *
      * @param inches A position in inches
      * @return The number of ticks for this position
      */
@@ -91,6 +95,7 @@ public class Transmission
 
     /**
      * Convert ticks to inches
+     *
      * @param ticks A position in ticks
      * @return The number of inches for this position
      */
@@ -101,12 +106,13 @@ public class Transmission
 
     /**
      * Set the motor output in a control mode
+     *
      * @param controlMode The control mode the motor should run in
-     * @param value The value at which the motor should run
+     * @param value       The value at which the motor should run
      */
     public void set(ControlMode controlMode, double value)
     {
-        for(Motor motor : motors)
+        for (Motor motor : motors)
             motor.set(controlMode, value);
     }
 
@@ -115,7 +121,7 @@ public class Transmission
      */
     public void setBrake(boolean brake)
     {
-        for(Motor motor : motors)
+        for (Motor motor : motors)
             motor.setBrake(brake);
     }
 
@@ -126,6 +132,7 @@ public class Transmission
     {
         return encoder.getPos();
     }
+
     /**
      * @return Get current position in inches
      */

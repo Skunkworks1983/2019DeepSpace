@@ -51,7 +51,7 @@ public class VelocityPIDFController extends Thread
         {
             // Cast 1000 to double to prevent integer division
             double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
-            if(time > motionProfile.getLength())
+            if (time > motionProfile.getLength())
             {
                 targetVelocity = 0;
                 transmission.set(ControlMode.PercentOutput, 0);
@@ -113,6 +113,7 @@ public class VelocityPIDFController extends Thread
 
     /**
      * Sets the target velocity of the system
+     *
      * @param value The target velocity of the system in ticks / second
      */
     public synchronized void setTargetVelocity(double value)

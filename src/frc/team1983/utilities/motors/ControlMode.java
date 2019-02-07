@@ -7,6 +7,7 @@ public enum ControlMode
     MotionProfile(com.ctre.phoenix.motorcontrol.ControlMode.MotionMagic);
 
     public final com.ctre.phoenix.motorcontrol.ControlMode TALON;
+
     ControlMode(com.ctre.phoenix.motorcontrol.ControlMode TALON)
     {
         this.TALON = TALON;

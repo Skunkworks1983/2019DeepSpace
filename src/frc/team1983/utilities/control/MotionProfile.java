@@ -1,18 +1,18 @@
 package frc.team1983.utilities.control;
 
-import java.util.function.Function;
-
 public interface MotionProfile
 {
     double calculate(double time);
+
     double getLength();
 
     /**
      * Generates a motion profile for motion magic
-     * @param startpoint Where the system will start
-     * @param endpoint The desired position of the system
+     *
+     * @param startpoint     Where the system will start
+     * @param endpoint       The desired position of the system
      * @param cruiseVelocity The maximum velocity this profile should achieve
-     * @param acceleration The maximum acceleration this profile should achieve
+     * @param acceleration   The maximum acceleration this profile should achieve
      */
     static MotionProfile generateMotionProfile(int startpoint, int endpoint, double cruiseVelocity, double acceleration)
     {
@@ -71,8 +71,8 @@ public interface MotionProfile
                 @Override
                 public double calculate(double time)
                 {
-                    if(time < maxTriangleLength) return velocitySign * time * acceleration;
-                    if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+                    if (time < maxTriangleLength) return velocitySign * time * acceleration;
+                    if (time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
                     return velocitySign * (profileLength - time) * acceleration;
                 }
 
