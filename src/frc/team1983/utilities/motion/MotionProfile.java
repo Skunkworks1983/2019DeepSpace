@@ -1,108 +1,84 @@
 package frc.team1983.utilities.motion;
 
-public interface MotionProfile
+import frc.team1983.utilities.math.Segment;
+import frc.team1983.utilities.math.Vector2;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class MotionProfile
 {
-    double calculate(double time);
+    private ArrayList<Segment> segments;
+    private double duration;
 
-    double calculatePosition(double time);
-
-    double getLength();
-
-    /**
-     * Generates a motion profile for motion magic
-     *
-     * @param startpoint     Where the system will start
-     * @param endpoint       The desired position of the system
-     * @param cruiseVelocity The maximum velocity this profile should achieve
-     * @param acceleration   The maximum acceleration this profile should achieve
-     */
-    static MotionProfile generateMotionProfile(int startpoint, int endpoint, double cruiseVelocity, double acceleration)
+    public MotionProfile(Segment... segments)
     {
-        // Distance the system will travel (difference between current and desired position)
-        double distance = Math.abs(endpoint - startpoint);
-        int velocitySign = endpoint < startpoint ? 1 : -1;
+        this.segments = new ArrayList<>();
+        this.segments.addAll(Arrays.asList(segments));
+        duration = segments[segments.length - 1].getPoint1().getX();
+    }
 
-        // Remember: The maximum height of the motion profile is cruiseVelocity, and the maximum slop is acceleration
-        // The maximum length of one of the triangles (cruiseVelocity / t = acceleration -> cruiseVelocity / acceleration = t)
-        double maxTriangleLength = cruiseVelocity / acceleration;
-        // The max area of one of the triangles (triangle area = 1/2 * base * height)
-        double maxTriangleSize = .5 * maxTriangleLength * cruiseVelocity;
-        // If the system does not have time to reach its max velocity than the motion profile will be triangular
-        boolean profileIsTriangular = distance <= 2 * maxTriangleSize;
+    public double getDuration()
+    {
+        return duration;
+    }
 
-        if (profileIsTriangular)
+    private Segment getSegment(double time)
+    {
+        if(time < 0 || time > duration)
+            throw new IllegalArgumentException("segment " + time + " is not in domain of profile [0, " + duration + "]");
+
+        for(Segment segment : segments)
+            if(segment.getPoint0().getX() <= time && time <= segment.getPoint1().getX())
+                return segment;
+        return null;
+    }
+
+    public double evaluateDisplacement(double time)
+    {
+        if(time < 0 || time > duration)
+            throw new IllegalArgumentException("segment " + time + " is not in domain of profile [0, " + duration + "]");
+
+        double area = 0;
+
+        // trapezoidal sum of all segments to find area
+        for(Segment segment : segments)
         {
-            // Calculating the profile's max velocity and total time involves solving a system of equations.
-            // The equations are:
-            // maxVelocity / (.5 * profileLength) = acceleration
-            // maxVelocity * .5 * profileLength = distance
-            // first, maxVelocity / (.5 * profileLength) = acceleration -> 2 * maxVelocity / profileLength = acceleration ->
-            //   2 * maxVelocity / acceleration = profileLength
-            // next, maxVelocity * .5 * profileLength = distance -> maxVelocity * .5 * 2 * maxVelocity / acceleration = distance ->
-            //   (maxVelocity ^ 2) / acceleration = distance -> (maxVelocity ^ 2) = distance * acceleration -> 
-            //   maxVelocity = sqrt(distance * acceleration)
-            // finally, put these together for profileLength = 2 * sqrt(distance * acceleration) / acceleration
-            double profileLength = 2 * Math.sqrt(distance * acceleration) / acceleration;
+            double vel_1 = segment.getPoint0().getY();
+            double vel_2 = 0, dt = 0;
 
-            return new MotionProfile()
+            // check if we are trying to evaluate a portion of a segment or a whole segment
+            if(segment.getPoint1().getX() < time)
             {
-                @Override
-                public double calculate(double time)
-                {
-                    return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
-                }
-
-                @Override
-                public double calculatePosition(double time)
-                {
-                    return time < .5 * profileLength ? startpoint + (velocitySign * time * time * acceleration) :
-                            startpoint + (velocitySign * distance / 2) +
-                                    (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
-                }
-
-                @Override
-                public double getLength()
-                {
-                    return profileLength;
-                }
-            };
-        } else
-        {
-            // The size of the rectangle is how much distance is left after the triangles
-            double rectangleSize = distance - (2 * maxTriangleSize);
-            // Divide the rectangle area by its height to find the base
-            double rectangleLength = rectangleSize / cruiseVelocity;
-
-            // The length of the profile is length of the two triangles and the rectangle
-            double profileLength = 2 * maxTriangleLength + rectangleLength;
-
-            return new MotionProfile()
+                // evaluate the whole segment
+                vel_2 = segment.getPoint1().getY();
+                dt = (segment.getPoint1().getX() - segment.getPoint0().getX());
+            }
+            else if(segment.getPoint0().getX() <= time)
             {
-                @Override
-                public double calculate(double time)
-                {
-                    if (time < maxTriangleLength) return velocitySign * time * acceleration;
-                    if (time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
-                    return velocitySign * (profileLength - time) * acceleration;
-                }
+                // evaluate a portion of the segment, [start, time]
+                vel_2 = segment.evaluate(time - segment.getPoint0().getX()).getY();
+                dt = time - segment.getPoint0().getX();
+            }
 
-                @Override
-                public double calculatePosition(double time)
-                {
-                    //TODO optimize variable storing
-                    if (time < maxTriangleLength) return startpoint + (velocitySign * time * time * acceleration);
-                    if (time < maxTriangleLength + rectangleLength)
-                        return startpoint + (velocitySign * maxTriangleSize) + (velocitySign * time * cruiseVelocity);
-                    return startpoint + (velocitySign * maxTriangleSize) +
-                            (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
-                }
-
-                @Override
-                public double getLength()
-                {
-                    return profileLength;
-                }
-            };
+            // area of a trapezoid
+            area += ((vel_1 + vel_2) / 2) * dt;
         }
+
+        return area;
+    }
+
+    public double evaluateVelocity(double time)
+    {
+        Segment segment = getSegment(time);
+        return segment.evaluate(time - segment.getPoint0().getX()).getY();
+    }
+
+    public double evaluateAcceleration(double time)
+    {
+        Segment segment = getSegment(time);
+        Vector2 derivative = segment.evaluateDerivative(time - segment.getPoint0().getX());
+        return derivative.getY() / derivative.getX();
     }
 }
+
