@@ -1,7 +1,7 @@
 package frc.team1983.utilities.control;
 
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.motion.IMotionProfile;
+import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.Transmission;
@@ -18,7 +18,7 @@ public class PIDFController extends Thread
 
     private double prevValue, prevTime, cumulativeError, target;
     private Logger logger = Logger.getInstance();
-    private IMotionProfile motionProfile;
+    private MotionProfile motionProfile;
     private boolean runMotionProfile, enabled;
     private long profileStartTime;
 
@@ -55,7 +55,7 @@ public class PIDFController extends Thread
         {
             // Cast 1000 to double to prevent integer division
             double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
-            if (time > motionProfile.getLength())
+            if (time > motionProfile.getDuration())
             {
                 target = 0;
                 transmission.set(ControlMode.Throttle, 0);
@@ -129,7 +129,7 @@ public class PIDFController extends Thread
     /**
      * Control the target with a motion profile
      */
-    public synchronized void setMotionProfile(IMotionProfile motionProfile)
+    public synchronized void setMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
         runMotionProfile = true;
