@@ -12,7 +12,7 @@ public class UT_IMotionProfile
     @Test
     public void trapezoidalDisplacement()
     {
-        IMotionProfile motionProfile = IMotionProfile.generateMotionProfile(0, 1000, 200, 100);
+        IMotionProfile motionProfile = IMotionProfile.generateTrapezoidalProfile(0, 1000, 200, 100);
         assertThat(motionProfile.calcPos(0), equalTo(0.0));
         assertThat(motionProfile.calcPos(motionProfile.getLength() / 2), equalTo(500.0));
         assertThat(motionProfile.calcPos(motionProfile.getLength()), equalTo(1000.0));
@@ -21,7 +21,7 @@ public class UT_IMotionProfile
     @Test
     public void triangularDisplacement()
     {
-        IMotionProfile motionProfile = IMotionProfile.generateMotionProfile(0, 1000, 1000, 500);
+        IMotionProfile motionProfile = IMotionProfile.generateTrapezoidalProfile(0, 1000, 1000, 500);
         assertThat(motionProfile.calcPos(0), equalTo(0.0));
         assertEquals(motionProfile.calcPos(motionProfile.getLength() * .5), 500.0, EPSILON);
         assertThat(motionProfile.calcPos(motionProfile.getLength()), equalTo(1000.0));

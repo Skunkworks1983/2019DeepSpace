@@ -16,7 +16,7 @@ public interface IMotionProfile
      * @param cruiseVelocity The maximum velocity this profile should achieve
      * @param acceleration   The maximum acceleration this profile should achieve
      */
-    static IMotionProfile generateMotionProfile(int startpoint, int endpoint, double cruiseVelocity, double acceleration)
+    static IMotionProfile generateTrapezoidalProfile(int startpoint, int endpoint, double cruiseVelocity, double acceleration)
     {
         // Distance the system will travel (difference between current and desired position)
         double distance = Math.abs(endpoint - startpoint);
