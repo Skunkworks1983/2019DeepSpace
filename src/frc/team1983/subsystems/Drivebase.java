@@ -19,14 +19,12 @@ public class Drivebase extends Subsystem
     public Drivebase()
     {
         left = new Transmission("Left Drivebase",
-                MAX_VELOCITY, MAX_ACCELERATION,
                 new Talon(MotorMap.Drivebase.LEFT_1, MotorMap.Drivebase.LEFT_1_REVERSED),
                 new Talon(MotorMap.Drivebase.LEFT_2, MotorMap.Drivebase.LEFT_2_REVERSED),
                 new Talon(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
         );
 
         right = new Transmission("Right Drivebase",
-                MAX_VELOCITY, MAX_ACCELERATION,
                 new Talon(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)

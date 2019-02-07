@@ -1,14 +1,14 @@
 package frc.team1983.utilities.motors;
 
-public class SparkMax extends com.revrobotics.CANSparkMax implements Motor
+public class Spark extends com.revrobotics.CANSparkMax implements Motor
 {
-    public SparkMax(int port, MotorType type, boolean reversed)
+    public Spark(int port, MotorType type, boolean reversed)
     {
         super(port, type);
         setInverted(reversed);
     }
 
-    public SparkMax(int port, boolean reversed)
+    public Spark(int port, boolean reversed)
     {
         this(port, MotorType.kBrushless, reversed);
     }
@@ -16,7 +16,7 @@ public class SparkMax extends com.revrobotics.CANSparkMax implements Motor
     @Override
     public void set(ControlMode mode, double output)
     {
-        if(mode == ControlMode.PercentOutput) super.set(output);
+        if(mode == ControlMode.Throttle) super.set(output);
     }
 
     @Override

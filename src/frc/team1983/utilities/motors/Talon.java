@@ -1,6 +1,7 @@
 package frc.team1983.utilities.motors;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import frc.team1983.utilities.sensors.Encoder;
 
 public class Talon extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements Motor, Encoder
 {

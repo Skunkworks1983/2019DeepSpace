@@ -1,46 +1,50 @@
 package frc.team1983.utilities.control;
 
 import frc.team1983.services.logging.Logger;
+import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.Transmission;
 
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class VelocityPIDFController extends Thread
+public class PIDFController extends Thread
 {
     private Transmission transmission;
     private double kP, kI, kD;
+    private FeedbackType feedbackType;
     private HashMap<String, Function<Double, Double>> feedForwards;
 
-    private double prevVel, prevTime, cumulativeError, targetVelocity;
+    private double prevValue, prevTime, cumulativeError, target;
     private Logger logger = Logger.getInstance();
     private MotionProfile motionProfile;
     private boolean runMotionProfile, enabled;
     private long profileStartTime;
 
-    public VelocityPIDFController(Transmission transmission, double kP, double kI, double kD,
-                                  HashMap<String, Function<Double, Double>> feedForwards)
+    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType,
+                          HashMap<String, Function<Double, Double>> feedForwards)
     {
         this.transmission = transmission;
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+        this.feedbackType = feedbackType;
         this.feedForwards = feedForwards;
 
         //These should probably be reset again before first execution, because construction usually happens a long time
         // before execution, but this at least prevents null pointer exceptions
-        prevVel = transmission.getTicksPerSecond();
+        prevValue = transmission.getTicksPerSecond();
         prevTime = System.currentTimeMillis();
         cumulativeError = 0;
-        targetVelocity = 0;
+        target = 0;
         runMotionProfile = false;
         enabled = false;
     }
 
-    public VelocityPIDFController(Transmission transmission, double kP, double kI, double kD)
+    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
     {
-        this(transmission, kP, kI, kD, new HashMap<>());
+        this(transmission, kP, kI, kD, feedbackType, new HashMap<>());
     }
 
     @Override
@@ -53,16 +57,16 @@ public class VelocityPIDFController extends Thread
             double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
             if (time > motionProfile.getLength())
             {
-                targetVelocity = 0;
-                transmission.set(ControlMode.PercentOutput, 0);
+                target = 0;
+                transmission.set(ControlMode.Throttle, 0);
                 runMotionProfile = false;
-                logger.info("VelocityPIDFController for " + transmission.getName() + " finished its motion profile",
+                logger.info("PIDFController for " + transmission.getName() + " finished its motion profile",
                         this.getClass());
                 return;
             }
-            targetVelocity = motionProfile.calculate(time);
+            target = motionProfile.calculate(time);
         }
-        transmission.set(ControlMode.PercentOutput, calculateVelocityPIDF(targetVelocity));
+        transmission.set(ControlMode.Throttle, calculate(target));
     }
 
     /**
@@ -76,7 +80,7 @@ public class VelocityPIDFController extends Thread
     }
 
     /**
-     * @param key The key of the feed forward function that should no longer be applied to the velocity controller
+     * @param key The key of the feed forward function that should no longer be applied to the controller
      */
     public synchronized void removeFeedForwardFunction(String key)
     {
@@ -84,16 +88,16 @@ public class VelocityPIDFController extends Thread
     }
 
     /**
-     * @param target The target velocity
+     * @param target The target value
      */
-    private double calculateVelocityPIDF(double target)
+    private double calculate(double target)
     {
         double currentPos = transmission.getPositionTicks();
-        double currentVel = transmission.getTicksPerSecond();
+        double currentValue = feedbackType == FeedbackType.POSITION ? currentPos : transmission.getTicksPerSecond();
         double currentTime = System.currentTimeMillis();
 
-        double error = target - currentVel; // Current error
-        double de = currentVel - prevVel; // Change in error since last calculation
+        double error = target - currentValue; // Current error
+        double de = currentValue - prevValue; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
         double output; // Percent output to be applied to the motor
 
@@ -105,31 +109,42 @@ public class VelocityPIDFController extends Thread
         for (Function<Double, Double> feedForward : feedForwards.values())
             output += feedForward.apply(currentPos);
 
-        prevVel = currentVel;
+        prevValue = currentValue;
         prevTime = currentTime;
 
         return output;
     }
 
     /**
-     * Sets the target velocity of the system
+     * Sets the target value of the system
      *
-     * @param value The target velocity of the system in ticks / second
+     * @param value The target value of the system in ticks / second
      */
-    public synchronized void setTargetVelocity(double value)
+    public synchronized void setTarget(double value)
     {
         runMotionProfile = false;
-        targetVelocity = value;
+        target = value;
     }
 
     /**
-     * Control the velocity with a motion profile
+     * Control the target with a motion profile
      */
     public synchronized void setMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
         runMotionProfile = true;
         profileStartTime = System.currentTimeMillis();
+    }
+
+    public synchronized void setFeedbackType(FeedbackType feedbackType)
+    {
+        this.feedbackType = feedbackType;
+        this.prevValue = feedbackType == FeedbackType.POSITION ? transmission.getPositionTicks() : transmission.getTicksPerSecond();
+    }
+
+    public synchronized FeedbackType getFeedbackType()
+    {
+        return feedbackType;
     }
 
     public synchronized void enable()
@@ -139,7 +154,7 @@ public class VelocityPIDFController extends Thread
 
     public synchronized void disable()
     {
-        transmission.set(ControlMode.PercentOutput, 0);
+        transmission.set(ControlMode.Throttle, 0);
         enabled = false;
         runMotionProfile = false;
     }

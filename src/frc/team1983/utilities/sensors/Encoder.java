@@ -1,4 +1,4 @@
-package frc.team1983.utilities.motors;
+package frc.team1983.utilities.sensors;
 
 public interface Encoder
 {

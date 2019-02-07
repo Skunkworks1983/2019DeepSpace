@@ -1,6 +1,8 @@
 package frc.team1983.utilities.motors;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import frc.team1983.utilities.sensors.Encoder;
+import frc.team1983.utilities.sensors.ThreadedEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,29 +11,21 @@ public class Transmission
 {
     private ArrayList<Motor> motors;
 
-    private double ticksPerInch;
-    private double encoderOffset; // added to encoder value for manual encoder zeroing
+    private double ticksPerInch, encoderOffset; // added to encoder value for manual encoder zeroing
 
     private Encoder encoder;
     private final String name; //For logging purposes
-
-    private double maxVelocity;
-    private double maxAcceleration;
 
     /**
      * The constructor for using TalonSRXs
      *
      * @param name            The name of the system (for logging purposes)
-     * @param maxVelocity     The maximum safe velocity of this system
-     * @param maxAcceleration The maximum safe acceleration of this system
      * @param master          The motor controller with the encoder
      * @param moreMotors      Any more controllers that this transmission should have
      */
-    public Transmission(String name, double maxVelocity, double maxAcceleration, Talon master, Motor... moreMotors)
+    public Transmission(String name, Talon master, Motor... moreMotors)
     {
         this.name = name;
-        this.maxVelocity = maxVelocity;
-        this.maxAcceleration = maxAcceleration;
 
         motors = new ArrayList<>();
         motors.add(master);
@@ -45,17 +39,13 @@ public class Transmission
      * The constructor for using CANSparkMaxes
      *
      * @param name            The name of the system (for logging purposes)
-     * @param maxVelocity     The maximum safe velocity of this system
-     * @param maxAcceleration The maximum safe acceleration of this system
      * @param encoderPort     The analog input port that this system's encoder is on
      * @param master          The motor controller with the encoder
      * @param moreMotors      Any more controllers that this transmission should have
      */
-    public Transmission(String name, double maxVelocity, double maxAcceleration, int encoderPort, SparkMax master, Motor... moreMotors)
+    public Transmission(String name, int encoderPort, Spark master, Motor... moreMotors)
     {
         this.name = name;
-        this.maxVelocity = maxVelocity;
-        this.maxAcceleration = maxAcceleration;
 
         ThreadedEncoder encoder = new ThreadedEncoder(encoderPort);
         encoder.start();
@@ -160,15 +150,5 @@ public class Transmission
     public String getName()
     {
         return name;
-    }
-
-    public double getMaxVelocity()
-    {
-        return maxVelocity;
-    }
-
-    public double getMaxAcceleration()
-    {
-        return maxAcceleration;
     }
 }

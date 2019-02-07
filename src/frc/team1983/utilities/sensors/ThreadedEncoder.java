@@ -1,4 +1,4 @@
-package frc.team1983.utilities.motors;
+package frc.team1983.utilities.sensors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.team1983.services.logging.Logger;

@@ -27,8 +27,8 @@ public class RunTankDrive extends Command
     @Override
     public void execute()
     {
-        drivebase.setLeft(ControlMode.PercentOutput, oi.getLeftY());
-        drivebase.setRight(ControlMode.PercentOutput, oi.getRightY());
+        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY());
+        drivebase.setRight(ControlMode.Throttle, oi.getRightY());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class RunTankDrive extends Command
     @Override
     public void end()
     {
-        drivebase.setLeft(ControlMode.PercentOutput, 0);
-        drivebase.setRight(ControlMode.PercentOutput, 0);
+        drivebase.setLeft(ControlMode.Throttle, 0);
+        drivebase.setRight(ControlMode.Throttle, 0);
     }
 }

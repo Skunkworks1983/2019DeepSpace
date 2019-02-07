@@ -1,8 +1,10 @@
-package frc.team1983.utilities.control;
+package frc.team1983.utilities.motion;
 
 public interface MotionProfile
 {
     double calculate(double time);
+
+    double calculatePosition(double time);
 
     double getLength();
 
@@ -51,6 +53,14 @@ public interface MotionProfile
                 }
 
                 @Override
+                public double calculatePosition(double time)
+                {
+                    return time < .5 * profileLength ? startpoint + (velocitySign * time * time * acceleration) :
+                            startpoint + (velocitySign * distance / 2) +
+                                    (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
+                }
+
+                @Override
                 public double getLength()
                 {
                     return profileLength;
@@ -74,6 +84,17 @@ public interface MotionProfile
                     if (time < maxTriangleLength) return velocitySign * time * acceleration;
                     if (time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
                     return velocitySign * (profileLength - time) * acceleration;
+                }
+
+                @Override
+                public double calculatePosition(double time)
+                {
+                    //TODO optimize variable storing
+                    if (time < maxTriangleLength) return startpoint + (velocitySign * time * time * acceleration);
+                    if (time < maxTriangleLength + rectangleLength)
+                        return startpoint + (velocitySign * maxTriangleSize) + (velocitySign * time * cruiseVelocity);
+                    return startpoint + (velocitySign * maxTriangleSize) +
+                            (velocitySign * (profileLength - time) * (profileLength - time) * acceleration);
                 }
 
                 @Override
