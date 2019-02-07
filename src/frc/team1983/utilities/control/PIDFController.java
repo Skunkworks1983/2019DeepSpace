@@ -50,23 +50,26 @@ public class PIDFController extends Thread
     @Override
     public void run()
     {
-        if (!enabled) return;
-        if (runMotionProfile)
+        while(true)
         {
-            // Cast 1000 to double to prevent integer division
-            double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
-            if (time > motionProfile.getDuration())
+            if (!enabled) return;
+            if (runMotionProfile)
             {
-                target = 0;
-                transmission.set(ControlMode.Throttle, 0);
-                runMotionProfile = false;
-                logger.info("PIDFController for " + transmission.getName() + " finished its motion profile",
-                        this.getClass());
-                return;
+                // Cast 1000 to double to prevent integer division
+                double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
+                if (time > motionProfile.getDuration())
+                {
+                    target = 0;
+                    transmission.set(ControlMode.Throttle, 0);
+                    runMotionProfile = false;
+                    logger.info("PIDFController for " + transmission.getName() + " finished its motion profile",
+                            this.getClass());
+                    return;
+                }
+                target = feedbackType == FeedbackType.POSITION ? motionProfile.calcPos(time) : motionProfile.calcVel(time);
             }
-            target = feedbackType == FeedbackType.POSITION ? motionProfile.calcPos(time) : motionProfile.calcVel(time);
+            transmission.set(ControlMode.Throttle, calculate(target));
         }
-        transmission.set(ControlMode.Throttle, calculate(target));
     }
 
     /**
