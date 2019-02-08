@@ -2,10 +2,8 @@ package frc.team1983.utilities.motion;
 
 public interface MotionProfile
 {
-    double calcVel(double time);
-
-    double calcPos(double time);
-
+    double evaluatePosition(double time);
+    double evaluateVelocity(double time);
     double getDuration();
 
     /**
@@ -16,11 +14,10 @@ public interface MotionProfile
      * @param cruiseVelocity The maximum velocity this profile should achieve
      * @param acceleration   The maximum acceleration this profile should achieve
      */
-    static MotionProfile generateTrapezoidalProfile(int startpoint, int endpoint, double cruiseVelocity, double acceleration)
+    static MotionProfile generateTrapezoidalProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration)
     {
         // Distance the system will travel (difference between current and desired position)
-        double distance = Math.abs(endpoint - startpoint);
-        int velocitySign = endpoint > startpoint ? 1 : -1;
+        double distance = Math.abs(endpoint - startpoint); int velocitySign = endpoint > startpoint ? 1 : -1;
 
         // Remember: The maximum height of the motion profile is cruiseVelocity, and the maximum slop is acceleration
         // The maximum length of one of the triangles (cruiseVelocity / t = acceleration -> cruiseVelocity / acceleration = t)
@@ -30,9 +27,8 @@ public interface MotionProfile
         // If the system does not have time to reach its max velocity than the motion profile will be triangular
         boolean profileIsTriangular = distance <= 2 * maxTriangleSize;
 
-        if (profileIsTriangular)
+        if(profileIsTriangular)
         {
-            System.out.println("Profile is triangular");
             // Calculating the profile's max velocity and total time involves solving a system of equations.
             // The equations are:
             // maxVelocity / (.5 * profileLength) = acceleration
@@ -48,17 +44,15 @@ public interface MotionProfile
             return new MotionProfile()
             {
                 @Override
-                public double calcVel(double time)
+                public double evaluatePosition(double time)
                 {
                     return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
                 }
 
                 @Override
-                public double calcPos(double time)
+                public double evaluateVelocity(double time)
                 {
-                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) :
-                            startpoint + (velocitySign * (distance -
-                                    (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override
@@ -67,7 +61,8 @@ public interface MotionProfile
                     return profileLength;
                 }
             };
-        } else
+        }
+        else
         {
             // The size of the rectangle is how much distance is left after the triangles
             double rectangleSize = distance - (2 * maxTriangleSize);
@@ -80,21 +75,20 @@ public interface MotionProfile
             return new MotionProfile()
             {
                 @Override
-                public double calcVel(double time)
+                public double evaluatePosition(double time)
                 {
-                    if (time < maxTriangleLength) return velocitySign * time * acceleration;
-                    if (time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+                    if(time < maxTriangleLength) return velocitySign * time * acceleration;
+                    if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
                     return velocitySign * (profileLength - time) * acceleration;
                 }
 
                 @Override
-                public double calcPos(double time)
+                public double evaluateVelocity(double time)
                 {
-                    if (time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
-                    if (time < maxTriangleLength + rectangleLength)
+                    if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
+                    if(time < maxTriangleLength + rectangleLength)
                         return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
-                    return startpoint + (velocitySign *
-                            (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override

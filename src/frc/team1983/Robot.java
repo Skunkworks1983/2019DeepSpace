@@ -49,7 +49,7 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
-        System.out.println(estimator.getPosition());
+        System.out.println(drivebase.left.getInchesPerSecond() / 12.0);
 
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());

@@ -1,5 +1,6 @@
 package frc.team1983.utilities.motors;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.team1983.utilities.sensors.Encoder;
 
@@ -24,13 +25,19 @@ public class Talon extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements
     }
 
     @Override
-    public int getPos()
+    public void configure()
+    {
+        configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    }
+
+    @Override
+    public int getPosition()
     {
         return getSelectedSensorPosition();
     }
 
     @Override
-    public double getVel()
+    public double getVelocity()
     {
         return getSelectedSensorVelocity();
     }

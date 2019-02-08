@@ -1,6 +1,8 @@
 package frc.team1983.utilities.motors;
 
-public class Spark extends com.revrobotics.CANSparkMax implements Motor
+import frc.team1983.utilities.sensors.Encoder;
+
+public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
 {
     public Spark(int port, MotorType type, boolean reversed)
     {
@@ -23,5 +25,23 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor
     public void setBrake(boolean brake)
     {
         setIdleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
+    }
+
+    @Override
+    public void configure()
+    {
+
+    }
+
+    @Override
+    public int getPosition()
+    {
+        return (int) getEncoder().getPosition();
+    }
+
+    @Override
+    public double getVelocity()
+    {
+        return (int) getEncoder().getVelocity();
     }
 }

@@ -9,12 +9,12 @@ import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
-    public static final double INCHES_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0; // feet / tick of wheel encoders
+    public static final double TICKS_PER_INCH = 1360.0 / (6.0 * Math.PI / 12.0); // feet / tick of wheel encoders
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double MAX_ACCELERATION = 3.0; // feet / second / second, a wild guess based on MAX_VELOCITY
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
-    private Transmission left, right;
+    public Transmission left, right;
 
     public Drivebase()
     {
@@ -24,11 +24,16 @@ public class Drivebase extends Subsystem
                 new Talon(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
         );
 
+        left.setTicksPerInch(TICKS_PER_INCH);
+
+
         right = new Transmission("Right Drivebase",
                 new Talon(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
                 new Talon(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)
         );
+
+        right.setTicksPerInch(TICKS_PER_INCH);
 
         // todo: configure reduction of transmissions
         // todo: configure encoder properties of transmissions

@@ -9,8 +9,10 @@ import frc.team1983.utilities.motors.Transmission;
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class PIDFController extends Thread
+public class TransmissionController extends Thread
 {
+    private static final int UPDATE_RATE = 20;
+
     private Transmission transmission;
     private double kP, kI, kD;
     private FeedbackType feedbackType;
@@ -19,11 +21,10 @@ public class PIDFController extends Thread
     private double prevValue, prevTime, cumulativeError, target;
     private Logger logger = Logger.getInstance();
     private MotionProfile motionProfile;
-    private boolean runMotionProfile, enabled;
+    private boolean runMotionProfile = true, enabled = false;
     private long profileStartTime;
 
-    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType,
-                          HashMap<String, Function<Double, Double>> feedForwards)
+    public TransmissionController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType, HashMap<String, Function<Double, Double>> feedForwards)
     {
         this.transmission = transmission;
         this.kP = kP;
@@ -36,15 +37,23 @@ public class PIDFController extends Thread
         // before execution, but this at least prevents null pointer exceptions
         prevValue = transmission.getTicksPerSecond();
         prevTime = System.currentTimeMillis();
+
         cumulativeError = 0;
-        target = 0;
-        runMotionProfile = false;
-        enabled = false;
     }
 
-    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
+    public TransmissionController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
     {
         this(transmission, kP, kI, kD, feedbackType, new HashMap<>());
+    }
+
+    public TransmissionController(Transmission transmission, FeedbackType feedbackType)
+    {
+        this(transmission, 0, 0, 0, feedbackType);
+    }
+
+    public TransmissionController(Transmission transmission)
+    {
+        this(transmission, FeedbackType.POSITION);
     }
 
     @Override
@@ -52,23 +61,36 @@ public class PIDFController extends Thread
     {
         while(true)
         {
-            if (!enabled) return;
-            if (runMotionProfile)
+            if(!enabled) continue;
+
+            if(kP == 0 && kI == 0 && kD == 0 && feedForwards.isEmpty())
+            {
+                logger.warn("PID constants not configured", this.getClass());
+                continue;
+            }
+
+            if(runMotionProfile)
             {
                 // Cast 1000 to double to prevent integer division
-                double time = (System.currentTimeMillis() - profileStartTime) / ((double) 1000);
-                if (time > motionProfile.getDuration())
+                double time = (System.currentTimeMillis() - profileStartTime) / (1000.0);
+                if(time > motionProfile.getDuration())
                 {
-                    target = 0;
-                    transmission.set(ControlMode.Throttle, 0);
                     runMotionProfile = false;
-                    logger.info("PIDFController for " + transmission.getName() + " finished its motion profile",
-                            this.getClass());
-                    return;
+                    logger.info("TransmissionController for " + transmission.getName() + " finished its motion profile", this.getClass());
                 }
-                target = feedbackType == FeedbackType.POSITION ? motionProfile.calcPos(time) : motionProfile.calcVel(time);
+                target = feedbackType == FeedbackType.POSITION ? motionProfile.evaluateVelocity(time) : motionProfile.evaluatePosition(time);
             }
+
             transmission.set(ControlMode.Throttle, calculate(target));
+
+            try
+            {
+                Thread.sleep((long) 1000.0 / UPDATE_RATE);
+            }
+            catch(InterruptedException exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -109,7 +131,7 @@ public class PIDFController extends Thread
         output += cumulativeError * kI;
         output -= de / dt * kD;
 
-        for (Function<Double, Double> feedForward : feedForwards.values())
+        for(Function<Double, Double> feedForward : feedForwards.values())
             output += feedForward.apply(currentPos);
 
         prevValue = currentValue;
@@ -132,7 +154,7 @@ public class PIDFController extends Thread
     /**
      * Control the target with a motion profile
      */
-    public synchronized void setMotionProfile(MotionProfile motionProfile)
+    public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
         runMotionProfile = true;
@@ -157,7 +179,6 @@ public class PIDFController extends Thread
 
     public synchronized void disable()
     {
-        transmission.set(ControlMode.Throttle, 0);
         enabled = false;
         runMotionProfile = false;
     }

@@ -1,8 +1,11 @@
 package frc.team1983.utilities.motors;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import frc.team1983.services.logging.Logger;
+import frc.team1983.utilities.control.TransmissionController;
+import frc.team1983.utilities.motion.MotionProfile;
+import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
-import frc.team1983.utilities.sensors.ThreadedEncoder;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,50 +13,63 @@ import java.util.Arrays;
 public class Transmission
 {
     private ArrayList<Motor> motors;
+    private TransmissionController controller;
 
     private double ticksPerInch, encoderOffset; // added to encoder value for manual encoder zeroing
 
     private Encoder encoder;
     private final String name; //For logging purposes
 
+    private double movementVelocity = 0; // in
+    private double movementAcceleration = 0; // in/s
+
     /**
-     * The constructor for using TalonSRXs
+     * Constructor for a transmission with a name, master, encoder, and other motors, regardless
+     * of whether or not the motor controllers are Talons or Sparks
      *
-     * @param name            The name of the system (for logging purposes)
-     * @param master          The motor controller with the encoder
-     * @param moreMotors      Any more controllers that this transmission should have
+     * @param name
+     * @param master
+     * @param encoder
+     * @param motors
      */
-    public Transmission(String name, Talon master, Motor... moreMotors)
+    protected Transmission(String name, Encoder encoder, Motor master, Motor... motors)
     {
         this.name = name;
 
-        motors = new ArrayList<>();
-        motors.add(master);
-        motors.addAll(Arrays.asList(moreMotors));
+        this.encoder = encoder;
+        this.encoder.configure();
 
-        master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        encoder = master;
+        this.controller = new TransmissionController(this, FeedbackType.POSITION);
+
+        this.motors = new ArrayList<>();
+        this.motors.add(master);
+        this.motors.addAll(Arrays.asList(motors));
     }
 
     /**
-     * The constructor for using CANSparkMaxes
+     * Constructor for a transmission where the master motor is also the encoder (either a Talon with an encoder plugged in or
+     * a NEO with the built-in encoder)
      *
-     * @param name            The name of the system (for logging purposes)
-     * @param encoderPort     The analog input port that this system's encoder is on
-     * @param master          The motor controller with the encoder
-     * @param moreMotors      Any more controllers that this transmission should have
+     * @param name
+     * @param master
+     * @param motors
      */
-    public Transmission(String name, int encoderPort, Spark master, Motor... moreMotors)
+    public Transmission(String name, Motor master, Motor... motors)
     {
-        this.name = name;
+        this(name, (Encoder) master, master, motors);
+    }
 
-        ThreadedEncoder encoder = new ThreadedEncoder(encoderPort);
-        encoder.start();
-        this.encoder = encoder;
-
-        motors = new ArrayList<>();
-        motors.add(master);
-        motors.addAll(Arrays.asList(moreMotors));
+    /**
+     * Constructor for a transmission where the transmission uses an encoder that is plugged directly into the roboRIO
+     *
+     * @param name
+     * @param master
+     * @param encoderPort
+     * @param motors
+     */
+    public Transmission(String name, Motor master, int encoderPort, Motor... motors)
+    {
+        this(name, new DigitalInputEncoder(encoderPort), master, motors);
     }
 
     /**
@@ -98,12 +114,26 @@ public class Transmission
      * Set the motor output in a control mode
      *
      * @param controlMode The control mode the motor should run in
-     * @param value       The value at which the motor should run
+     * @param value       The value at which the motor should run (%, in, in/s)
      */
     public void set(ControlMode controlMode, double value)
     {
-        for (Motor motor : motors)
-            motor.set(controlMode, value);
+        if(controlMode == ControlMode.Throttle)
+        {
+            controller.disable();
+
+            for(Motor motor : motors)
+                motor.set(controlMode, value);
+        }
+        else
+        {
+            if(movementVelocity == 0 || movementAcceleration == 0)
+                Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
+
+            MotionProfile profile = MotionProfile.generateTrapezoidalProfile(getPositionInches(), value, movementVelocity, movementAcceleration);
+            controller.runMotionProfile(profile);
+            controller.enable();
+        }
     }
 
     /**
@@ -111,7 +141,7 @@ public class Transmission
      */
     public void setBrake(boolean brake)
     {
-        for (Motor motor : motors)
+        for(Motor motor : motors)
             motor.setBrake(brake);
     }
 
@@ -120,7 +150,7 @@ public class Transmission
      */
     public double getPositionTicks()
     {
-        return encoder.getPos();
+        return encoder.getPosition();
     }
 
     /**
@@ -136,7 +166,7 @@ public class Transmission
      */
     public double getTicksPerSecond()
     {
-        return encoder.getVel();
+        return encoder.getVelocity();
     }
 
     /**
@@ -150,5 +180,15 @@ public class Transmission
     public String getName()
     {
         return name;
+    }
+
+    public void setMovementVelocity(double movementVelocity)
+    {
+        this.movementVelocity = movementVelocity;
+    }
+
+    public void setMovementAcceleration(double movementAcceleration)
+    {
+        this.movementAcceleration = movementAcceleration;
     }
 }
