@@ -9,7 +9,7 @@ import frc.team1983.utilities.motors.Transmission;
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class TransmissionController extends Thread
+public class PIDFController extends Thread
 {
     private static final int UPDATE_RATE = 20;
 
@@ -24,7 +24,7 @@ public class TransmissionController extends Thread
     private boolean runMotionProfile = true, enabled = false;
     private long profileStartTime;
 
-    public TransmissionController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType, HashMap<String, Function<Double, Double>> feedForwards)
+    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType, HashMap<String, Function<Double, Double>> feedForwards)
     {
         this.transmission = transmission;
         this.kP = kP;
@@ -41,17 +41,17 @@ public class TransmissionController extends Thread
         cumulativeError = 0;
     }
 
-    public TransmissionController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
+    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
     {
         this(transmission, kP, kI, kD, feedbackType, new HashMap<>());
     }
 
-    public TransmissionController(Transmission transmission, FeedbackType feedbackType)
+    public PIDFController(Transmission transmission, FeedbackType feedbackType)
     {
         this(transmission, 0, 0, 0, feedbackType);
     }
 
-    public TransmissionController(Transmission transmission)
+    public PIDFController(Transmission transmission)
     {
         this(transmission, FeedbackType.POSITION);
     }
@@ -76,7 +76,7 @@ public class TransmissionController extends Thread
                 if(time > motionProfile.getDuration())
                 {
                     runMotionProfile = false;
-                    logger.info("TransmissionController for " + transmission.getName() + " finished its motion profile", this.getClass());
+                    logger.info("PIDFController for " + transmission.getName() + " finished its motion profile", this.getClass());
                 }
                 target = feedbackType == FeedbackType.POSITION ? motionProfile.evaluateVelocity(time) : motionProfile.evaluatePosition(time);
             }

@@ -1,7 +1,7 @@
 package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.control.TransmissionController;
+import frc.team1983.utilities.control.PIDFController;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class Transmission
 {
     private ArrayList<Motor> motors;
-    private TransmissionController controller;
+    private PIDFController controller;
 
     private double ticksPerInch, encoderOffset; // added to encoder value for manual encoder zeroing
 
@@ -39,7 +39,7 @@ public class Transmission
         this.encoder = encoder;
         this.encoder.configure();
 
-        this.controller = new TransmissionController(this, FeedbackType.POSITION);
+        this.controller = new PIDFController(this, FeedbackType.POSITION);
 
         this.motors = new ArrayList<>();
         this.motors.add(master);
