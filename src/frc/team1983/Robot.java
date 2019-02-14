@@ -1,14 +1,18 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.drivebase.SmellyDashListener;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.sensors.Encoder;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 import frc.team1983.utilities.sensors.Pigeon;
@@ -49,8 +53,6 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
-        System.out.println(drivebase.left.getInchesPerSecond() / 12.0);
-
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
@@ -59,6 +61,7 @@ public class Robot extends TimedRobot
     @Override
     public void disabledInit()
     {
+        Scheduler.getInstance().removeAll();
         drivebase.setBrake(false);
     }
 
@@ -67,7 +70,14 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
 
-        Scheduler.getInstance().add(new SmellyDashListener());
+        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0 * 10);
+        drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0 * 10);
+    }
+
+    @Override
+    public void teleopInit()
+    {
+        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     public static Robot getInstance()

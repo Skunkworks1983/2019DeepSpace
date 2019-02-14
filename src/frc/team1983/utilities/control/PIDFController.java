@@ -1,49 +1,41 @@
 package frc.team1983.utilities.control;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
-import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.Transmission;
-
-import java.util.HashMap;
-import java.util.function.Function;
 
 public class PIDFController extends Thread
 {
     private static final int UPDATE_RATE = 20;
 
     private Transmission transmission;
-    private double kP, kI, kD;
     private FeedbackType feedbackType;
-    private HashMap<String, Function<Double, Double>> feedForwards;
 
-    private double prevValue, prevTime, cumulativeError, target;
-    private Logger logger = Logger.getInstance();
     private MotionProfile motionProfile;
-    private boolean runMotionProfile = true, enabled = false;
+
+    private double kP, kI, kD;
+    private double prevValue, prevTime, cumulativeError, target;
+
+    private boolean enabled = false;
     private long profileStartTime;
 
-    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType, HashMap<String, Function<Double, Double>> feedForwards)
+    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
     {
         this.transmission = transmission;
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
         this.feedbackType = feedbackType;
-        this.feedForwards = feedForwards;
 
         //These should probably be reset again before first execution, because construction usually happens a long time
         // before execution, but this at least prevents null pointer exceptions
-        prevValue = transmission.getTicksPerSecond();
+        prevValue = transmission.getVelocityTicks();
         prevTime = System.currentTimeMillis();
 
+        target = transmission.getPositionInches();
         cumulativeError = 0;
-    }
-
-    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
-    {
-        this(transmission, kP, kI, kD, feedbackType, new HashMap<>());
     }
 
     public PIDFController(Transmission transmission, FeedbackType feedbackType)
@@ -56,6 +48,13 @@ public class PIDFController extends Thread
         this(transmission, FeedbackType.POSITION);
     }
 
+    public synchronized void setPID(double p, double i, double d)
+    {
+        this.kP = p;
+        this.kI = i;
+        this.kD = d;
+    }
+
     @Override
     public void run()
     {
@@ -63,25 +62,26 @@ public class PIDFController extends Thread
         {
             if(!enabled) continue;
 
-            if(kP == 0 && kI == 0 && kD == 0 && feedForwards.isEmpty())
+            if(kP == 0 && kI == 0 && kD == 0)
             {
-                logger.warn("PID constants not configured", this.getClass());
+                Logger.getInstance().warn("PID constants not configured", this.getClass());
                 continue;
             }
 
-            if(runMotionProfile)
+            if(motionProfile != null)
             {
                 // Cast 1000 to double to prevent integer division
-                double time = (System.currentTimeMillis() - profileStartTime) / (1000.0);
-                if(time > motionProfile.getDuration())
-                {
-                    runMotionProfile = false;
-                    logger.info("PIDFController for " + transmission.getName() + " finished its motion profile", this.getClass());
-                }
-                target = feedbackType == FeedbackType.POSITION ? motionProfile.evaluateVelocity(time) : motionProfile.evaluatePosition(time);
-            }
+                double time = (System.currentTimeMillis() - profileStartTime) / 1000.0;
 
-            transmission.set(ControlMode.Throttle, calculate(target));
+                if(time > motionProfile.getDuration())
+                    motionProfile = null;
+                else
+                    transmission.setRawThrottle(calculate(MotionProfile.evaluate(motionProfile, Math.min(time, motionProfile.getDuration()), feedbackType)));
+            }
+            else
+            {
+                transmission.setRawThrottle(calculate(target));
+            }
 
             try
             {
@@ -95,30 +95,11 @@ public class PIDFController extends Thread
     }
 
     /**
-     * @param key      A string that can be used to access this feed forward term
-     * @param function A lambda which takes in the current position of the system and returns a percentoutput
-     *                 that will be added to the output
-     */
-    public synchronized void addFeedForwardFunction(String key, Function<Double, Double> function)
-    {
-        feedForwards.put(key, function);
-    }
-
-    /**
-     * @param key The key of the feed forward function that should no longer be applied to the controller
-     */
-    public synchronized void removeFeedForwardFunction(String key)
-    {
-        feedForwards.remove(key);
-    }
-
-    /**
      * @param target The target value
      */
     private double calculate(double target)
     {
-        double currentPos = transmission.getPositionTicks();
-        double currentValue = feedbackType == FeedbackType.POSITION ? currentPos : transmission.getTicksPerSecond();
+        double currentValue = feedbackType == FeedbackType.POSITION ? transmission.getPositionInches() : transmission.getVelocityInches();
         double currentTime = System.currentTimeMillis();
 
         double error = target - currentValue; // Current error
@@ -131,45 +112,17 @@ public class PIDFController extends Thread
         output += cumulativeError * kI;
         output -= de / dt * kD;
 
-        for(Function<Double, Double> feedForward : feedForwards.values())
-            output += feedForward.apply(currentPos);
-
         prevValue = currentValue;
         prevTime = currentTime;
 
         return output;
     }
 
-    /**
-     * Sets the target value of the system
-     *
-     * @param value The target value of the system in ticks / second
-     */
     public synchronized void setTarget(double value)
     {
-        runMotionProfile = false;
         target = value;
-    }
-
-    /**
-     * Control the target with a motion profile
-     */
-    public synchronized void runMotionProfile(MotionProfile motionProfile)
-    {
-        this.motionProfile = motionProfile;
-        runMotionProfile = true;
         profileStartTime = System.currentTimeMillis();
-    }
-
-    public synchronized void setFeedbackType(FeedbackType feedbackType)
-    {
-        this.feedbackType = feedbackType;
-        this.prevValue = feedbackType == FeedbackType.POSITION ? transmission.getPositionTicks() : transmission.getTicksPerSecond();
-    }
-
-    public synchronized FeedbackType getFeedbackType()
-    {
-        return feedbackType;
+        motionProfile = MotionProfile.generateTrapezoidalProfile(transmission.getPositionInches(), value, transmission.getMovementVelocity(), transmission.getMovementAcceleration());
     }
 
     public synchronized void enable()
@@ -180,26 +133,5 @@ public class PIDFController extends Thread
     public synchronized void disable()
     {
         enabled = false;
-        runMotionProfile = false;
-    }
-
-    public synchronized boolean isEnabled()
-    {
-        return enabled;
-    }
-
-    public synchronized void setkP(double kP)
-    {
-        this.kP = kP;
-    }
-
-    public synchronized void setkI(double kI)
-    {
-        this.kI = kI;
-    }
-
-    public synchronized void setkD(double kD)
-    {
-        this.kD = kD;
     }
 }

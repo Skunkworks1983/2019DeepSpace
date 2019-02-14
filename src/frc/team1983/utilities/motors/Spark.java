@@ -4,6 +4,8 @@ import frc.team1983.utilities.sensors.Encoder;
 
 public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
 {
+    public static final int SPARK_INTERNAL_ENCODER_RESOLUTION = 42;
+
     public Spark(int port, MotorType type, boolean reversed)
     {
         super(port, type);
@@ -34,14 +36,14 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
     }
 
     @Override
-    public int getPosition()
+    public double getPosition()
     {
-        return (int) getEncoder().getPosition();
+        return (getInverted() ? -1 : 1) * getEncoder().getPosition();
     }
 
     @Override
     public double getVelocity()
     {
-        return (int) getEncoder().getVelocity();
+        return (getInverted() ? -1 : 1) * getEncoder().getVelocity() / SPARK_INTERNAL_ENCODER_RESOLUTION;
     }
 }

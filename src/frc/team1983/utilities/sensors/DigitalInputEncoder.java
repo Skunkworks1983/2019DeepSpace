@@ -6,7 +6,7 @@ public class DigitalInputEncoder extends edu.wpi.first.wpilibj.Encoder implement
 
     private double velocity;
 
-    private int prevPos;
+    private double prevPos;
     private long prevTime;
 
     public DigitalInputEncoder(int channelA, int channelB)
@@ -27,7 +27,7 @@ public class DigitalInputEncoder extends edu.wpi.first.wpilibj.Encoder implement
     }
 
     @Override
-    public int getPosition()
+    public double getPosition()
     {
         return get();
     }
@@ -43,7 +43,7 @@ public class DigitalInputEncoder extends edu.wpi.first.wpilibj.Encoder implement
     {
         while(true)
         {
-            int currentPos = getPosition();
+            double currentPos = getPosition();
             long currentTime = System.currentTimeMillis();
 
             //(double) casts ints to doubles, preventing integer division

@@ -1,15 +1,14 @@
 package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.constants.MotorMap;
+import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.motors.Talon;
+import frc.team1983.utilities.motors.Spark;
 import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
-    public static final double TICKS_PER_INCH = 1360.0 / (6.0 * Math.PI / 12.0); // feet / tick of wheel encoders
+    public static final double TICKS_PER_INCH = 8.69 / (6.0 * Math.PI); // encoder pulses / inches of travel
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double MAX_ACCELERATION = 3.0; // feet / second / second, a wild guess based on MAX_VELOCITY
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
@@ -19,23 +18,29 @@ public class Drivebase extends Subsystem
     public Drivebase()
     {
         left = new Transmission("Left Drivebase",
-                new Talon(MotorMap.Drivebase.LEFT_1, MotorMap.Drivebase.LEFT_1_REVERSED),
-                new Talon(MotorMap.Drivebase.LEFT_2, MotorMap.Drivebase.LEFT_2_REVERSED),
-                new Talon(MotorMap.Drivebase.LEFT_3, MotorMap.Drivebase.LEFT_3_REVERSED)
+                new Spark(RobotMap.Drivebase.LEFT_1, RobotMap.Drivebase.LEFT_1_REVERSED),
+                new Spark(RobotMap.Drivebase.LEFT_2, RobotMap.Drivebase.LEFT_2_REVERSED),
+                new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
         );
 
         left.setTicksPerInch(TICKS_PER_INCH);
+        left.setMovementVelocity(12 * 3);
+        left.setMovementAcceleration(12 * 12);
+        left.setPID(0.03, 0 , 0);
 
 
         right = new Transmission("Right Drivebase",
-                new Talon(MotorMap.Drivebase.RIGHT_1, MotorMap.Drivebase.RIGHT_1_REVERSED),
-                new Talon(MotorMap.Drivebase.RIGHT_2, MotorMap.Drivebase.RIGHT_2_REVERSED),
-                new Talon(MotorMap.Drivebase.RIGHT_3, MotorMap.Drivebase.RIGHT_3_REVERSED)
+                new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
+                new Spark(RobotMap.Drivebase.RIGHT_2, RobotMap.Drivebase.RIGHT_2_REVERSED),
+                new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
         );
 
         right.setTicksPerInch(TICKS_PER_INCH);
+        right.setMovementVelocity(12 * 3);
+        right.setMovementAcceleration(12 * 12);
+        right.setPID(0.03, 0 , 0);
 
-        // todo: configure reduction of transmissions
+
         // todo: configure encoder properties of transmissions
 
         zero();
@@ -44,7 +49,7 @@ public class Drivebase extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new RunTankDrive());
+
     }
 
     @Override
@@ -74,9 +79,19 @@ public class Drivebase extends Subsystem
         return left.getPositionInches();
     }
 
+    public double getLeftVelocity()
+    {
+        return left.getVelocityInches();
+    }
+
     public double getRightPosition()
     {
         return right.getPositionInches();
+    }
+
+    public double getRightVelocity()
+    {
+        return right.getVelocityInches();
     }
 
 

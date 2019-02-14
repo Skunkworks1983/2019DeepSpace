@@ -31,7 +31,7 @@ public class Talon extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements
     }
 
     @Override
-    public int getPosition()
+    public double getPosition()
     {
         return getSelectedSensorPosition();
     }

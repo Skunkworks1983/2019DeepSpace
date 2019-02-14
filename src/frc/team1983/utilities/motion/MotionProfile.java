@@ -1,10 +1,20 @@
 package frc.team1983.utilities.motion;
 
+import frc.team1983.utilities.motors.FeedbackType;
+
 public interface MotionProfile
 {
     double evaluatePosition(double time);
     double evaluateVelocity(double time);
     double getDuration();
+
+    static double evaluate(MotionProfile profile, double time, FeedbackType type)
+    {
+        if(type == FeedbackType.POSITION)
+            return profile.evaluatePosition(time);
+        else
+            return profile.evaluateVelocity(time);
+    }
 
     /**
      * Generates a motion profile for motion magic
@@ -46,13 +56,13 @@ public interface MotionProfile
                 @Override
                 public double evaluatePosition(double time)
                 {
-                    return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
+                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override
                 public double evaluateVelocity(double time)
                 {
-                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
                 }
 
                 @Override
@@ -77,18 +87,18 @@ public interface MotionProfile
                 @Override
                 public double evaluatePosition(double time)
                 {
-                    if(time < maxTriangleLength) return velocitySign * time * acceleration;
-                    if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
-                    return velocitySign * (profileLength - time) * acceleration;
+                    if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
+                    if(time < maxTriangleLength + rectangleLength)
+                        return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
+                    return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                 }
 
                 @Override
                 public double evaluateVelocity(double time)
                 {
-                    if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
-                    if(time < maxTriangleLength + rectangleLength)
-                        return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
-                    return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    if(time < maxTriangleLength) return velocitySign * time * acceleration;
+                    if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+                    return velocitySign * (profileLength - time) * acceleration;
                 }
 
                 @Override

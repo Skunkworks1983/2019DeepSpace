@@ -2,7 +2,6 @@ package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.control.PIDFController;
-import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
 
@@ -39,7 +38,8 @@ public class Transmission
         this.encoder = encoder;
         this.encoder.configure();
 
-        this.controller = new PIDFController(this, FeedbackType.POSITION);
+        controller = new PIDFController(this, FeedbackType.POSITION);
+        controller.start();
 
         this.motors = new ArrayList<>();
         this.motors.add(master);
@@ -121,19 +121,22 @@ public class Transmission
         if(controlMode == ControlMode.Throttle)
         {
             controller.disable();
-
-            for(Motor motor : motors)
-                motor.set(controlMode, value);
+            setRawThrottle(value);
         }
         else
         {
             if(movementVelocity == 0 || movementAcceleration == 0)
                 Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
 
-            MotionProfile profile = MotionProfile.generateTrapezoidalProfile(getPositionInches(), value, movementVelocity, movementAcceleration);
-            controller.runMotionProfile(profile);
+            controller.setTarget(value);
             controller.enable();
         }
+    }
+
+    public void setRawThrottle(double throttle)
+    {
+        for(Motor motor : motors)
+            motor.set(ControlMode.Throttle, throttle);
     }
 
     /**
@@ -143,6 +146,17 @@ public class Transmission
     {
         for(Motor motor : motors)
             motor.setBrake(brake);
+    }
+
+    /**
+     * Sets the PID gains of the controller
+     * @param p
+     * @param i
+     * @param d
+     */
+    public void setPID(double p, double i, double d)
+    {
+        controller.setPID(p, i, d);
     }
 
     /**
@@ -164,7 +178,7 @@ public class Transmission
     /**
      * @return Current encoder ticks per second
      */
-    public double getTicksPerSecond()
+    public double getVelocityTicks()
     {
         return encoder.getVelocity();
     }
@@ -172,9 +186,9 @@ public class Transmission
     /**
      * @return getVelocityInInchesPerSecond
      */
-    public double getInchesPerSecond()
+    public double getVelocityInches()
     {
-        return toInches(getTicksPerSecond());
+        return toInches(getVelocityTicks());
     }
 
     public String getName()
@@ -182,9 +196,19 @@ public class Transmission
         return name;
     }
 
+    public double getMovementVelocity()
+    {
+        return movementVelocity;
+    }
+
     public void setMovementVelocity(double movementVelocity)
     {
         this.movementVelocity = movementVelocity;
+    }
+
+    public double getMovementAcceleration()
+    {
+        return movementAcceleration;
     }
 
     public void setMovementAcceleration(double movementAcceleration)
