@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.FeedbackType;
@@ -12,21 +11,20 @@ public class PIDFController extends Thread
 
     private Transmission transmission;
     private FeedbackType feedbackType;
+    private boolean useMotionProfiles = true;
 
     private MotionProfile motionProfile;
 
     private double kP, kI, kD;
-    private double prevValue, prevTime, cumulativeError, target;
+    private double prevValue, prevTime, cumulativeError = 0, setpoint;
 
     private boolean enabled = false;
     private long profileStartTime;
 
-    public PIDFController(Transmission transmission, double kP, double kI, double kD, FeedbackType feedbackType)
+    public PIDFController(Transmission transmission, double p, double i, double d, FeedbackType feedbackType)
     {
         this.transmission = transmission;
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
+        setPID(p, i, d);
         this.feedbackType = feedbackType;
 
         //These should probably be reset again before first execution, because construction usually happens a long time
@@ -34,18 +32,12 @@ public class PIDFController extends Thread
         prevValue = transmission.getVelocityTicks();
         prevTime = System.currentTimeMillis();
 
-        target = transmission.getPositionInches();
-        cumulativeError = 0;
+        setpoint = transmission.getPositionInches();
     }
 
     public PIDFController(Transmission transmission, FeedbackType feedbackType)
     {
         this(transmission, 0, 0, 0, feedbackType);
-    }
-
-    public PIDFController(Transmission transmission)
-    {
-        this(transmission, FeedbackType.POSITION);
     }
 
     public synchronized void setPID(double p, double i, double d)
@@ -68,20 +60,16 @@ public class PIDFController extends Thread
                 continue;
             }
 
-            if(motionProfile != null)
+            double adjustedSetpoint = setpoint;
+            if(useMotionProfiles && motionProfile != null)
             {
-                // Cast 1000 to double to prevent integer division
                 double time = (System.currentTimeMillis() - profileStartTime) / 1000.0;
-
                 if(time > motionProfile.getDuration())
                     motionProfile = null;
                 else
-                    transmission.setRawThrottle(calculate(MotionProfile.evaluate(motionProfile, Math.min(time, motionProfile.getDuration()), feedbackType)));
+                    adjustedSetpoint = MotionProfile.evaluate(motionProfile, Math.min(time, motionProfile.getDuration()), feedbackType);
             }
-            else
-            {
-                transmission.setRawThrottle(calculate(target));
-            }
+            transmission.setRawThrottle(adjustedSetpoint);
 
             try
             {
@@ -95,14 +83,14 @@ public class PIDFController extends Thread
     }
 
     /**
-     * @param target The target value
+     * @param setpoint The setpoint value
      */
-    private double calculate(double target)
+    private double calculate(double setpoint)
     {
         double currentValue = feedbackType == FeedbackType.POSITION ? transmission.getPositionInches() : transmission.getVelocityInches();
         double currentTime = System.currentTimeMillis();
 
-        double error = target - currentValue; // Current error
+        double error = setpoint - currentValue; // Current error
         double de = currentValue - prevValue; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
         double output; // Percent output to be applied to the motor
@@ -112,17 +100,23 @@ public class PIDFController extends Thread
         output += cumulativeError * kI;
         output -= de / dt * kD;
 
-        prevValue = currentValue;
-        prevTime = currentTime;
-
         return output;
     }
 
-    public synchronized void setTarget(double value)
+    public synchronized void setSetpoint(double value)
     {
-        target = value;
+        setpoint = value;
+
+        if(!useMotionProfiles) return;
+
         profileStartTime = System.currentTimeMillis();
         motionProfile = MotionProfile.generateTrapezoidalProfile(transmission.getPositionInches(), value, transmission.getMovementVelocity(), transmission.getMovementAcceleration());
+    }
+
+    public synchronized void setFeedbackType(FeedbackType feedbackType)
+    {
+        this.feedbackType = feedbackType;
+        disable();
     }
 
     public synchronized void enable()

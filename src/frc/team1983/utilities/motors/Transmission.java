@@ -38,9 +38,6 @@ public class Transmission
         this.encoder = encoder;
         this.encoder.configure();
 
-        controller = new PIDFController(this, FeedbackType.POSITION);
-        controller.start();
-
         this.motors = new ArrayList<>();
         this.motors.add(master);
         this.motors.addAll(Arrays.asList(motors));
@@ -125,10 +122,19 @@ public class Transmission
         }
         else
         {
+            // controller defaults to null, so subsystems that never use multi-threaded closed-loop control
+            // don't bog down the CPU because their closed-loop controller never gets instantiated. controller
+            // is only created when we want to use closed-loop control.
+            if(controller == null)
+            {
+                controller = new PIDFController(this, controlMode.feedbackType);
+                controller.start();
+            }
+
             if(movementVelocity == 0 || movementAcceleration == 0)
                 Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
 
-            controller.setTarget(value);
+            controller.setSetpoint(value);
             controller.enable();
         }
     }
