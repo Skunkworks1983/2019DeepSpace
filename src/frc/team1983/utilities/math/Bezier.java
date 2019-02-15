@@ -100,7 +100,10 @@ public class Bezier
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)), new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
+        Line l1 = new Line(evaluate(t - 1e-2), evaluateNormal(t - 1e-2));
+        Line l2 = new Line(evaluate(t + 1e-2), evaluateNormal(t + 1e-2));
+        Vector2 icc = Line.cast(l1, l2);
+        return icc;
     }
 
     /**

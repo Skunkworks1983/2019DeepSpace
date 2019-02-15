@@ -61,13 +61,40 @@ public class UT_Bezier
     @Test
     public void centerOfCurvatureTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
+        Vector2 point = b.evaluate(0.5);
+        Vector2 icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() > point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(-1, 1));
+
+        point = b.evaluate(0.5);
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() < point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1));
+
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc, equalTo(null));
     }
 
     @Test
     public void radiusOfCurvatureTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
+        Vector2 point = b.evaluate(0.5);
+        Vector2 icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(b.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(-1, 1));
+
+        point = b.evaluate(0.5);
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(b.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
     }
 
     @Test
