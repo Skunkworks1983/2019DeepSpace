@@ -4,17 +4,8 @@ import frc.team1983.utilities.motors.FeedbackType;
 
 public interface MotionProfile
 {
-    double evaluatePosition(double time);
-    double evaluateVelocity(double time);
+    double evaluate(double time);
     double getDuration();
-
-    static double evaluate(MotionProfile profile, double time, FeedbackType type)
-    {
-        if(type == FeedbackType.POSITION)
-            return profile.evaluatePosition(time);
-        else
-            return profile.evaluateVelocity(time);
-    }
 
     /**
      * Generates a motion profile for motion magic
@@ -24,7 +15,7 @@ public interface MotionProfile
      * @param cruiseVelocity The maximum velocity this profile should achieve
      * @param acceleration   The maximum acceleration this profile should achieve
      */
-    static MotionProfile generateTrapezoidalProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration)
+    static MotionProfile generateTrapezoidalProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration, FeedbackType feedbackType)
     {
         // Distance the system will travel (difference between current and desired position)
         double distance = Math.abs(endpoint - startpoint); int velocitySign = endpoint > startpoint ? 1 : -1;
@@ -51,26 +42,35 @@ public interface MotionProfile
             // finally, put these together for profileLength = 2 * sqrt(distance * acceleration) / acceleration
             double profileLength = 2 * Math.sqrt(distance * acceleration) / acceleration;
 
-            return new MotionProfile()
-            {
-                @Override
-                public double evaluatePosition(double time)
+            return feedbackType == FeedbackType.POSITION ?
+                new MotionProfile()
                 {
-                    return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
-                }
+                    @Override
+                    public double evaluate(double time)
+                    {
+                        return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    }
 
-                @Override
-                public double evaluateVelocity(double time)
+                    @Override
+                    public double getDuration()
+                    {
+                        return profileLength;
+                    }
+                } :
+                new MotionProfile()
                 {
-                    return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
-                }
+                    @Override
+                    public double evaluate(double time)
+                    {
+                        return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
+                    }
 
-                @Override
-                public double getDuration()
-                {
-                    return profileLength;
-                }
-            };
+                    @Override
+                    public double getDuration()
+                    {
+                        return profileLength;
+                    }
+                };
         }
         else
         {
@@ -82,31 +82,40 @@ public interface MotionProfile
             // The length of the profile is length of the two triangles and the rectangle
             double profileLength = 2 * maxTriangleLength + rectangleLength;
 
-            return new MotionProfile()
-            {
-                @Override
-                public double evaluatePosition(double time)
+            return feedbackType == FeedbackType.POSITION ?
+                new MotionProfile()
                 {
-                    if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
-                    if(time < maxTriangleLength + rectangleLength)
-                        return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
-                    return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
-                }
+                    @Override
+                    public double evaluate(double time)
+                    {
+                        if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
+                        if(time < maxTriangleLength + rectangleLength)
+                            return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
+                        return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                    }
 
-                @Override
-                public double evaluateVelocity(double time)
+                    @Override
+                    public double getDuration()
+                    {
+                        return profileLength;
+                    }
+                } :
+                new MotionProfile()
                 {
-                    if(time < maxTriangleLength) return velocitySign * time * acceleration;
-                    if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
-                    return velocitySign * (profileLength - time) * acceleration;
-                }
+                    @Override
+                    public double evaluate(double time)
+                    {
+                        if(time < maxTriangleLength) return velocitySign * time * acceleration;
+                        if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+                        return velocitySign * (profileLength - time) * acceleration;
+                    }
 
-                @Override
-                public double getDuration()
-                {
-                    return profileLength;
-                }
-            };
-        }
+                    @Override
+                    public double getDuration()
+                    {
+                        return profileLength;
+                    }
+                };
+    }
     }
 }

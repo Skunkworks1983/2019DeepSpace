@@ -2,6 +2,8 @@ package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.control.PIDFController;
+import frc.team1983.utilities.control.PIDOutput;
+import frc.team1983.utilities.control.PIDSource;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
 
@@ -9,7 +11,7 @@ import frc.team1983.utilities.sensors.Encoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Transmission
+public class Transmission implements PIDSource, PIDOutput
 {
     private ArrayList<Motor> motors;
     private PIDFController controller;
@@ -18,6 +20,7 @@ public class Transmission
 
     private Encoder encoder;
     private final String name; //For logging purposes
+    private FeedbackType feedbackType;
 
     private double movementVelocity = 0; // in
     private double movementAcceleration = 0; // in/s
@@ -31,9 +34,11 @@ public class Transmission
      * @param encoder
      * @param motors
      */
-    protected Transmission(String name, Encoder encoder, Motor master, Motor... motors)
+    protected Transmission(String name, FeedbackType feedbackType, Encoder encoder, Motor master, Motor... motors)
     {
         this.name = name;
+
+        this.feedbackType = feedbackType;
 
         this.encoder = encoder;
         this.encoder.configure();
@@ -51,9 +56,9 @@ public class Transmission
      * @param master
      * @param motors
      */
-    public Transmission(String name, Motor master, Motor... motors)
+    public Transmission(String name, FeedbackType feedbackType, Motor master, Motor... motors)
     {
-        this(name, (Encoder) master, master, motors);
+        this(name, feedbackType, (Encoder) master, master, motors);
     }
 
     /**
@@ -64,9 +69,9 @@ public class Transmission
      * @param encoderPort
      * @param motors
      */
-    public Transmission(String name, Motor master, int encoderPort, Motor... motors)
+    public Transmission(String name, FeedbackType feedbackType, int encoderPort, Motor master, Motor... motors)
     {
-        this(name, new DigitalInputEncoder(encoderPort), master, motors);
+        this(name, feedbackType, new DigitalInputEncoder(encoderPort), master, motors);
     }
 
     /**
@@ -127,7 +132,7 @@ public class Transmission
             // is only created when we want to use closed-loop control.
             if(controller == null)
             {
-                controller = new PIDFController(this, controlMode.feedbackType);
+                controller = new PIDFController(this);
                 controller.start();
             }
 
@@ -220,5 +225,18 @@ public class Transmission
     public void setMovementAcceleration(double movementAcceleration)
     {
         this.movementAcceleration = movementAcceleration;
+    }
+
+    @Override
+    public void pidWrite(double output)
+    {
+        setRawThrottle(output);
+    }
+
+
+    @Override
+    public double pidGet()
+    {
+        return feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks();
     }
 }

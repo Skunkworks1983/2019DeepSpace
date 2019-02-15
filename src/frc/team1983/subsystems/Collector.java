@@ -25,8 +25,6 @@ public class Collector extends Subsystem
         wristRight.getPIDController().setD(CollectorConstants.WristGains.D);
         wristRight.getPIDController().setFF(0);
 
-        wristRight.setRampRate(0.25);
-
         initialEncoderPosition = wristRight.getEncoder().getPosition();
         //we know starting position now
     }

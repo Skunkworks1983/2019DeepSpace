@@ -4,5 +4,6 @@ import frc.team1983.utilities.motors.FeedbackType;
 
 public interface PIDSource
 {
-    double pidGet(FeedbackType feedbackType);
+    double pidGet();
+    double getPositionTicks(); // Only used for feedforward stuff
 }
