@@ -13,7 +13,7 @@ public class UT_Line
         Line l = new Line(1, 2, 3, 4);
 
         assertThat(Vector2.equals(l.getOrigin(), new Vector2(1, 2)), equalTo(true));
-        assertThat(Vector2.equals(l.getDirection(), new Vector2(3, 4)), equalTo(true));
+        assertThat(Vector2.equals(l.getDirection(), new Vector2(3, 4).getNormalized()), equalTo(true));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class UT_Line
         line1 = new Line(10, 10, 0, 1);
 
         assertThat(Vector2.equals(Line.cast(line0, line1), new Vector2(10, 0)), equalTo(true));
-        assertThat(Vector2.equals(line0.cast(line1), new Vector2(0, 10)), equalTo(true));
+        assertThat(Vector2.equals(line0.cast(line1), new Vector2(10, 0)), equalTo(true));
 
 
         line0 = new Line(0, 0, 1, 1);
