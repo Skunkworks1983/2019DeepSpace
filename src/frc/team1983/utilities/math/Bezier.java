@@ -11,6 +11,7 @@ import java.util.Arrays;
 public class Bezier
 {
     public static int RESOLUTION = 50;
+    public static double CAST_EPSILON = 1e-2;
 
     private final Vector2[] points;
     private double length = 0;
@@ -100,15 +101,12 @@ public class Bezier
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        Line l1 = new Line(evaluate(t - 1e-2), evaluateNormal(t - 1e-2));
-        Line l2 = new Line(evaluate(t + 1e-2), evaluateNormal(t + 1e-2));
-        Vector2 icc = Line.cast(l1, l2);
-        return icc;
+        return icc = Line.cast(new Line(evaluate(t - CAST_EPSILON), evaluateNormal(t - CAST_EPSILON)), 
+                               new Line(evaluate(t + CAST_EPSILON), evaluateNormal(t + CAST_EPSILON)));
     }
 
     /**
      * Evaluates the distance of the center of curvature
-     *
      * @param t the percentage along the curve [0, 1]
      * @return radius of curvature
      */
@@ -119,21 +117,23 @@ public class Bezier
 
     /**
      * Evaluate the closest point and t of the closest point
-     *
      * @param point
      * @return closest point and t of closest point
      */
     public Pair evaluateClosestPointAndT(Vector2 point)
     {
-        double closestT = 0; Vector2 closest = evaluate(closestT);
+        double closestT = 0;
+        Vector2 closest = evaluate(closestT);
         double closestDistance = Vector2.getDistance(closest, point);
-        for (double i = 0; i <= RESOLUTION; i++)
+        for(double i = 0; i <= RESOLUTION; i++)
         {
             Vector2 candidate = evaluate(i / RESOLUTION);
             double candidateDistance = Vector2.getDistance(candidate, point);
-            if (candidateDistance < closestDistance)
+            if(candidateDistance < closestDistance)
             {
-                closestT = i / RESOLUTION; closest = candidate; closestDistance = candidateDistance;
+                closestT = i / RESOLUTION;
+                closest = candidate;
+                closestDistance = candidateDistance;
             }
         }
         return new Pair(closestT, closest);
@@ -169,7 +169,8 @@ public class Bezier
     {
         if (o instanceof Bezier)
         {
-            Vector2[] oPoints = ((Bezier) o).points; if (oPoints.length != points.length) return false;
+            Vector2[] oPoints = ((Bezier) o).points;
+            if (oPoints.length != points.length) return false;
 
             for (int i = 0; i < points.length; i++)
             {
