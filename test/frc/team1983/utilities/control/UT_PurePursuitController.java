@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotEquals;
 
 public class UT_PurePursuitController
 {
@@ -96,6 +97,9 @@ public class UT_PurePursuitController
         pose = new Pose(0, 10 - DEADZONE + 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
 
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), equalTo(0.0));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue2(), equalTo(0.0));
+
         pose = new Pose(0, 10 + DEADZONE + 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
@@ -107,5 +111,36 @@ public class UT_PurePursuitController
 
         pose = new Pose(0, 20, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), 0.0);
+        assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue2(), 0.0);
+    }
+
+    @Test
+    public void reverseTest()
+    {
+        Pose pose = new Pose(0, 0, 90);
+
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
+        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
+    }
+
+    @Test
+    public void pastPathTest()
+    {
+        Pose pose = new Pose(0, 11, 90);
+
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue1() < 0, equalTo(true));
+        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue2() < 0, equalTo(true));
     }
 }

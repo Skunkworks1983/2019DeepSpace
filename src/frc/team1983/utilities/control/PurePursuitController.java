@@ -29,6 +29,9 @@ public class PurePursuitController
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
+        if(PurePursuitController.inDeadzone(pose, path))
+            return new Pair(0.0, 0.0);
+
 //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
 //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
 //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
@@ -45,21 +48,22 @@ public class PurePursuitController
 
         Vector2 icc = evaluateCenterOfCurvature(pose, lookahead);
 
-        if(icc == null)
-            return output;
-
-        double radius = evaluateRadiusOfCurvature(pose, icc);
-
         double distanceToEnd = Vector2.getDistance(pose.getPosition(), end);
-
-        if(PurePursuitController.inDeadzone(pose, path))
-            return new Pair(0.0, 0.0);
 
         // Reverse velocity if past end of path
         boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
-                            Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
+                Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
+
+        if(icc == null)
+        {
+            output.setValue1(velocity);
+            output.setValue2(velocity);
+            return output;
+        }
+
+        double radius = evaluateRadiusOfCurvature(pose, icc);
 
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
         output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);

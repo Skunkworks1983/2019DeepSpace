@@ -158,7 +158,6 @@ public class Bezier
 
     /**
      * Tests if another object (presumable another Bezier) are made up of the same points
-     *
      * @param o another object to compare to this object
      * @return if the two beziers share the same point values
      */
