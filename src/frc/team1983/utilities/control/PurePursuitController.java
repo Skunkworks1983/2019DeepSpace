@@ -29,9 +29,9 @@ public class PurePursuitController
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
-        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
-        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
-        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
+//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+//        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
+//        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
@@ -40,9 +40,8 @@ public class PurePursuitController
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
-
-        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
-        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
+//        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
+//        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
 
         Vector2 icc = evaluateCenterOfCurvature(pose, lookahead);
 

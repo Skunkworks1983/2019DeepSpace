@@ -125,17 +125,17 @@ function draw() {
         robot.position.y = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val;
         robot.heading = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val;
 
+        // If there is a lookahead point in the network table, read value
         let entryLookaheadX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadX"));
         lookahead.x = typeof entryLookaheadX == 'undefined' ? 0 : entryLookaheadX.val;
         let entryLookaheadY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadY"));
         lookahead.y = typeof entryLookaheadY == 'undefined' ? 0 : entryLookaheadY.val;
 
+        // If there is a closestPoint point in the network table, read value
         let entryClosestPointX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointX"));
         closestPoint.x = typeof entryClosestPointX == 'undefined' ? 0 : entryClosestPointX.val;
         let entryClosestPointY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointY"));
         closestPoint.y = typeof entryClosestPointY == 'undefined' ? 0 : entryClosestPointY.val;
-
-        console.log(closestPoint.x + ", " + closestPoint.y);
     }
     else {
         notconnected();
