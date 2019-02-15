@@ -103,5 +103,6 @@ public class UT_Bezier
     public void notBezierIsNotEqualToBeizer()
     {
         assertNotEquals(new Vector2(0, 0), new Bezier(new Vector2(0, 0), new Vector2(10, 10)));
+        assertNotEquals(new String(), new Bezier(new Vector2(3, 3), new Vector2(1, 3)));
     }
 }
