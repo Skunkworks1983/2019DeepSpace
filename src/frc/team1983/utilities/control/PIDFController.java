@@ -47,6 +47,20 @@ public class PIDFController extends Thread
         this.kD = d;
     }
 
+    protected synchronized void execute()
+    {
+        double adjustedSetpoint = setpoint;
+        if(useMotionProfiles && motionProfile != null)
+        {
+            double time = (System.currentTimeMillis() - profileStartTime) / 1000.0;
+            if(time > motionProfile.getDuration())
+                motionProfile = null;
+            else
+                adjustedSetpoint = MotionProfile.evaluate(motionProfile, Math.min(time, motionProfile.getDuration()), feedbackType);
+        }
+        transmission.setRawThrottle(adjustedSetpoint);
+    }
+
     @Override
     public void run()
     {
@@ -60,16 +74,7 @@ public class PIDFController extends Thread
                 continue;
             }
 
-            double adjustedSetpoint = setpoint;
-            if(useMotionProfiles && motionProfile != null)
-            {
-                double time = (System.currentTimeMillis() - profileStartTime) / 1000.0;
-                if(time > motionProfile.getDuration())
-                    motionProfile = null;
-                else
-                    adjustedSetpoint = MotionProfile.evaluate(motionProfile, Math.min(time, motionProfile.getDuration()), feedbackType);
-            }
-            transmission.setRawThrottle(adjustedSetpoint);
+            execute();
 
             try
             {
