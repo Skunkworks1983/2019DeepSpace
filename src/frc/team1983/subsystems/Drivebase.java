@@ -3,6 +3,7 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.Spark;
 import frc.team1983.utilities.motors.Transmission;
 
@@ -17,7 +18,7 @@ public class Drivebase extends Subsystem
 
     public Drivebase()
     {
-        left = new Transmission("Left Drivebase",
+        left = new Transmission("Left Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.LEFT_1, RobotMap.Drivebase.LEFT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_2, RobotMap.Drivebase.LEFT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
@@ -29,7 +30,7 @@ public class Drivebase extends Subsystem
         left.setPID(0.03, 0 , 0);
 
 
-        right = new Transmission("Right Drivebase",
+        right = new Transmission("Right Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_2, RobotMap.Drivebase.RIGHT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)

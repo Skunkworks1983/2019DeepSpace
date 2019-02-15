@@ -15,7 +15,7 @@ public interface MotionProfile
      * @param cruiseVelocity The maximum velocity this profile should achieve
      * @param acceleration   The maximum acceleration this profile should achieve
      */
-    static MotionProfile generateTrapezoidalProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration, FeedbackType feedbackType)
+    static MotionProfile generateProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration, FeedbackType feedbackType)
     {
         // Distance the system will travel (difference between current and desired position)
         double distance = Math.abs(endpoint - startpoint); int velocitySign = endpoint > startpoint ? 1 : -1;
