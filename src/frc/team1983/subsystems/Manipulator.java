@@ -9,14 +9,14 @@ import frc.team1983.services.logging.Logger;
 
 /**
  * The manipulator is mounted to the elevator, and is how we score game pieces. It has four actuators on it:
- * The extender pushes the entire mechanism out and in. The claw grabs hatch panels by opening up. The rollers grab cargo.
+ * The extender pushes the entire mechanism out and in. The hooks grabs hatch panels by opening up. The rollers grab cargo.
  */
 public class Manipulator extends Subsystem
 {
     private Logger logger;
 
     private DoubleSolenoid extender;
-    private DoubleSolenoid claw;
+    private DoubleSolenoid hooks;
 
     private TalonSRX leftRoller;
     private TalonSRX rightRoller;
@@ -27,16 +27,16 @@ public class Manipulator extends Subsystem
     /**
      * This constructor is mainly for unit testing.
      */
-    public Manipulator(DoubleSolenoid extender, DoubleSolenoid claw, TalonSRX leftRoller, TalonSRX rightRoller, Logger logger)
+    public Manipulator(DoubleSolenoid extender, DoubleSolenoid hooks, TalonSRX leftRoller, TalonSRX rightRoller, Logger logger)
     {
         this.extender = extender;
-        this.claw = claw;
+        this.hooks = hooks;
         this.leftRoller = leftRoller;
         this.rightRoller = rightRoller;
         this.logger = logger;
 
         isExtended = extender.get() == DoubleSolenoid.Value.kForward;
-        isOpen = claw.get() == DoubleSolenoid.Value.kForward;
+        isOpen = hooks.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
@@ -45,7 +45,7 @@ public class Manipulator extends Subsystem
     public Manipulator()
     {
         this(new DoubleSolenoid(MotorMap.Manipulator.EXTENDER_FORWARD, MotorMap.Manipulator.EXTENDER_REVERSE),
-                new DoubleSolenoid(MotorMap.Manipulator.CLAW_FORWARD, MotorMap.Manipulator.CLAW_REVERSE),
+                new DoubleSolenoid(MotorMap.Manipulator.HOOKS_FORWARD, MotorMap.Manipulator.HOOKS_REVERSE),
                 new TalonSRX(MotorMap.Manipulator.LEFT_ROLLER), new TalonSRX(MotorMap.Manipulator.RIGHT_ROLLER),
                 Logger.getInstance());
 
@@ -54,22 +54,22 @@ public class Manipulator extends Subsystem
     }
 
     /**
-     * @param isExtended If the manipulator should be extended or not
+     * @param shouldExtend If the manipulator should be extended or not
      */
-    public void setExtender(boolean isExtended)
+    public void setExtender(boolean shouldExtend)
     {
-        this.isExtended = isExtended;
-        logger.debug((isExtended ? "Extending" : "Retracting") + " manipulator", this.getClass());
-        extender.set(isExtended ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        extender.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        logger.debug((shouldExtend ? "Extending" : "Retracting") + " manipulator", this.getClass());
+        this.isExtended = shouldExtend;
     }
 
     /**
-     * @param shouldOpen If the claw should be opened or closed
+     * @param shouldOpen If the hooks should be opened or closed
      */
-    public void setOpen(boolean shouldOpen)
+    public void setHooks(boolean shouldOpen)
     {
-        logger.debug((shouldOpen ? "Opening" : "Closing") + " claw", this.getClass());
-        extender.set(isOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        hooks.set(shouldOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        logger.debug((shouldOpen ? "Opening" : "Closing") + " hooks", this.getClass());
         this.isOpen = shouldOpen;
     }
 
@@ -107,7 +107,7 @@ public class Manipulator extends Subsystem
     }
 
     /**
-     * @return if the claw is currently open or closed
+     * @return if the hooks is currently open or closed
      */
     public boolean isOpen()
     {

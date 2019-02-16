@@ -33,7 +33,7 @@ public class OpenClaw extends CommandBase
     @Override
     public void initialize()
     {
-        manipulator.setOpen(shouldOpen);
+        manipulator.setHooks(shouldOpen);
     }
 
     @Override

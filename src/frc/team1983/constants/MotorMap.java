@@ -21,8 +21,8 @@ public class MotorMap
 
     public static class Manipulator
     {
-        public static final int CLAW_FORWARD = 0;
-        public static final int CLAW_REVERSE = 0;
+        public static final int HOOKS_FORWARD = 0;
+        public static final int HOOKS_REVERSE = 0;
 
         public static final int EXTENDER_FORWARD = 0;
         public static final int EXTENDER_REVERSE = 0;
