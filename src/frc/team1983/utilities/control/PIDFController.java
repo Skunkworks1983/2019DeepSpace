@@ -31,13 +31,6 @@ public class PIDFController extends Thread
         setPID(p, i, d);
 
         this.feedforwards = feedForwards;
-
-        //These should probably be reset again before first execution, because construction usually happens a long time
-        // before execution, but this at least prevents null pointer exceptions
-        prevValue = source.pidGet();
-        prevTime = System.currentTimeMillis() / 1000.0;
-
-        setpoint = source.pidGet();
     }
 
     public PIDFController(Transmission transmission)
@@ -61,7 +54,8 @@ public class PIDFController extends Thread
     {
         if (useMotionProfiles && motionProfile != null)
         {
-            double time = (System.currentTimeMillis() / 1000.0) - profileStartTime;
+            double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
+
             if (time > motionProfile.getDuration())
                 motionProfile = null;
             else
@@ -133,7 +127,6 @@ public class PIDFController extends Thread
 
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
-        Logger.getInstance().info("Starting a motion profile", this.getClass());
         this.motionProfile = motionProfile;
         useMotionProfiles = true;
         profileStartTime = System.currentTimeMillis() / 1000.0;

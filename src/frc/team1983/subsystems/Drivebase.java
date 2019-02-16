@@ -9,7 +9,7 @@ import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
-    public static final double TICKS_PER_INCH = (8.69 * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION) / (6.0 * Math.PI); // encoder pulses / inches of travel
+    public static final double TICKS_PER_INCH = (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/) / (6.0 * Math.PI); // encoder pulses / inches of travel
     public static final double MAX_VELOCITY = 14.0 * 12; // inches / second, empirically measured maximum drive velocity in a straight line
     public static final double MAX_ACCELERATION = 3.0 * 12; // inches / second / second, a wild guess based on MAX_VELOCITY
     public static final double TRACK_WIDTH = 26.0; // inches, horizontal distance between left and right wheels

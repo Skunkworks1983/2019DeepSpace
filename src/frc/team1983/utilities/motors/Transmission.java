@@ -246,7 +246,7 @@ public class Transmission implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks();
+        return feedbackType == FeedbackType.POSITION ? getPositionInches() : getVelocityInches();
     }
 
     @Override
