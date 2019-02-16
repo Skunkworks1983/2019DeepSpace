@@ -5,20 +5,20 @@ coverage:
         target: 70%
         threshold: null
         base: auto
-        paths:
-          - !smellydash
-          - !src/frc/team1983/constants
-          - !src/frc/Robot.java
-          - !src/frc/Main.java
-          - !src/frc/utilities/sensors
+        ignore:
+          - "smellydash"
+          - "src/frc/team1983/constants"
+          - "src/frc/Robot.java"
+          - "src/frc/Main.java"
+          - "src/frc/utilities/sensors"
     project:
       default:
         target: auto
         threshold: null
         base: auto
-        paths:
-          - !smellydash
-          - !src/frc/team1983/constants
-          - !src/frc/Robot.java
-          - !src/frc/Main.java
-          - !src/frc/utilities/sensors
+        ignore:
+          - "smellydash"
+          - "src/frc/team1983/constants"
+          - "src/frc/Robot.java"
+          - "src/frc/Main.java"
+          - "src/frc/utilities/sensors"

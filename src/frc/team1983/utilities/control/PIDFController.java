@@ -67,7 +67,9 @@ public class PIDFController extends Thread
             else
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
         }
-        output.pidWrite(calculate(setpoint));
+        double out = calculate(setpoint);
+        //System.out.println(out);
+        output.pidWrite(out);
     }
 
     @Override
@@ -131,6 +133,7 @@ public class PIDFController extends Thread
 
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
+        Logger.getInstance().info("Starting a motion profile", this.getClass());
         this.motionProfile = motionProfile;
         useMotionProfiles = true;
         profileStartTime = System.currentTimeMillis() / 1000.0;

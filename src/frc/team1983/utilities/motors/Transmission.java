@@ -25,6 +25,8 @@ public class Transmission implements PIDInput, PIDOutput
     private double movementVelocity = 0; // in
     private double movementAcceleration = 0; // in/s
 
+    private double p = 0, i = 0, d = 0;
+
     /**
      * Constructor for a transmission with a name, master, encoder, and other motors, regardless
      * of whether or not the motor controllers are Talons or Sparks
@@ -122,7 +124,8 @@ public class Transmission implements PIDInput, PIDOutput
     {
         if (controlMode == ControlMode.Throttle)
         {
-            controller.disable();
+            if(controller != null)
+                controller.disable();
             setRawThrottle(value);
         } else
         {
@@ -132,6 +135,7 @@ public class Transmission implements PIDInput, PIDOutput
             if (controller == null)
             {
                 controller = new PIDFController(this);
+                controller.setPID(p, i, d);
                 controller.start();
             }
 
@@ -169,7 +173,10 @@ public class Transmission implements PIDInput, PIDOutput
      */
     public void setPID(double p, double i, double d)
     {
-        controller.setPID(p, i, d);
+        this.p = p;
+        this.i = i;
+        this.d = d;
+        if(controller != null) controller.setPID(p, i, d);
     }
 
     /**

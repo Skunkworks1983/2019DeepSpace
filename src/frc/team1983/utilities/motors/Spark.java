@@ -28,6 +28,8 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
     @Override
     public void set(ControlMode mode, double output)
     {
+        System.out.println(output);
+        System.out.println(mode);
         if(mode == ControlMode.Throttle) super.set(output);
     }
 
