@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
 import frc.team1983.commands.manipulator.ExtendManipulator;
-import frc.team1983.commands.manipulator.OpenClaw;
+import frc.team1983.commands.manipulator.OpenHooks;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 
 import java.util.HashMap;
@@ -95,7 +95,7 @@ public class OI
 
     public void initializeBindings()
     {
-        buttons.get(Joysticks.PANEL).get(0).whenPressed(new OpenClaw(robot.getManipulator()));
+        buttons.get(Joysticks.PANEL).get(0).whenPressed(new OpenHooks(robot.getManipulator()));
         buttons.get(Joysticks.PANEL).get(1).whenPressed(new ExtendManipulator(robot.getManipulator()));
         buttons.get(Joysticks.PANEL).get(2).whileHeld(
                 new SetManipulatorRollerSpeed(robot.getManipulator(), 0.25, true));

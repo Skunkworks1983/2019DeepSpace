@@ -3,7 +3,7 @@ package frc.team1983.commands.manipulator;
 import frc.team1983.commands.CommandBase;
 import frc.team1983.subsystems.Manipulator;
 
-public class OpenClaw extends CommandBase
+public class OpenHooks extends CommandBase
 {
     private Manipulator manipulator;
     private boolean shouldOpen;
@@ -14,7 +14,7 @@ public class OpenClaw extends CommandBase
      * @param manipulator The manipulator
      * @param shouldOpen  If the manipulator should open or close
      */
-    public OpenClaw(Manipulator manipulator, boolean shouldOpen)
+    public OpenHooks(Manipulator manipulator, boolean shouldOpen)
     {
         this.manipulator = manipulator;
         this.shouldOpen = shouldOpen;
@@ -25,7 +25,7 @@ public class OpenClaw extends CommandBase
      *
      * @param manipulator The manipulator
      */
-    public OpenClaw(Manipulator manipulator)
+    public OpenHooks(Manipulator manipulator)
     {
         this(manipulator, !manipulator.isOpen());
     }
