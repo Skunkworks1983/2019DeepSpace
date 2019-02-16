@@ -59,21 +59,55 @@ public class UT_Bezier
     }
 
     @Test
-    public void radiusOfCurvatureTest()
+    public void centerOfCurvatureTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
+        Vector2 point = b.evaluate(0.5);
+        Vector2 icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() > point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(-1, 1));
+
+        point = b.evaluate(0.5);
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() < point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1));
+
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(icc, equalTo(null));
     }
 
     @Test
-    public void centerOfCurvatureTest()
+    public void radiusOfCurvatureTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
+        Vector2 point = b.evaluate(0.5);
+        Vector2 icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(b.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(-1, 1));
+
+        point = b.evaluate(0.5);
+        icc = b.evaluateCenterOfCurvature(0.5);
+        assertThat(b.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
     }
 
     @Test
     public void closestPointTest()
     {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
 
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(-1, 0)), new Vector2(0, 0)), equalTo(true));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(1, 2)), new Vector2(1, 1)), equalTo(true));
+
+        b = new Bezier(new Vector2(0, 0), new Vector2(1, 0));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(0.5, -2)), new Vector2(0.5, 0)), equalTo(true));
+        assertThat(Vector2.equals(b.evaluateClosestPoint(new Vector2(0.5, 2)), new Vector2(0.5, 0)), equalTo(true));
     }
 
     @Test
