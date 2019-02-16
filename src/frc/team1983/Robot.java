@@ -4,17 +4,13 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.SmellyDashListener;
-import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.Manipulator;
-import frc.team1983.utilities.pathing.Path;
-import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 import frc.team1983.utilities.sensors.Pigeon;
@@ -58,6 +54,7 @@ public class Robot extends TimedRobot
         navx.reset();
         pigeon.reset();
     }
+    
     @Override
     public void teleopInit()
     {
@@ -68,6 +65,7 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
     }
+
     @Override
     public void robotPeriodic()
     {

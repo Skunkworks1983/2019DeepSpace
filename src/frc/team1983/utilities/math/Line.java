@@ -32,7 +32,7 @@ public class Line
      * Finds the intersection point of two lines
      * @param left first line
      * @param right second line
-     * @return point
+     * @return intersection
      */
     public static Vector2 cast(Line left, Line right)
     {
@@ -48,10 +48,31 @@ public class Line
     /**
      * Finds the intersection point of this line and another
      * @param other other line
-     * @return point
+     * @return intersection
      */
     public Vector2 cast(Line other)
     {
         return cast(this, other);
+    }
+
+    /**
+     * Find the closest point on a line that another point is closest to
+     * @param line
+     * @param point other point
+     * @return closest point
+     */
+    public static Vector2 closest(Line line, Vector2 point)
+    {
+        return cast(new Line(point, line.getDirection().getRight()), line);
+    }
+
+    /**
+     * Find the closest point on this line that another point is closest to
+     * @param point other point
+     * @return closest point
+     */
+    public Vector2 closest(Vector2 point)
+    {
+        return Line.closest(this, point);
     }
 }

@@ -10,7 +10,8 @@ import java.util.Arrays;
  */
 public class Bezier
 {
-    public static int RESOLUTION = 20;
+    public static int RESOLUTION = 50;
+    public static double CAST_EPSILON = 1e-2;
 
     private final Vector2[] points;
     private double length = 0;
@@ -100,13 +101,12 @@ public class Bezier
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)),
-                new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
+        return Line.cast(new Line(evaluate(t - CAST_EPSILON), evaluateNormal(t - CAST_EPSILON)),
+                         new Line(evaluate(t + CAST_EPSILON), evaluateNormal(t + CAST_EPSILON)));
     }
 
     /**
      * Evaluates the distance of the center of curvature
-     *
      * @param t the percentage along the curve [0, 1]
      * @return radius of curvature
      */
@@ -117,11 +117,10 @@ public class Bezier
 
     /**
      * Evaluate the closest point and t of the closest point
-     *
      * @param point
      * @return closest point and t of closest point
      */
-    public Pair evaluateClosestPoint(Vector2 point)
+    public Pair evaluateClosestPointAndT(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = evaluate(closestT);
@@ -141,8 +140,27 @@ public class Bezier
     }
 
     /**
+     * Evaluate the closest point from another point
+     * @param point
+     * @return closest point
+     */
+    public Vector2 evaluateClosestPoint(Vector2 point)
+    {
+        return (Vector2) evaluateClosestPointAndT(point).getValue2();
+    }
+
+    /**
+     * Evaluate the closest t from another point
+     * @param point
+     * @return closest t the percentage along the curve [0, 1]
+     */
+    public double evaluateClosestT(Vector2 point)
+    {
+        return (double) evaluateClosestPointAndT(point).getValue1();
+    }
+
+    /**
      * Tests if another object (presumable another Bezier) are made up of the same points
-     *
      * @param o another object to compare to this object
      * @return if the two beziers share the same point values
      */
