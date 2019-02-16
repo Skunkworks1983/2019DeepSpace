@@ -100,7 +100,7 @@ public class PIDFController extends Thread
     /**
      * @param setpoint The setpoint value
      */
-    private double calculate(double setpoint)
+    protected double calculate(double setpoint)
     {
         double currentValue = source.pidGet();
         double currentTime = System.currentTimeMillis() / 1000.0;
