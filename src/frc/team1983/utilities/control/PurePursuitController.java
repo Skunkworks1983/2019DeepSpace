@@ -29,7 +29,12 @@ public class PurePursuitController
     {
         Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
-        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+        if(PurePursuitController.inDeadzone(pose, path))
+            return new Pair(0.0, 0.0);
+
+//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+//        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
+//        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
@@ -38,24 +43,27 @@ public class PurePursuitController
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
+//        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
+//        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
 
         Vector2 icc = evaluateCenterOfCurvature(pose, lookahead);
 
-        if(icc == null)
-            return output;
-
-        double radius = evaluateRadiusOfCurvature(pose, icc);
-
         double distanceToEnd = Vector2.getDistance(pose.getPosition(), end);
-
-        if(PurePursuitController.inDeadzone(pose, path))
-            return new Pair(0.0, 0.0);
 
         // Reverse velocity if past end of path
         boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
-                            Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
+                Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
+
+        if(icc == null)
+        {
+            output.setValue1(velocity);
+            output.setValue2(velocity);
+            return output;
+        }
+
+        double radius = evaluateRadiusOfCurvature(pose, icc);
 
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
         output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
