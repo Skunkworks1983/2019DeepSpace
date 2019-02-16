@@ -128,6 +128,7 @@ public class PIDFController extends Thread
     {
         setpoint = value;
         useMotionProfiles = false;
+        enable();
     }
 
     // Don't forget to update your pidsource's feedback type!
@@ -136,10 +137,13 @@ public class PIDFController extends Thread
         this.motionProfile = motionProfile;
         useMotionProfiles = true;
         profileStartTime = System.currentTimeMillis() / 1000.0;
+        enable();
     }
 
     public synchronized void enable()
     {
+        prevValue = source.pidGet();
+        prevTime = System.currentTimeMillis() / 1000.0;
         enabled = true;
     }
 

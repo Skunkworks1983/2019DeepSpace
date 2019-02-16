@@ -4,6 +4,7 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.control.PIDFController;
 import frc.team1983.utilities.control.PIDOutput;
 import frc.team1983.utilities.control.PIDSource;
+import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
 
@@ -139,8 +140,10 @@ public class Transmission implements PIDSource, PIDOutput
             if(movementVelocity == 0 || movementAcceleration == 0)
                 Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
 
-            controller.setSetpoint(value);
-            controller.enable();
+            feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
+
+            controller.runMotionProfile(MotionProfile.generateProfile(
+                    pidGet(), value, movementVelocity, movementAcceleration, feedbackType));
         }
     }
 

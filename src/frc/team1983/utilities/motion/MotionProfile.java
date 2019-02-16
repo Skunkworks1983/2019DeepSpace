@@ -6,6 +6,7 @@ public interface MotionProfile
 {
     double evaluate(double time);
     double getDuration();
+    FeedbackType getFeedbackType();
 
     /**
      * Generates a motion profile for motion magic
@@ -56,6 +57,12 @@ public interface MotionProfile
                     {
                         return profileLength;
                     }
+
+                    @Override
+                    public FeedbackType getFeedbackType()
+                    {
+                        return FeedbackType.POSITION;
+                    }
                 } :
                 new MotionProfile()
                 {
@@ -69,6 +76,12 @@ public interface MotionProfile
                     public double getDuration()
                     {
                         return profileLength;
+                    }
+
+                    @Override
+                    public FeedbackType getFeedbackType()
+                    {
+                        return FeedbackType.VELOCITY;
                     }
                 };
         }
@@ -99,6 +112,12 @@ public interface MotionProfile
                     {
                         return profileLength;
                     }
+
+                    @Override
+                    public FeedbackType getFeedbackType()
+                    {
+                        return FeedbackType.POSITION;
+                    }
                 } :
                 new MotionProfile()
                 {
@@ -114,6 +133,12 @@ public interface MotionProfile
                     public double getDuration()
                     {
                         return profileLength;
+                    }
+
+                    @Override
+                    public FeedbackType getFeedbackType()
+                    {
+                        return FeedbackType.VELOCITY;
                     }
                 };
     }
