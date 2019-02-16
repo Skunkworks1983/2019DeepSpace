@@ -2,17 +2,16 @@ package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.control.PIDFController;
+import frc.team1983.utilities.control.PIDInput;
 import frc.team1983.utilities.control.PIDOutput;
-import frc.team1983.utilities.control.PIDSource;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import frc.team1983.utilities.sensors.Encoder;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Transmission implements PIDSource, PIDOutput
+public class Transmission implements PIDInput, PIDOutput
 {
     private ArrayList<Motor> motors;
     private PIDFController controller;
@@ -121,23 +120,22 @@ public class Transmission implements PIDSource, PIDOutput
      */
     public void set(ControlMode controlMode, double value)
     {
-        if(controlMode == ControlMode.Throttle)
+        if (controlMode == ControlMode.Throttle)
         {
             controller.disable();
             setRawThrottle(value);
-        }
-        else
+        } else
         {
             // controller defaults to null, so subsystems that never use multi-threaded closed-loop control
             // don't bog down the CPU because their closed-loop controller never gets instantiated. controller
             // is only created when we want to use closed-loop control.
-            if(controller == null)
+            if (controller == null)
             {
                 controller = new PIDFController(this);
                 controller.start();
             }
 
-            if(movementVelocity == 0 || movementAcceleration == 0)
+            if (movementVelocity == 0 || movementAcceleration == 0)
                 Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
 
             feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
@@ -149,7 +147,7 @@ public class Transmission implements PIDSource, PIDOutput
 
     public void setRawThrottle(double throttle)
     {
-        for(Motor motor : motors)
+        for (Motor motor : motors)
             motor.set(ControlMode.Throttle, throttle);
     }
 
@@ -158,12 +156,13 @@ public class Transmission implements PIDSource, PIDOutput
      */
     public void setBrake(boolean brake)
     {
-        for(Motor motor : motors)
+        for (Motor motor : motors)
             motor.setBrake(brake);
     }
 
     /**
      * Sets the PID gains of the controller
+     *
      * @param p
      * @param i
      * @param d
@@ -241,5 +240,11 @@ public class Transmission implements PIDSource, PIDOutput
     public double pidGet()
     {
         return feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks();
+    }
+
+    @Override
+    public double getFeedForwardValue()
+    {
+        return getVelocityInches();
     }
 }

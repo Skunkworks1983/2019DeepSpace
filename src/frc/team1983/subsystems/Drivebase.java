@@ -9,10 +9,10 @@ import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
-    public static final double TICKS_PER_INCH = 8.69 / (6.0 * Math.PI); // encoder pulses / inches of travel
-    public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
-    public static final double MAX_ACCELERATION = 3.0; // feet / second / second, a wild guess based on MAX_VELOCITY
-    public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
+    public static final double TICKS_PER_INCH = (8.69 * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION) / (6.0 * Math.PI); // encoder pulses / inches of travel
+    public static final double MAX_VELOCITY = 14.0 * 12; // inches / second, empirically measured maximum drive velocity in a straight line
+    public static final double MAX_ACCELERATION = 3.0 * 12; // inches / second / second, a wild guess based on MAX_VELOCITY
+    public static final double TRACK_WIDTH = 26.0; // inches, horizontal distance between left and right wheels
 
     public Transmission left, right;
 
@@ -25,9 +25,9 @@ public class Drivebase extends Subsystem
         );
 
         left.setTicksPerInch(TICKS_PER_INCH);
-        left.setMovementVelocity(12 * 3);
-        left.setMovementAcceleration(12 * 12);
-        left.setPID(0.03, 0 , 0);
+        left.setMovementVelocity(12);
+        left.setMovementAcceleration(12);
+        left.setPID(0.03, 0, 0);
 
 
         right = new Transmission("Right Drivebase", FeedbackType.VELOCITY,
@@ -37,9 +37,9 @@ public class Drivebase extends Subsystem
         );
 
         right.setTicksPerInch(TICKS_PER_INCH);
-        right.setMovementVelocity(12 * 3);
-        right.setMovementAcceleration(12 * 12);
-        right.setPID(0.03, 0 , 0);
+        right.setMovementVelocity(12);
+        right.setMovementAcceleration(12);
+        right.setPID(0.03, 0, 0);
 
 
         // todo: configure encoder properties of transmissions

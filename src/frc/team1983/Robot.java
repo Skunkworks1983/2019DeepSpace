@@ -1,21 +1,17 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.commands.drivebase.SmellyDashListener;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.sensors.Encoder;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
-import frc.team1983.utilities.sensors.Pigeon;
 
 public class Robot extends TimedRobot
 {
@@ -70,8 +66,8 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
 
-        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0 * 10);
-        drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0 * 10);
+        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0);
+        drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0);
     }
 
     @Override
@@ -82,7 +78,7 @@ public class Robot extends TimedRobot
 
     public static Robot getInstance()
     {
-        if(instance == null)
+        if (instance == null)
             instance = new Robot();
         return instance;
     }

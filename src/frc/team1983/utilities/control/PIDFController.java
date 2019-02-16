@@ -2,7 +2,6 @@ package frc.team1983.utilities.control;
 
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
-import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.Transmission;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ public class PIDFController extends Thread
 {
     private static final int UPDATE_RATE = 20;
 
-    private PIDSource source;
+    private PIDInput source;
     private PIDOutput output;
     private boolean useMotionProfiles = true;
 
@@ -25,7 +24,7 @@ public class PIDFController extends Thread
 
     private boolean enabled = false;
 
-    public PIDFController(PIDSource source, PIDOutput output, double p, double i, double d, ArrayList<Function<Double, Double>> feedForwards)
+    public PIDFController(PIDInput source, PIDOutput output, double p, double i, double d, ArrayList<Function<Double, Double>> feedForwards)
     {
         this.source = source;
         this.output = output;
@@ -38,7 +37,7 @@ public class PIDFController extends Thread
         prevValue = source.pidGet();
         prevTime = System.currentTimeMillis() / 1000.0;
 
-        setpoint = source.getPositionTicks();
+        setpoint = source.pidGet();
     }
 
     public PIDFController(Transmission transmission)
@@ -60,10 +59,10 @@ public class PIDFController extends Thread
 
     protected synchronized void execute()
     {
-        if(useMotionProfiles && motionProfile != null)
+        if (useMotionProfiles && motionProfile != null)
         {
             double time = (System.currentTimeMillis() / 1000.0) - profileStartTime;
-            if(time > motionProfile.getDuration())
+            if (time > motionProfile.getDuration())
                 motionProfile = null;
             else
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
@@ -74,11 +73,11 @@ public class PIDFController extends Thread
     @Override
     public void run()
     {
-        while(true)
+        while (true)
         {
-            if(!enabled) continue;
+            if (!enabled) continue;
 
-            if(kP == 0 && kI == 0 && kD == 0)
+            if (kP == 0 && kI == 0 && kD == 0)
             {
                 Logger.getInstance().warn("PID constants not configured", this.getClass());
                 continue;
@@ -89,8 +88,7 @@ public class PIDFController extends Thread
             try
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
-            }
-            catch(InterruptedException exception)
+            } catch (InterruptedException exception)
             {
                 exception.printStackTrace();
             }
@@ -115,8 +113,8 @@ public class PIDFController extends Thread
         output += cumulativeError * kI;
         output -= de / dt * kD;
 
-        double currentTicks = source.getPositionTicks();
-        for(Function<Double, Double> feedforward : feedforwards)
+        double currentTicks = source.getFeedForwardValue();
+        for (Function<Double, Double> feedforward : feedforwards)
         {
             output += feedforward.apply(currentTicks);
         }
@@ -131,7 +129,6 @@ public class PIDFController extends Thread
         enable();
     }
 
-    // Don't forget to update your pidsource's feedback type!
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
