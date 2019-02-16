@@ -158,6 +158,50 @@ function draw() {
         ellipse(mouseX, mouseY, 5);
     }
 
+    // Draw locations
+    var LENGTH = ROBOT_HEIGHT / PIXELS_PER_FOOT;
+
+    push();
+
+    scale(PIXELS_PER_FOOT, -PIXELS_PER_FOOT);
+    translate(0, -27);
+
+    strokeWeight(0);
+    fill(255, 0, 0);
+
+    // Rockets
+    var dx = LENGTH / 2.0 * Math.cos(61.25 * Math.PI / 180.0);
+    var dy = LENGTH / 2.0 * Math.sin(61.25 * Math.PI / 180.0);
+
+    arrow(1 + (6.5 / 12.0) + dx, 17 + (8.5 / 12.0) - dy, 118.75); // LEFT_ROCKET_CLOSE
+    arrow(2 + (3.5 / 12.0) + LENGTH / 2.0, 19, 180); // LEFT_ROCKET_MIDDLE
+    arrow(1 + (6.5 / 12.0) + dx, 20 + (3.5 / 12.0) + dy, -118.75); // LEFT_ROCKET_FAR
+
+    arrow(25 + (5.5 / 12.0) - dx, 17 + (8.5 / 12.0) - dy, 61.25); // RIGHT_ROCKET_CLOSE
+    arrow(24 + (8.5 / 12.0) - LENGTH / 2.0, 19, 0); // RIGHT_ROCKET_MIDDLE
+    arrow(25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25); // RIGHT_ROCKET_FAR
+
+    // Cargo ship
+    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 25 + (7.5 / 12.0), 0); // CARGO_SHIP_LEFT_CLOSE
+    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 23 + (7.375 / 12.0), 0); // CARGO_SHIP_LEFT_MIDDLE
+    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 21 + (11.25 / 12.0), 0); // CARGO_SHIP_LEFT_FAR
+    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 25 + (7.5 / 12.0), 180); // CARGO_SHIP_RIGHT_CLOSE
+    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 23 + (7.375 / 12.0), 180); // CARGO_SHIP_RIGHT_MIDDLE
+    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 21 + (11.25 / 12.0), 180); // CARGO_SHIP_RIGHT_FAR
+    arrow(12 + (7 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90); // CARGO_SHIP_MIDDLE_LEFT
+    arrow(14 + (5 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90); // CARGO_SHIP_MIDDLE_RIGHT
+
+    // Loading stations
+    arrow(1 + (10.75 / 12.0), LENGTH / 2.0, -90); // LEFT_LOADING_STATION
+    arrow(25 + (1.25 / 12.0), LENGTH / 2.0, -90); // RIGHT_LOADING_STATION
+
+    // HAB
+    arrow(9 + (8 / 12.0), LENGTH / 2.0, 90); // LEVEL_1
+    arrow(17 + (4 / 12.0), LENGTH / 2.0, 90); // LEFT_LEVEL_2
+    arrow(13 + (6 / 12.0), 4 + LENGTH / 2.0, 90); // RIGHT_LEVEL_2
+
+    pop();
+
     // Draw poses
     fill(0, 0, 255);
     stroke(0);
@@ -178,20 +222,20 @@ function draw() {
     poses.forEach(pose => pose.showText());
 
     // draw robot
-    push();
-
-    fill(255, 0, 0);
-    stroke(0);
-    strokeWeight(1);
-
-    translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
-    rotate(-(robot.heading + 90));
-    rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
-
-    fill(0);
-    triangle(0, 5, 5, 0, -5, 0);
-
-    pop();
+    // push();
+    //
+    // fill(255, 0, 0);
+    // stroke(0);
+    // strokeWeight(1);
+    //
+    // translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
+    // rotate(-(robot.heading + 90));
+    // rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+    //
+    // fill(0);
+    // triangle(0, 5, 5, 0, -5, 0);
+    //
+    // pop();
 
     // Draw lookahead
     push();
@@ -266,4 +310,23 @@ function mousePressed() {
 
 function mouseReleased() {
     poseDragging = null;
+}
+
+function arrow(x, y, heading) {
+  let size = 0.5;
+  let lineWeight = 0.1;
+
+  push();
+
+  translate(x, y);
+
+  ellipse(0, 0, size);
+
+  strokeWeight(0.1);
+  rotate(heading);
+  line(0, 0, size, 0);
+
+  strokeWeight(0);
+
+  pop();
 }
