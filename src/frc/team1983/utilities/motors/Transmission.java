@@ -11,6 +11,9 @@ import frc.team1983.utilities.sensors.Encoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This class represents a system of motors and an encoder
+ */
 public class Transmission implements PIDInput, PIDOutput
 {
     public static ArrayList<Transmission> transmissions = new ArrayList<>();
@@ -31,12 +34,12 @@ public class Transmission implements PIDInput, PIDOutput
 
     /**
      * Constructor for a transmission with a name, master, encoder, and other motors, regardless
-     * of whether or not the motor controllers are Talons or Sparks
-     *
-     * @param name
-     * @param master
-     * @param encoder
-     * @param motors
+     * of whether or not the motor controllers are Talons or Sparks.
+     * @param name The name of this transmission. Is used for logging.
+     * @param feedbackType The feedback type that this motor should use in closed loop control
+     * @param encoder The encoder of this system. Usually attached to one of the motors.
+     * @param master The master motor. This doesn't mean much but it does ensure we always have at least one motor.
+     * @param motors An array of the other motors in this system. Can be left out if there is only one motor.
      */
     protected Transmission(String name, FeedbackType feedbackType, Encoder encoder, Motor master, Motor... motors)
     {
@@ -57,10 +60,7 @@ public class Transmission implements PIDInput, PIDOutput
     /**
      * Constructor for a transmission where the master motor is also the encoder (either a Talon with an encoder plugged in or
      * a NEO with the built-in encoder)
-     *
-     * @param name
-     * @param master
-     * @param motors
+     * @param master A motor with an attached encoder
      */
     public Transmission(String name, FeedbackType feedbackType, Motor master, Motor... motors)
     {
@@ -70,10 +70,7 @@ public class Transmission implements PIDInput, PIDOutput
     /**
      * Constructor for a transmission where the transmission uses an encoder that is plugged directly into the roboRIO
      *
-     * @param name
-     * @param master
-     * @param encoderPort
-     * @param motors
+     * @param encoderPort The port that a new DigitalInputEncoder will be attached to.
      */
     public Transmission(String name, FeedbackType feedbackType, int encoderPort, Motor master, Motor... motors)
     {
@@ -107,7 +104,6 @@ public class Transmission implements PIDInput, PIDOutput
 
     /**
      * Convert inches to ticks
-     *
      * @param inches A position in inches
      * @return The number of ticks for this position
      */
@@ -118,7 +114,6 @@ public class Transmission implements PIDInput, PIDOutput
 
     /**
      * Convert ticks to inches
-     *
      * @param ticks A position in ticks
      * @return The number of inches for this position
      */
@@ -129,7 +124,6 @@ public class Transmission implements PIDInput, PIDOutput
 
     /**
      * Set the motor output in a control mode
-     *
      * @param controlMode The control mode the motor should run in
      * @param value       The value at which the motor should run (%, in, in/s)
      */
@@ -161,6 +155,9 @@ public class Transmission implements PIDInput, PIDOutput
         }
     }
 
+    /**
+     * @param throttle Sets the percent output of the motors
+     */
     public void setRawThrottle(double throttle)
     {
         for (Motor motor : motors)
@@ -178,10 +175,6 @@ public class Transmission implements PIDInput, PIDOutput
 
     /**
      * Sets the PID gains of the controller
-     *
-     * @param p
-     * @param i
-     * @param d
      */
     public void setPID(double p, double i, double d)
     {
@@ -223,31 +216,49 @@ public class Transmission implements PIDInput, PIDOutput
         return toInches(getVelocityTicks());
     }
 
+    /**
+     * @return The name of this transmission (for logging)
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * @return The configured cruise velocity for this transmission
+     */
     public double getMovementVelocity()
     {
         return movementVelocity;
     }
 
+    /**
+     * @param movementVelocity Sets the cruise velocity for this transmission
+     */
     public void setMovementVelocity(double movementVelocity)
     {
         this.movementVelocity = movementVelocity;
     }
 
+    /**
+     * @return The configured max acceleration for this transmission
+     */
     public double getMovementAcceleration()
     {
         return movementAcceleration;
     }
 
+    /**
+     * @param movementAcceleration Sets the max acceleration of this transmission
+     */
     public void setMovementAcceleration(double movementAcceleration)
     {
         this.movementAcceleration = movementAcceleration;
     }
 
+    /**
+     * @param output For the PIDFController. Just sets the raw percent output.
+     */
     @Override
     public void pidWrite(double output)
     {
@@ -255,12 +266,18 @@ public class Transmission implements PIDInput, PIDOutput
     }
 
 
+    /**
+     * @return For the PIDFController. Returns position or velocity depending on the configured feedbacktype
+     */
     @Override
     public double pidGet()
     {
         return feedbackType == FeedbackType.POSITION ? getPositionInches() : getVelocityInches();
     }
 
+    /**
+     * @return For calculating the arbitrary feed forward terms in PIDFController
+     */
     @Override
     public double getFeedForwardValue()
     {
