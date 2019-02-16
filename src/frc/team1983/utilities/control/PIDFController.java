@@ -1,5 +1,6 @@
 package frc.team1983.utilities.control;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.Transmission;
@@ -104,9 +105,6 @@ public class PIDFController extends Thread
         double de = currentValue - prevValue; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
         double output; // Percent output to be applied to the motor
-
-        if(currentValue > setpoint)
-            System.out.println("setpoint ahead " + error * kP);
 
         output = error * kP;
         cumulativeError += error * dt;

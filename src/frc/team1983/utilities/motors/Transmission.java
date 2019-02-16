@@ -81,7 +81,7 @@ public class Transmission implements PIDInput, PIDOutput
      */
     public void zero()
     {
-        encoderOffset = -getPositionTicks();
+        encoderOffset = -encoder.getPosition();
     }
 
     /**
@@ -184,7 +184,7 @@ public class Transmission implements PIDInput, PIDOutput
      */
     public double getPositionTicks()
     {
-        return encoder.getPosition();
+        return encoderOffset + encoder.getPosition();
     }
 
     /**

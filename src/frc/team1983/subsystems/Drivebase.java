@@ -27,7 +27,7 @@ public class Drivebase extends Subsystem
         left.setTicksPerInch(TICKS_PER_INCH);
         left.setMovementVelocity(12 * 3);
         left.setMovementAcceleration(24);
-        left.setPID(0.01, 0, 0);
+        left.setPID(0.03, 0, 0);
 
 
         right = new Transmission("Right Drivebase", FeedbackType.VELOCITY,

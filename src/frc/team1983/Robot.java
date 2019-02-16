@@ -30,6 +30,8 @@ public class Robot extends TimedRobot
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
+        drivebase.zero();
+
         navx = new NavX();
         estimator = new StateEstimator();
 
