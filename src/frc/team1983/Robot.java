@@ -1,15 +1,18 @@
 package frc.team1983;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.SmellyDashListener;
+import frc.team1983.constants.MotorMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
@@ -20,11 +23,15 @@ public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
+    private Manipulator manipulator;
+    private Compressor compressor;
     private Pigeon pigeon;
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
+
+    private static final int COMPRESSOR_ID = 1;
 
     Robot()
     {
@@ -34,6 +41,8 @@ public class Robot extends TimedRobot
         logger.setGlobalLevel(Level.INFO);
 
         drivebase = new Drivebase();
+        compressor = new Compressor(COMPRESSOR_ID);
+        manipulator = new Manipulator();
         pigeon = new Pigeon(drivebase.getPigeonTalon());
         navx = new NavX();
         estimator = new StateEstimator();
@@ -52,6 +61,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+        compressor.start();
     }
     @Override
     public void teleopPeriodic()
@@ -72,12 +82,14 @@ public class Robot extends TimedRobot
     public void disabledInit()
     {
         drivebase.setBrake(false);
+        compressor.stop();
     }
 
     @Override
     public void autonomousInit()
     {
         drivebase.setBrake(true);
+        compressor.start();
 
         Scheduler.getInstance().add(new SmellyDashListener());
     }
@@ -107,5 +119,10 @@ public class Robot extends TimedRobot
     public OI getOI()
     {
         return oi;
+    }
+
+    public Manipulator getManipulator()
+    {
+        return manipulator;
     }
 }
