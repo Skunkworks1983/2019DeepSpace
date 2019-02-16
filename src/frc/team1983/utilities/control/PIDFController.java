@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.Transmission;
@@ -8,8 +7,16 @@ import frc.team1983.utilities.motors.Transmission;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+/**
+ * This is our custom implementation of a PIDF Controller. It also can be passed motion profiles, and allows for arbitrary
+ * feedforward functions. A PIDF Controller is a closed loop controller that drives a system towards a given setpoint
+ * by adding together several things. There are many explanations online for what a PID controller is, and any senior
+ * member of the team should be able to explain it better to you than I can in a javadoc.
+ */
 public class PIDFController extends Thread
 {
+    // After every execution this thread will sleep for a bit. A higher update rate reduces this wait time, effectively
+    // making the thread update more often.
     public static final int UPDATE_RATE = 20;
 
     private PIDInput source;
@@ -25,6 +32,15 @@ public class PIDFController extends Thread
 
     private boolean enabled = false;
 
+    /**
+     * @param source The input to the closed loop. Usually an encoder or transmission.
+     * @param output The object that will be fed the output. Usually a motor or transmission.
+     * @param p The proportional gain
+     * @param i The integral gain
+     * @param d The derivative gain
+     * @param feedForwards An array of Function objects, which will be passed the output of source.getFeedForward() and
+     *                     should return a value that will be added to the final output.
+     */
     public PIDFController(PIDInput source, PIDOutput output, double p, double i, double d, ArrayList<Function<Double, Double>> feedForwards)
     {
         this.source = source;
@@ -34,11 +50,19 @@ public class PIDFController extends Thread
         this.feedforwards = feedForwards;
     }
 
+    /**
+     * A constructor which passes a given transmission as source and output, zeros all the gains,
+     * and initializes an empty array for feedforwards.
+     * @param transmission The transmission that this PIDFController should control
+     */
     public PIDFController(Transmission transmission)
     {
         this(transmission, transmission, 0, 0, 0, new ArrayList<>());
     }
 
+    /**
+     * Sets the PID gains
+     */
     public synchronized void setPID(double p, double i, double d)
     {
         this.kP = p;
@@ -46,11 +70,19 @@ public class PIDFController extends Thread
         this.kD = d;
     }
 
+    /**
+     * Setter method for adding a new arbitrary feedforward function
+     * @param feedForward The new feedforward function
+     */
     public synchronized void addFeedforward(Function<Double, Double> feedForward)
     {
         feedforwards.add(feedForward);
     }
 
+    /**
+     * This method only exists for unit testing purposes. It evaluates the motion profile and calculates then writes
+     * the PIDF output
+     */
     protected void execute()
     {
         if (useMotionProfiles && motionProfile != null)
@@ -58,7 +90,7 @@ public class PIDFController extends Thread
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
             if (time > motionProfile.getDuration())
-                motionProfile = null;
+                useMotionProfiles = false;
             else
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
         }
@@ -67,6 +99,9 @@ public class PIDFController extends Thread
         output.pidWrite(out);
     }
 
+    /**
+     * Called by the system when this thread is started.
+     */
     @Override
     public void run()
     {
@@ -93,7 +128,9 @@ public class PIDFController extends Thread
     }
 
     /**
+     * Calculates the PIDF output
      * @param setpoint The setpoint value
+     * @return the calculated output
      */
     protected double calculate(double setpoint)
     {
@@ -127,6 +164,10 @@ public class PIDFController extends Thread
         enable();
     }
 
+    /**
+     * Starts a motion profile and enables the controller
+     * @param motionProfile The motion profile to be run
+     */
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
@@ -135,6 +176,9 @@ public class PIDFController extends Thread
         enable();
     }
 
+    /**
+     * Enables the controller and sets the prev variables to prevent timing issues
+     */
     public synchronized void enable()
     {
         prevValue = source.pidGet();
@@ -142,6 +186,9 @@ public class PIDFController extends Thread
         enabled = true;
     }
 
+    /**
+     * Disables the controller
+     */
     public synchronized void disable()
     {
         enabled = false;

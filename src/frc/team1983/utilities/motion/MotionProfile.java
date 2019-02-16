@@ -49,7 +49,12 @@ public interface MotionProfile
                     @Override
                     public double evaluate(double time)
                     {
-                        return time <= .5 * profileLength ? startpoint + (velocitySign * .5 * time * time * acceleration) : startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
+                        return time <= .5 * profileLength ? // Are we in the first or second triangle?
+                                // Evaluate the position by finding the area of the first triangle
+                                startpoint + (velocitySign * .5 * time * time * acceleration) :
+                                // Evaluate the position by finding the the remaining distance we need to travel
+                                // during this profile and subtracting it from total distance
+                                startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                     }
 
                     @Override
@@ -69,7 +74,10 @@ public interface MotionProfile
                     @Override
                     public double evaluate(double time)
                     {
-                        return velocitySign * (time < .5 * profileLength ? time * acceleration : (profileLength - time) * acceleration);
+                        // Calculating velocity is easy, we check which part of the profile we are on and then
+                        // multiply the distance from the beginning or end by the acceleration
+                        return velocitySign * (time < .5 * profileLength ? time * acceleration :
+                                (profileLength - time) * acceleration);
                     }
 
                     @Override
@@ -101,9 +109,14 @@ public interface MotionProfile
                     @Override
                     public double evaluate(double time)
                     {
+                        // If we are in the first triangle, we can just find the area
                         if(time < maxTriangleLength) return startpoint + (velocitySign * .5 * time * time * acceleration);
+                        // If we are at cruise velocity we can sum the first triangle with the area of the square we have
+                        // traveled
                         if(time < maxTriangleLength + rectangleLength)
                             return startpoint + (velocitySign * (maxTriangleSize + ((time - maxTriangleLength) * cruiseVelocity)));
+                        // If we are in the last triangle we can subtract the distance we need to travel from the total
+                        // area of the profile
                         return startpoint + (velocitySign * (distance - (.5 * (profileLength - time) * (profileLength - time) * acceleration)));
                     }
 
@@ -124,8 +137,11 @@ public interface MotionProfile
                     @Override
                     public double evaluate(double time)
                     {
+                        // Velocity is easy. We simply multiply the time by the acceleration.
                         if(time < maxTriangleLength) return velocitySign * time * acceleration;
+                        // Or just return the cruise velocity if we are in the square
                         if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+                        // Or multiply distance from the end by acceleration
                         return velocitySign * (profileLength - time) * acceleration;
                     }
 
