@@ -10,6 +10,7 @@ import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.motors.Transmission;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
@@ -60,6 +61,8 @@ public class Robot extends TimedRobot
     public void disabledInit()
     {
         Scheduler.getInstance().removeAll();
+        for(Transmission transmission : Transmission.transmissions)
+            transmission.disableController();
         drivebase.setBrake(false);
     }
 
@@ -67,9 +70,6 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         drivebase.setBrake(true);
-
-        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0 * 3);
-        //drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0);
     }
 
     @Override

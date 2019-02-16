@@ -25,8 +25,8 @@ public class Drivebase extends Subsystem
         );
 
         left.setTicksPerInch(TICKS_PER_INCH);
-        left.setMovementVelocity(12 * 3);
-        left.setMovementAcceleration(24);
+        left.setMovementVelocity(12 * 5);
+        left.setMovementAcceleration(12 * 2);
         left.setPID(0.03, 0, 0);
 
 

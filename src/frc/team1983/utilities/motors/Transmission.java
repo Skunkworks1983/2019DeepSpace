@@ -13,8 +13,10 @@ import java.util.Arrays;
 
 public class Transmission implements PIDInput, PIDOutput
 {
+    public static ArrayList<Transmission> transmissions = new ArrayList<>();
+
     private ArrayList<Motor> motors;
-    private PIDFController controller;
+    public PIDFController controller;
 
     private double ticksPerInch, encoderOffset; // added to encoder value for manual encoder zeroing
 
@@ -48,6 +50,8 @@ public class Transmission implements PIDInput, PIDOutput
         this.motors = new ArrayList<>();
         this.motors.add(master);
         this.motors.addAll(Arrays.asList(motors));
+
+        transmissions.add(this);
     }
 
     /**
@@ -82,6 +86,15 @@ public class Transmission implements PIDInput, PIDOutput
     public void zero()
     {
         encoderOffset = -encoder.getPosition();
+    }
+
+    /**
+     * Stops the controller from running
+     */
+    public void disableController()
+    {
+        if(controller != null)
+            controller.disable();
     }
 
     /**
@@ -144,8 +157,7 @@ public class Transmission implements PIDInput, PIDOutput
 
             feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
 
-            controller.runMotionProfile(MotionProfile.generateProfile(
-                    pidGet() + getVelocityInches() * (1.0 / PIDFController.UPDATE_RATE), value, movementVelocity, movementAcceleration, feedbackType));
+            controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, movementVelocity, movementAcceleration, feedbackType));
         }
     }
 

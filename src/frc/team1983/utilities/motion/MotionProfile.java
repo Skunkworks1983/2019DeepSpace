@@ -6,6 +6,7 @@ public interface MotionProfile
 {
     double evaluate(double time);
     double getDuration();
+    double getEndpoint();
     FeedbackType getFeedbackType();
 
     /**
@@ -59,6 +60,12 @@ public interface MotionProfile
                     }
 
                     @Override
+                    public double getEndpoint()
+                    {
+                        return endpoint;
+                    }
+
+                    @Override
                     public FeedbackType getFeedbackType()
                     {
                         return FeedbackType.POSITION;
@@ -76,6 +83,12 @@ public interface MotionProfile
                     public double getDuration()
                     {
                         return profileLength;
+                    }
+
+                    @Override
+                    public double getEndpoint()
+                    {
+                        return endpoint;
                     }
 
                     @Override
@@ -114,6 +127,12 @@ public interface MotionProfile
                     }
 
                     @Override
+                    public double getEndpoint()
+                    {
+                        return endpoint;
+                    }
+
+                    @Override
                     public FeedbackType getFeedbackType()
                     {
                         return FeedbackType.POSITION;
@@ -133,6 +152,12 @@ public interface MotionProfile
                     public double getDuration()
                     {
                         return profileLength;
+                    }
+
+                    @Override
+                    public double getEndpoint()
+                    {
+                        return endpoint;
                     }
 
                     @Override

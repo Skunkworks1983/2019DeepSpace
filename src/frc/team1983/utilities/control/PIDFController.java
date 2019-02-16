@@ -12,14 +12,13 @@ public class PIDFController extends Thread
 {
     public static final int UPDATE_RATE = 20;
 
-    private PIDInput source;
+    private PIDInput input;
     private PIDOutput output;
-    private boolean useMotionProfiles = true;
 
     private MotionProfile motionProfile;
 
     private double kP, kI, kD;
-    private double prevValue, prevTime, cumulativeError = 0, setpoint, profileStartTime;
+    public double prevValue, prevTime, cumulativeError = 0, setpoint, profileStartTime;
 
     private ArrayList<Function<Double, Double>> feedforwards;
 
@@ -27,7 +26,7 @@ public class PIDFController extends Thread
 
     public PIDFController(PIDInput source, PIDOutput output, double p, double i, double d, ArrayList<Function<Double, Double>> feedForwards)
     {
-        this.source = source;
+        this.input = source;
         this.output = output;
         setPID(p, i, d);
 
@@ -53,7 +52,7 @@ public class PIDFController extends Thread
 
     protected void execute()
     {
-        if (useMotionProfiles && motionProfile != null)
+        if (motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
@@ -63,7 +62,6 @@ public class PIDFController extends Thread
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
         }
         double out = calculate(setpoint);
-        //System.out.println(out);
         output.pidWrite(out);
     }
 
@@ -97,10 +95,11 @@ public class PIDFController extends Thread
      */
     protected double calculate(double setpoint)
     {
-        double currentValue = source.pidGet();
+        double currentValue = input.pidGet();
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
+
         //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
@@ -111,11 +110,9 @@ public class PIDFController extends Thread
         output += cumulativeError * kI;
         output -= de / dt * kD;
 
-        double currentTicks = source.getFeedForwardValue();
+        double currentTicks = input.getFeedForwardValue();
         for (Function<Double, Double> feedforward : feedforwards)
-        {
             output += feedforward.apply(currentTicks);
-        }
 
         return output;
     }
@@ -123,27 +120,25 @@ public class PIDFController extends Thread
     public synchronized void setSetpoint(double value)
     {
         setpoint = value;
-        useMotionProfiles = false;
+        motionProfile = null;
         enable();
     }
 
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
-        useMotionProfiles = true;
         profileStartTime = System.currentTimeMillis() / 1000.0;
         enable();
     }
 
     public synchronized void enable()
     {
-        prevValue = source.pidGet();
-        prevTime = System.currentTimeMillis() / 1000.0;
         enabled = true;
     }
 
     public synchronized void disable()
     {
         enabled = false;
+        motionProfile = null;
     }
 }
