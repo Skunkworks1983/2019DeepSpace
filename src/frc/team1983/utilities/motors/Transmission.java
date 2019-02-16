@@ -18,12 +18,12 @@ public class Transmission implements PIDInput, PIDOutput
 {
     public static ArrayList<Transmission> transmissions = new ArrayList<>();
 
-    private ArrayList<Motor> motors;
-    public PIDFController controller;
+    protected ArrayList<Motor> motors;
+    protected PIDFController controller;
 
     private double ticksPerInch, encoderOffset; // added to encoder value for manual encoder zeroing
 
-    private Encoder encoder;
+    protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
 
@@ -134,7 +134,8 @@ public class Transmission implements PIDInput, PIDOutput
             if(controller != null)
                 controller.disable();
             setRawThrottle(value);
-        } else
+        }
+        else
         {
             // controller defaults to null, so subsystems that never use multi-threaded closed-loop control
             // don't bog down the CPU because their closed-loop controller never gets instantiated. controller
@@ -282,5 +283,20 @@ public class Transmission implements PIDInput, PIDOutput
     public double getFeedForwardValue()
     {
         return getVelocityInches();
+    }
+
+    public double getP()
+    {
+        return p;
+    }
+
+    public double getI()
+    {
+        return i;
+    }
+
+    public double getD()
+    {
+        return d;
     }
 }
