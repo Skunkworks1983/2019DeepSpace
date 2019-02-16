@@ -46,7 +46,7 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
     @Override
     public double getPosition()
     {
-        return (getInverted() ? -1 : 1) * encoder.getPosition();
+        return encoder.getPosition();
     }
 
     @Override

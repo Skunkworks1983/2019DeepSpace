@@ -66,8 +66,8 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
 
-        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0);
-        drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0);
+        drivebase.left.set(ControlMode.Position, drivebase.left.getPositionInches() + 18.0 * 3);
+        //drivebase.right.set(ControlMode.Position, drivebase.right.getPositionInches() + 18.0);
     }
 
     @Override

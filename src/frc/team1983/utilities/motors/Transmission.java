@@ -145,7 +145,7 @@ public class Transmission implements PIDInput, PIDOutput
             feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
 
             controller.runMotionProfile(MotionProfile.generateProfile(
-                    pidGet(), value, movementVelocity, movementAcceleration, feedbackType));
+                    pidGet() + getVelocityInches() * (1.0 / PIDFController.UPDATE_RATE), value, movementVelocity, movementAcceleration, feedbackType));
         }
     }
 

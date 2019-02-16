@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class PIDFController extends Thread
 {
-    private static final int UPDATE_RATE = 20;
+    public static final int UPDATE_RATE = 20;
 
     private PIDInput source;
     private PIDOutput output;
@@ -50,7 +50,7 @@ public class PIDFController extends Thread
         feedforwards.add(feedForward);
     }
 
-    protected synchronized void execute()
+    protected void execute()
     {
         if (useMotionProfiles && motionProfile != null)
         {
@@ -100,9 +100,13 @@ public class PIDFController extends Thread
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
+        //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
         double dt = currentTime - prevTime; // Change in time since last calculation
         double output; // Percent output to be applied to the motor
+
+        if(currentValue > setpoint)
+            System.out.println("setpoint ahead " + error * kP);
 
         output = error * kP;
         cumulativeError += error * dt;
