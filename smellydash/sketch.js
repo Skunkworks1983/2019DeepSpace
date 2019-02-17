@@ -196,9 +196,11 @@ function draw() {
     arrow(25 + (1.25 / 12.0), LENGTH / 2.0, -90); // RIGHT_LOADING_STATION
 
     // HAB
-    arrow(9 + (8 / 12.0), LENGTH / 2.0, 90); // LEVEL_1
-    arrow(17 + (4 / 12.0), LENGTH / 2.0, 90); // LEFT_LEVEL_2
-    arrow(13 + (6 / 12.0), 4 + LENGTH / 2.0, 90); // RIGHT_LEVEL_2
+    arrow(9 + (8 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
+    arrow(13 + (6 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
+    arrow(17 + (4 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
+    arrow(9 + (8 / 12.0), LENGTH / 2.0, 90); // LEVEL_2_LEFT
+    arrow(17 + (4 / 12.0), LENGTH / 2.0, 90); // LEVEL_2_RIGHT
 
     pop();
 

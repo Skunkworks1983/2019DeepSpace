@@ -1,6 +1,5 @@
 package frc.team1983.utilities.math;
 
-import frc.team1983.constants.Constants;
 import frc.team1983.utilities.Pair;
 
 import java.util.Arrays;
@@ -18,7 +17,6 @@ public class Bezier
 
     /**
      * Creates a bezier with at least two points
-     *
      * @param point0 the first point, must be defined
      * @param point1 the second point, must be defined
      * @param points all other points
@@ -35,7 +33,6 @@ public class Bezier
 
     /**
      * Evaluate a point on the curve at a value of t
-     *
      * @param t the percentage along the curve [0, 1]
      * @return point
      */
@@ -48,7 +45,6 @@ public class Bezier
 
     /**
      * Sums the length of all curves in this path
-     *
      * @return the length
      */
     public double getLength()
@@ -59,7 +55,6 @@ public class Bezier
 
     /**
      * Evaluate a normalized tangent to the curve at a value of t
-     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -72,7 +67,6 @@ public class Bezier
 
     /**
      * Evaluate a normalized perpendicular to the curve at a value of t
-     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -83,8 +77,7 @@ public class Bezier
 
     /**
      * Evaluate a point that is offset a distance along the normal at B(t)
-     *
-     * @param t      the percentage along the curve [0, 1]
+     * @param t the percentage along the curve [0, 1]
      * @param offset
      * @return point
      */
@@ -94,8 +87,7 @@ public class Bezier
     }
 
     /**
-     * Evaluates the center of curvature to generate motion profiles
-     *
+     * Evaluates the center of curvature of a point on the curve
      * @param t the percentage along the curve [0, 1]
      * @return center of curvature
      */

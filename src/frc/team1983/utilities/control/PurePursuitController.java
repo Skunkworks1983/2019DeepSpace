@@ -14,15 +14,16 @@ import frc.team1983.utilities.pathing.Pose;
  */
 public class PurePursuitController
 {
-    public static final double LOOKAHEAD_DISTANCE = 3.0; // feet
+    public static final double LOOKAHEAD_DISTANCE = 2.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
 
-    public static final double ANGLE_CORRECTION = 4.0;
-    public static final double ANGLE_CORRECTION_DISTANCE = 3.0;
+    public static final double ANGLE_CORRECTION = 3.5;
+    public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
+    public static final double MAX_ANGLE_CORRECTION = 0.4;
 
     public static final double MIN_VELOCITY = 1.0; // feet / s
     public static final double VELOCITY_DEADZONE = 0.15; // feet
-    public static final double HEADING_DEADZONE = 5.0; // degrees
+    public static final double HEADING_DEADZONE = 3.0; // degrees
 
     /**
      * Evaluates the motor output
@@ -61,11 +62,14 @@ public class PurePursuitController
                 Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
+
+        // Keep velocity from being below the minimum
         if(velocity > 0 && velocity < MIN_VELOCITY)
             velocity = MIN_VELOCITY;
         else if(velocity < 0 && velocity > -MIN_VELOCITY)
             velocity = -MIN_VELOCITY;
 
+        // If there is no center of curvature, go straight
         if(icc == null)
         {
             output.setValue1(velocity);
@@ -75,12 +79,14 @@ public class PurePursuitController
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
+        // Correct for angle error
         double angleCorrection = 0;
         if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
         {
-            angleCorrection = getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION;
+            angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
         }
 
+        // Set velocities
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
         output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY + angleCorrection);
 
@@ -95,13 +101,13 @@ public class PurePursuitController
      */
     protected static Vector2 evaluateLookaheadPoint(Pose pose, Path path)
     {
-        // find closest point on path to robot
+        // Find closest point on path to robot
         double closestT = path.evaluateClosestT(pose.getPosition());
 
-        // find lookAhead point
+        // Find lookAhead point
         double lookaheadT = closestT + LOOKAHEAD_DISTANCE / path.getLength();
 
-        // if look ahead is outside of path bounds, evaluate along continuing tangent
+        // If look ahead is outside of path bounds, evaluate along continuing tangent
         Vector2 lookahead;
         if(lookaheadT > 1.0)
             lookahead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1.0) * path.getLength()));
