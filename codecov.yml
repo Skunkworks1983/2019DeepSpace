@@ -2,23 +2,18 @@ coverage:
   status:
     patch:
       default:
-        target: 70%
+        target: 50%
         threshold: null
         base: auto
-        ignore:
-          - "smellydash"
-          - "src/frc/team1983/constants"
-          - "src/frc/Robot.java"
-          - "src/frc/Main.java"
-          - "src/frc/utilities/sensors"
     project:
       default:
         target: auto
         threshold: null
         base: auto
-        ignore:
-          - "smellydash"
-          - "src/frc/team1983/constants"
-          - "src/frc/Robot.java"
-          - "src/frc/Main.java"
-          - "src/frc/utilities/sensors"
+
+ignore:
+  - "smellydash"
+  - "src/frc/team1983/constants"
+  - "src/frc/team1983/Robot.java"
+  - "src/frc/team1983/Main.java"
+  - "src/frc/team1983/services/OI.java"
