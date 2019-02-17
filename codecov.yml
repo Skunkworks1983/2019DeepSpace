@@ -2,7 +2,7 @@ coverage:
   status:
     patch:
       default:
-        target: 70%
+        target: 50%
         threshold: null
         base: auto
     project:
@@ -10,6 +10,10 @@ coverage:
         target: auto
         threshold: null
         base: auto
-        paths:
-          - !smellydash
-          - !src/frc/team1983/constants
+
+ignore:
+  - "smellydash"
+  - "src/frc/team1983/constants"
+  - "src/frc/team1983/Robot.java"
+  - "src/frc/team1983/Main.java"
+  - "src/frc/team1983/services/OI.java"

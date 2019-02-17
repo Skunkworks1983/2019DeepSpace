@@ -55,7 +55,7 @@ public class StateEstimator implements Runnable
         this.position = position;
     }
 
-    private synchronized void execute()
+    protected synchronized void execute()
     {
         double leftPosition = drivebase.getLeftPosition();
         double rightPosition = drivebase.getRightPosition();

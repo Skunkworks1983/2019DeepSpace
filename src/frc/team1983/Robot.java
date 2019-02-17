@@ -1,23 +1,29 @@
 package frc.team1983;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.drivebase.SmellyDashListener;
+import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.subsystems.Elevator;
+import frc.team1983.subsystems.Manipulator;
+import frc.team1983.utilities.motors.Transmission;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
-import frc.team1983.utilities.sensors.Pigeon;
 
 public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
-    private Pigeon pigeon;
+    private Elevator elevator;
+    private Manipulator manipulator;
+    private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
@@ -30,9 +36,18 @@ public class Robot extends TimedRobot
         logger = Logger.getInstance();
         logger.setGlobalLevel(Level.INFO);
 
+        compressor = new Compressor(RobotMap.COMPRESSOR);
+
         drivebase = new Drivebase();
-        pigeon = new Pigeon(drivebase.getPigeonTalon());
+        drivebase.zero();
+
+        elevator = new Elevator();
+        elevator.zero();
+
+        manipulator = new Manipulator();
+
         navx = new NavX();
+
         estimator = new StateEstimator();
 
         oi = new OI();
@@ -44,7 +59,12 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         navx.reset();
-        pigeon.reset();
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+        Scheduler.getInstance().run();
     }
 
     @Override
@@ -60,20 +80,30 @@ public class Robot extends TimedRobot
     @Override
     public void disabledInit()
     {
+        Scheduler.getInstance().removeAll();
+        for(Transmission transmission : Transmission.transmissions)
+            transmission.disableController();
         drivebase.setBrake(false);
+        compressor.stop();
     }
 
     @Override
     public void autonomousInit()
     {
         drivebase.setBrake(true);
+        compressor.start();
+    }
 
-        Scheduler.getInstance().add(new SmellyDashListener());
+    @Override
+    public void teleopInit()
+    {
+        Scheduler.getInstance().add(new RunTankDrive());
+        compressor.start();
     }
 
     public static Robot getInstance()
     {
-        if(instance == null)
+        if (instance == null)
             instance = new Robot();
         return instance;
     }
@@ -81,6 +111,11 @@ public class Robot extends TimedRobot
     public Drivebase getDrivebase()
     {
         return drivebase;
+    }
+
+    public Elevator getElevator()
+    {
+        return elevator;
     }
 
     public Gyro getGyro()
@@ -96,5 +131,10 @@ public class Robot extends TimedRobot
     public OI getOI()
     {
         return oi;
+    }
+
+    public Manipulator getManipulator()
+    {
+        return manipulator;
     }
 }
