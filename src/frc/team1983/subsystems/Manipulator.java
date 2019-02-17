@@ -3,8 +3,7 @@ package frc.team1983.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team1983.constants.MotorMap;
+import frc.team1983.constants.RobotMap;
 import frc.team1983.services.logging.Logger;
 
 /**
@@ -44,13 +43,13 @@ public class Manipulator //extends Subsystem
      */
     public Manipulator()
     {
-        this(new DoubleSolenoid(MotorMap.Manipulator.EXTENDER_FORWARD, MotorMap.Manipulator.EXTENDER_REVERSE),
-                new DoubleSolenoid(MotorMap.Manipulator.HOOKS_FORWARD, MotorMap.Manipulator.HOOKS_REVERSE),
-                new TalonSRX(MotorMap.Manipulator.LEFT_ROLLER), new TalonSRX(MotorMap.Manipulator.RIGHT_ROLLER),
+        this(new DoubleSolenoid(RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE),
+                new DoubleSolenoid(RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE),
+                new TalonSRX(RobotMap.Manipulator.LEFT_ROLLER), new TalonSRX(RobotMap.Manipulator.RIGHT_ROLLER),
                 Logger.getInstance());
 
-        leftRoller.setInverted(MotorMap.Manipulator.LEFT_ROLLER_REVERSED);
-        rightRoller.setInverted(MotorMap.Manipulator.RIGHT_ROLLER_REVERSED);
+        leftRoller.setInverted(RobotMap.Manipulator.LEFT_ROLLER_REVERSED);
+        rightRoller.setInverted(RobotMap.Manipulator.RIGHT_ROLLER_REVERSED);
     }
 
     /**

@@ -13,7 +13,7 @@ public class Bezier
     public static int RESOLUTION = 50;
     public static double CAST_EPSILON = 1e-2;
 
-    private final Vector2[] points;
+    protected final Vector2[] points;
     private double length = 0;
 
     /**
@@ -58,6 +58,18 @@ public class Bezier
     }
 
     /**
+     * Evaluates the derivative of the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return derivative vector
+     */
+    public Vector2 evaluateDerivative(double t)
+    {
+        if (points.length == 2) return Vector2.sub(points[1], points[0]).getNormalized();
+        else
+            return Vector2.sub(new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t), new Bezier(points[0], points[1], Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t));
+    }
+
+    /**
      * Evaluate a normalized tangent to the curve at a value of t
      *
      * @param t the percentage along the curve [0, 1]
@@ -65,9 +77,7 @@ public class Bezier
      */
     public Vector2 evaluateTangent(double t)
     {
-        if (points.length == 2) return Vector2.sub(points[1], points[0]).getNormalized();
-        else
-            return Vector2.sub(new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t), new Bezier(points[0], points[1], Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t)).getNormalized();
+        return evaluateDerivative(t).getNormalized();
     }
 
     /**

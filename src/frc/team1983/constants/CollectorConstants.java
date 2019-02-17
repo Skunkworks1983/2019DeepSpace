@@ -1,6 +1,6 @@
 package frc.team1983.constants;
 
-public class CollectorConstants
+public class CollectorConstants // todo: delete
 {
     public static final int WRIST_RIGHT = 1234; //TODO: FIX PORTS
     public static final int WRIST_LEFT = 1234;
