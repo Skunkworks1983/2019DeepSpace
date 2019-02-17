@@ -4,7 +4,7 @@ import frc.team1983.commands.CommandBase;
 import frc.team1983.subsystems.Manipulator;
 
 /**
- * Sets the speed of the rollers on the manipulator
+ * Sets the speed of the grippers on the manipulator
  */
 public class SetManipulatorRollerSpeed extends CommandBase
 {
@@ -14,12 +14,12 @@ public class SetManipulatorRollerSpeed extends CommandBase
     private boolean zeroOnFinish;
 
     /**
-     * This constructor allows setting both roller speed independently
+     * This constructor allows setting both gripper speeds independently
      *
      * @param manipulator     The manipulator
-     * @param leftSpeed       The percent output of the left roller
-     * @param rightSpeed      The percent output of the right roller
-     * @param zeroOnInterrupt If the command should run forever and zero the rollers when it ends
+     * @param leftSpeed       The percent output of the left gripper
+     * @param rightSpeed      The percent output of the right gripper
+     * @param zeroOnInterrupt If the command should run forever and zero the grippers when it ends
      */
     public SetManipulatorRollerSpeed(Manipulator manipulator, double leftSpeed, double rightSpeed, boolean zeroOnInterrupt)
     {
@@ -30,11 +30,11 @@ public class SetManipulatorRollerSpeed extends CommandBase
     }
 
     /**
-     * This constructor allows setting both roller speeds to the same value
+     * This constructor allows setting both gripper speeds to the same value
      *
      * @param manipulator     The manipulator
-     * @param speed           The percent output of both rollers
-     * @param zeroOnInterrupt If the command should run forever and zero the rollers when it is interrupted
+     * @param speed           The percent output of both grippers
+     * @param zeroOnInterrupt If the command should run forever and zero the grippers when it is interrupted
      */
     public SetManipulatorRollerSpeed(Manipulator manipulator, double speed, boolean zeroOnInterrupt)
     {
@@ -44,8 +44,8 @@ public class SetManipulatorRollerSpeed extends CommandBase
     @Override
     public void initialize()
     {
-        manipulator.setLeftRoller(leftSpeed);
-        manipulator.setRightRoller(rightSpeed);
+        manipulator.setLeftGripper(leftSpeed);
+        manipulator.setRightGripper(rightSpeed);
     }
 
     @Override
@@ -69,6 +69,6 @@ public class SetManipulatorRollerSpeed extends CommandBase
     @Override
     public void interrupted()
     {
-        manipulator.setRollers(0);
+        manipulator.setGrippers(0);
     }
 }

@@ -26,18 +26,18 @@ public class UT_SetManipulatorRollerSpeed
     {
         SetManipulatorRollerSpeed command = new SetManipulatorRollerSpeed(manipulator, .5, .3, false);
         command.initialize();
-        verify(manipulator).setLeftRoller(.5);
-        verify(manipulator).setRightRoller(.3);
+        verify(manipulator).setLeftGripper(.5);
+        verify(manipulator).setRightGripper(.3);
 
         command = new SetManipulatorRollerSpeed(manipulator, -.5, -.3, false);
         command.initialize();
-        verify(manipulator).setLeftRoller(-.5);
-        verify(manipulator).setRightRoller(-.3);
+        verify(manipulator).setLeftGripper(-.5);
+        verify(manipulator).setRightGripper(-.3);
 
         command = new SetManipulatorRollerSpeed(manipulator, .8, false);
         command.initialize();
-        verify(manipulator).setLeftRoller(.8);
-        verify(manipulator).setRightRoller(.8);
+        verify(manipulator).setLeftGripper(.8);
+        verify(manipulator).setRightGripper(.8);
     }
 
     @Test
@@ -55,6 +55,6 @@ public class UT_SetManipulatorRollerSpeed
     {
         SetManipulatorRollerSpeed command = new SetManipulatorRollerSpeed(manipulator, 1, false);
         command.interrupted();
-        verify(manipulator).setRollers(0);
+        verify(manipulator).setGrippers(0);
     }
 }

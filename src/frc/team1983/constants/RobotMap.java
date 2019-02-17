@@ -38,10 +38,10 @@ public class RobotMap
         public static final int EXTENDER_FORWARD = 0;
         public static final int EXTENDER_REVERSE = 0;
 
-        public static final int LEFT_ROLLER = 0;
-        public static final boolean LEFT_ROLLER_REVERSED = false;
-        public static final int RIGHT_ROLLER = 0;
-        public static final boolean RIGHT_ROLLER_REVERSED = false;
+        public static final int LEFT_GRIPPER = 0;
+        public static final boolean LEFT_GRIPPER_REVERSED = false;
+        public static final int RIGHT_GRIPPER = 0;
+        public static final boolean RIGHT_GRIPPER_REVERSED = false;
     }
 
     public static class Elevator //todo: rename
