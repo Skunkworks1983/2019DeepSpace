@@ -49,4 +49,12 @@ public class UT_SetManipulatorRollerSpeed
         command = new SetManipulatorRollerSpeed(manipulator, 1, true);
         assertFalse(command.isFinished());
     }
+
+    @Test
+    public void interruptedSetsMotorOutputsToZero()
+    {
+        SetManipulatorRollerSpeed command = new SetManipulatorRollerSpeed(manipulator, 1, false);
+        command.interrupted();
+        verify(manipulator).setRollers(0);
+    }
 }
