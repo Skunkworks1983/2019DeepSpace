@@ -54,7 +54,7 @@ public class Robot extends TimedRobot
         navx.reset();
         pigeon.reset();
     }
-    
+
     @Override
     public void teleopInit()
     {

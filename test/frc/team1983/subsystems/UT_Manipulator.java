@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UT_Manipulator
@@ -31,6 +32,8 @@ public class UT_Manipulator
     {
         initMocks(this);
 
+        when(extender.get()).thenReturn(DoubleSolenoid.Value.kOff);
+        when(hooks.get()).thenReturn(DoubleSolenoid.Value.kOff);
         manipulator = new Manipulator(extender, hooks, leftRoller, rightRoller, Logger.getInstance());
     }
 
