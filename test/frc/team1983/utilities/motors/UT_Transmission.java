@@ -86,7 +86,7 @@ public class UT_Transmission
     @Test
     public void usesDigitalInputEncoder()
     {
-        Transmission transmission = new Transmission("Test Transmission", FeedbackType.VELOCITY, 1, motor1);
+        //Transmission transmission = new Transmission("Test Transmission", FeedbackType.VELOCITY, 1, motor1);
         //assertThat(transmission.encoder instanceof DigitalInputEncoder, is(true));
     }
 
