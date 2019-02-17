@@ -8,9 +8,9 @@ coverage:
         ignore:
           - "smellydash"
           - "src/frc/team1983/constants"
-          - "src/frc/Robot.java"
-          - "src/frc/Main.java"
-          - "src/frc/utilities/sensors"
+          - "src/frc/team1983/Robot.java"
+          - "src/frc/team1983/Main.java"
+          - "src/frc/team1983/utilities/sensors"
     project:
       default:
         target: auto
@@ -19,6 +19,6 @@ coverage:
         ignore:
           - "smellydash"
           - "src/frc/team1983/constants"
-          - "src/frc/Robot.java"
-          - "src/frc/Main.java"
-          - "src/frc/utilities/sensors"
+          - "src/frc/team1983/Robot.java"
+          - "src/frc/team1983/Main.java"
+          - "src/frc/team1983/utilities/sensors"
