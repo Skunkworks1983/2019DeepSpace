@@ -9,7 +9,7 @@ import frc.team1983.services.logging.Logger;
 
 /**
  * The manipulator is mounted to the elevator, and is how we score game pieces. It has four actuators on it:
- * The extender pushes the entire mechanism out and in. The hooks grabs hatch panels by opening up. The rollers grab cargo.
+ * The extender pushes the entire mechanism out and in. The hooks grabs hatch panels by opening up. The grippers grip cargo.
  */
 public class Manipulator extends Subsystem
 {
@@ -18,8 +18,8 @@ public class Manipulator extends Subsystem
     private DoubleSolenoid extender;
     private DoubleSolenoid hooks;
 
-    private TalonSRX leftRoller;
-    private TalonSRX rightRoller;
+    private TalonSRX leftGripper;
+    private TalonSRX rightGripper;
 
     private boolean isExtended;
     private boolean isOpen;
@@ -27,12 +27,12 @@ public class Manipulator extends Subsystem
     /**
      * This constructor is mainly for unit testing.
      */
-    public Manipulator(DoubleSolenoid extender, DoubleSolenoid hooks, TalonSRX leftRoller, TalonSRX rightRoller, Logger logger)
+    public Manipulator(DoubleSolenoid extender, DoubleSolenoid hooks, TalonSRX leftGripper, TalonSRX rightGripper, Logger logger)
     {
         this.extender = extender;
         this.hooks = hooks;
-        this.leftRoller = leftRoller;
-        this.rightRoller = rightRoller;
+        this.leftGripper = leftGripper;
+        this.rightGripper = rightGripper;
         this.logger = logger;
 
         isExtended = extender.get() == DoubleSolenoid.Value.kForward;
@@ -46,11 +46,11 @@ public class Manipulator extends Subsystem
     {
         this(new DoubleSolenoid(RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE),
                 new DoubleSolenoid(RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE),
-                new TalonSRX(RobotMap.Manipulator.LEFT_ROLLER), new TalonSRX(RobotMap.Manipulator.RIGHT_ROLLER),
+                new TalonSRX(RobotMap.Manipulator.LEFT_GRIPPER), new TalonSRX(RobotMap.Manipulator.RIGHT_GRIPPER),
                 Logger.getInstance());
 
-        leftRoller.setInverted(RobotMap.Manipulator.LEFT_ROLLER_REVERSED);
-        rightRoller.setInverted(RobotMap.Manipulator.RIGHT_ROLLER_REVERSED);
+        leftGripper.setInverted(RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
+        rightGripper.setInverted(RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
     }
 
     /**
@@ -76,26 +76,26 @@ public class Manipulator extends Subsystem
     /**
      * @param output The percentoutput that should be applied to the motor
      */
-    public void setLeftRoller(double output)
+    public void setLeftGripper(double output)
     {
-        leftRoller.set(ControlMode.PercentOutput, output);
+        leftGripper.set(ControlMode.PercentOutput, output);
     }
 
     /**
      * @param output The percentoutput that should be applied to the motor
      */
-    public void setRightRoller(double output)
+    public void setRightGripper(double output)
     {
-        rightRoller.set(ControlMode.PercentOutput, output);
+        rightGripper.set(ControlMode.PercentOutput, output);
     }
 
     /**
      * @param output The percentoutput that should be applied to the motors
      */
-    public void setRollers(double output)
+    public void setGrippers(double output)
     {
-        setLeftRoller(output);
-        setRightRoller(output);
+        setLeftGripper(output);
+        setRightGripper(output);
     }
 
     /**
