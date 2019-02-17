@@ -43,4 +43,13 @@ public class RobotMap
         public static final int RIGHT_ROLLER = 0;
         public static final boolean RIGHT_ROLLER_REVERSED = false;
     }
+
+    public static class Elevator //todo: rename
+    {
+        public static final int LEFT = 0; //todo: find actual value
+        public static final boolean LEFT_REVERSED = false; //todo: change
+
+        public static final int RIGHT = 1; //todo: find actual value
+        public static final boolean RIGHT_REVERSED = false; // todo: change
+    }
 }

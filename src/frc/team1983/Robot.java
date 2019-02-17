@@ -11,6 +11,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.subsystems.Elevator;
 import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.motors.Transmission;
 import frc.team1983.utilities.sensors.Gyro;
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot
 {
     private static Robot instance;
     private Drivebase drivebase;
+    private Elevator elevator;
     private Manipulator manipulator;
     private Compressor compressor;
     private NavX navx;
@@ -38,6 +40,9 @@ public class Robot extends TimedRobot
 
         drivebase = new Drivebase();
         drivebase.zero();
+
+        elevator = new Elevator();
+        elevator.zero();
 
         manipulator = new Manipulator();
 
@@ -106,6 +111,11 @@ public class Robot extends TimedRobot
     public Drivebase getDrivebase()
     {
         return drivebase;
+    }
+
+    public Elevator getElevator()
+    {
+        return elevator;
     }
 
     public Gyro getGyro()
