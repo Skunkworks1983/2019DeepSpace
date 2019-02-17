@@ -3,7 +3,6 @@ package frc.team1983.utilities.pathing;
 import frc.team1983.constants.Constants;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
-import frc.team1983.utilities.math.Line;
 import frc.team1983.utilities.math.Vector2;
 
 import java.util.ArrayList;
