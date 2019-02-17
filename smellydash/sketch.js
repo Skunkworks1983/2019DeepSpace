@@ -17,8 +17,8 @@ var wasPressed = false; // Whether the mouse was pressed last frame (for debounc
 var poseDragging = null; // The pose that is being dragged
 
 var robot = new Pose(0, 0, 90); // Default robot pose
-var lookahead = new Vector2(0, 0);
-var closestPoint = new Vector2(0, 0);
+var lookahead = new Vector2(-1, -1);
+var closestPoint = new Vector2(-1, -1);
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 //functions when pressing buttons
@@ -221,21 +221,21 @@ function draw() {
     strokeWeight(2);
     poses.forEach(pose => pose.showText());
 
-    // draw robot
-    // push();
-    //
-    // fill(255, 0, 0);
-    // stroke(0);
-    // strokeWeight(1);
-    //
-    // translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
-    // rotate(-(robot.heading + 90));
-    // rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
-    //
-    // fill(0);
-    // triangle(0, 5, 5, 0, -5, 0);
-    //
-    // pop();
+    // Draw robot
+    push();
+
+    fill(255, 0, 0);
+    stroke(0);
+    strokeWeight(1);
+
+    translate(robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);
+    rotate(-(robot.heading + 90));
+    rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
+
+    fill(0);
+    triangle(0, 5, 5, 0, -5, 0);
+
+    pop();
 
     // Draw lookahead
     push();

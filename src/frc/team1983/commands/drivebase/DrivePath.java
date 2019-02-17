@@ -25,6 +25,8 @@ public class DrivePath extends Command
         this.estimator = estimator;
         this.path = path;
         this.velocity = velocity;
+
+        System.out.println("drive path constructor");
     }
 
     public DrivePath(Path path, double velocity)

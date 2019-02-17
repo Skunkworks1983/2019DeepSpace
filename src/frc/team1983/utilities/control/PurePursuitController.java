@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Line;
@@ -16,6 +15,12 @@ import frc.team1983.utilities.pathing.Pose;
 public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 3.0; // feet
+    public static final double SLOWDOWN_DISTANCE = 4.0; // feet
+
+    public static final double ANGLE_CORRECTION = 4.0;
+    public static final double ANGLE_CORRECTION_DISTANCE = 3.0;
+
+    public static final double MIN_VELOCITY = 1.0; // feet / s
     public static final double VELOCITY_DEADZONE = 0.15; // feet
 
     /**
@@ -54,7 +59,8 @@ public class PurePursuitController
         boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
                 Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
-        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
+        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
+        velocity = Math.max(MIN_VELOCITY, velocity);
 
         if(icc == null)
         {
@@ -65,8 +71,27 @@ public class PurePursuitController
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
+        double angleCorrection = 0;
+        if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
+        {
+            // Find the target angle that the final pose is at [0, 360]
+            double target = Math.toDegrees(Math.atan2(endTangent.getY(), endTangent.getX()));
+            if (target < 0) target += 360;
+
+            // Find heading [0, 360]
+            double heading = pose.getHeading();
+            if (heading < 0) heading += 360;
+
+            // Find error and angle correction
+            double error = (target - heading);
+            if (error > 180) error -= 360;
+            else if (error < -180) error += 360;
+
+            angleCorrection = error / 180.0 * ANGLE_CORRECTION;
+        }
+
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY + angleCorrection);
 
         return output;
     }
