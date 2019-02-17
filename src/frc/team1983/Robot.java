@@ -10,6 +10,7 @@ import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
+import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.subsystems.Manipulator;
@@ -23,6 +24,7 @@ public class Robot extends TimedRobot
     private Drivebase drivebase;
     private Elevator elevator;
     private Manipulator manipulator;
+    private Collector collector;
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
@@ -43,6 +45,8 @@ public class Robot extends TimedRobot
 
         elevator = new Elevator();
         elevator.zero();
+
+        collector = new Collector();
 
         manipulator = new Manipulator();
 
@@ -136,5 +140,10 @@ public class Robot extends TimedRobot
     public Manipulator getManipulator()
     {
         return manipulator;
+    }
+
+    public Collector getCollector()
+    {
+        return collector;
     }
 }

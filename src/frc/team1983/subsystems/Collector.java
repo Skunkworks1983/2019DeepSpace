@@ -72,6 +72,21 @@ public class Collector extends Subsystem
         return wrist.getTargetValue() / ticksPerDegree;
     }
 
+    public void setPiston(boolean shouldExtend)
+    {
+        piston.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+
+    public boolean isPistonExtended()
+    {
+        return piston.get() == DoubleSolenoid.Value.kForward;
+    }
+
+    public void setRollerThrottle(double throttle)
+    {
+        roller.set(ControlMode.Position, throttle);
+    }
+
     public double getAngle()
     {
         return wrist.getPositionTicks() / ticksPerDegree;
