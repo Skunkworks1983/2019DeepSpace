@@ -5,12 +5,6 @@ coverage:
         target: 50%
         threshold: null
         base: auto
-        ignore:
-          - "smellydash"
-          - "src/frc/team1983/constants"
-          - "src/frc/team1983/Robot.java"
-          - "src/frc/team1983/Main.java"
-          - "src/frc/team1983/utilities/sensors"
     project:
       default:
         target: auto
@@ -22,3 +16,11 @@ coverage:
           - "src/frc/team1983/Robot.java"
           - "src/frc/team1983/Main.java"
           - "src/frc/team1983/utilities/sensors"
+
+
+ignore:
+  - "smellydash"
+  - "src/frc/team1983/constants"
+  - "src/frc/team1983/Robot.java"
+  - "src/frc/team1983/Main.java"
+  - "src/frc/team1983/utilities/sensors"
