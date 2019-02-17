@@ -1,9 +1,9 @@
 package frc.team1983.commands.manipulator;
 
-import frc.team1983.commands.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.subsystems.Manipulator;
 
-public class ExtendManipulator extends CommandBase
+public class ExtendManipulator extends Command
 {
     private Manipulator manipulator;
     private boolean shouldExtend;
@@ -30,33 +30,13 @@ public class ExtendManipulator extends CommandBase
         this(manipulator, !manipulator.isExtended());
     }
 
-    @Override
     public void initialize()
     {
         manipulator.setExtender(shouldExtend);
     }
 
-    @Override
-    public void execute()
-    {
-
-    }
-
-    @Override
     public boolean isFinished()
     {
         return true;
-    }
-
-    @Override
-    public void end()
-    {
-
-    }
-
-    @Override
-    public void interrupted()
-    {
-
     }
 }

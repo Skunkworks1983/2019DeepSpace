@@ -2,7 +2,7 @@ package frc.team1983.utilities.control;
 
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
-import frc.team1983.utilities.motors.Transmission;
+import frc.team1983.utilities.motors.MotorGroup;
 
 import java.util.ArrayList;
 import java.util.function.Function;
@@ -56,7 +56,7 @@ public class PIDFController extends Thread
      *
      * @param transmission The transmission that this PIDFController should control
      */
-    public PIDFController(Transmission transmission)
+    public PIDFController(MotorGroup transmission)
     {
         this(transmission, transmission, 0, 0, 0, new ArrayList<>());
     }

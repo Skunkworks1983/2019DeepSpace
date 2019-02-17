@@ -2,7 +2,7 @@ package frc.team1983.utilities.control;
 
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.FeedbackType;
-import frc.team1983.utilities.motors.Transmission;
+import frc.team1983.utilities.motors.MotorGroup;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +19,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class UT_PIDFController
 {
     @Mock
-    Transmission transmission;
+    MotorGroup transmission;
 
     private PIDFController controller;
 
@@ -88,16 +88,5 @@ public class UT_PIDFController
 
         controller.execute();
         assertNull(controller.motionProfile);
-    }
-
-    @Test
-    public void feedforwardTest()
-    {
-        controller.setPID(0, 0, 0);
-        controller.addFeedforward(current -> current + 1);
-        controller.addFeedforward(current -> current * 3);
-
-        when(transmission.getFF1()).thenReturn(1.0);
-        assertThat(controller.calculate(1.0), is(5.0));
     }
 }

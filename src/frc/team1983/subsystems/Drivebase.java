@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.FeedbackType;
+import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
-import frc.team1983.utilities.motors.Transmission;
 
 public class Drivebase extends Subsystem
 {
@@ -14,11 +14,11 @@ public class Drivebase extends Subsystem
     public static final double MAX_ACCELERATION = 3.0 * 12; // inches / second / second, a wild guess based on MAX_VELOCITY
     public static final double TRACK_WIDTH = 26.0; // inches, horizontal distance between left and right wheels
 
-    public Transmission left, right;
+    public MotorGroup left, right;
 
     public Drivebase()
     {
-        left = new Transmission("Left Drivebase", FeedbackType.VELOCITY,
+        left = new MotorGroup("Left Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.LEFT_1, RobotMap.Drivebase.LEFT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_2, RobotMap.Drivebase.LEFT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
@@ -29,7 +29,7 @@ public class Drivebase extends Subsystem
         left.setPID(0.03, 0, 0);
 
 
-        right = new Transmission("Right Drivebase", FeedbackType.VELOCITY,
+        right = new MotorGroup("Right Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_2, RobotMap.Drivebase.RIGHT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
@@ -92,7 +92,6 @@ public class Drivebase extends Subsystem
     {
         return right.getVelocityTicks() / TICKS_PER_INCH;
     }
-
 
     public void setBrake(boolean brake)
     {

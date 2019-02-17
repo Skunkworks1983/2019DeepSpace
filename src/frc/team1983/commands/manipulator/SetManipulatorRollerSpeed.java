@@ -1,12 +1,12 @@
 package frc.team1983.commands.manipulator;
 
-import frc.team1983.commands.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.subsystems.Manipulator;
 
 /**
  * Sets the speed of the grippers on the manipulator
  */
-public class SetManipulatorRollerSpeed extends CommandBase
+public class SetManipulatorRollerSpeed extends Command
 {
     private Manipulator manipulator;
     private double leftSpeed;
@@ -49,21 +49,9 @@ public class SetManipulatorRollerSpeed extends CommandBase
     }
 
     @Override
-    public void execute()
-    {
-
-    }
-
-    @Override
     public boolean isFinished()
     {
         return !zeroOnFinish;
-    }
-
-    @Override
-    public void end()
-    {
-
     }
 
     @Override

@@ -13,7 +13,7 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.subsystems.Manipulator;
-import frc.team1983.utilities.motors.Transmission;
+import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
@@ -81,7 +81,7 @@ public class Robot extends TimedRobot
     public void disabledInit()
     {
         Scheduler.getInstance().removeAll();
-        for(Transmission transmission : Transmission.transmissions)
+        for(MotorGroup transmission : MotorGroup.transmissions)
             transmission.disableController();
         drivebase.setBrake(false);
         compressor.stop();

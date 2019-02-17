@@ -15,9 +15,9 @@ import java.util.function.Function;
 /**
  * This class represents a system of motors and an encoder
  */
-public class Transmission implements PIDInput, PIDOutput
+public class MotorGroup implements PIDInput, PIDOutput
 {
-    public static ArrayList<Transmission> transmissions = new ArrayList<>();
+    public static ArrayList<MotorGroup> transmissions = new ArrayList<>();
 
     private Function<Object, double[]> ffFunction;
     private Object ffOperator;
@@ -25,12 +25,12 @@ public class Transmission implements PIDInput, PIDOutput
     protected ArrayList<Motor> motors;
     protected PIDFController controller;
 
-    private double encoderOffset; // added to encoder value for manual encoder zeroing
+    private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
 
     protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
-    private double value;
+    private double targetValue;
 
     private double movementVelocity = 0; // in
     private double movementAcceleration = 0; // in/s
@@ -45,7 +45,7 @@ public class Transmission implements PIDInput, PIDOutput
      * @param master       The master motor. This doesn't mean much but it does ensure we always have at least one motor.
      * @param motors       An array of the other motors in this system. Can be left out if there is only one motor.
      */
-    protected Transmission(String name, FeedbackType feedbackType, Encoder encoder, Motor master, Motor... motors)
+    protected MotorGroup(String name, FeedbackType feedbackType, Encoder encoder, Motor master, Motor... motors)
     {
         this.name = name;
 
@@ -59,7 +59,7 @@ public class Transmission implements PIDInput, PIDOutput
         this.motors.addAll(Arrays.asList(motors));
 
         transmissions.add(this);
-        this.value = 0;
+        this.targetValue = 0;
     }
 
     /**
@@ -68,7 +68,7 @@ public class Transmission implements PIDInput, PIDOutput
      *
      * @param master A motor with an attached encoder
      */
-    public Transmission(String name, FeedbackType feedbackType, Motor master, Motor... motors)
+    public MotorGroup(String name, FeedbackType feedbackType, Motor master, Motor... motors)
     {
         this(name, feedbackType, (Encoder) master, master, motors);
     }
@@ -78,7 +78,7 @@ public class Transmission implements PIDInput, PIDOutput
      *
      * @param encoderPort The port that a new DigitalInputEncoder will be attached to.
      */
-    public Transmission(String name, FeedbackType feedbackType, int encoderPort, Motor master, Motor... motors)
+    public MotorGroup(String name, FeedbackType feedbackType, int encoderPort, Motor master, Motor... motors)
     {
         this(name, feedbackType, new DigitalInputEncoder(encoderPort), master, motors);
     }
@@ -146,11 +146,11 @@ public class Transmission implements PIDInput, PIDOutput
      * Set the motor output in a control mode
      *
      * @param controlMode The control mode the motor should run in
-     * @param value       The value at which the motor should run (%, in, in/s)
+     * @param value       The targetValue at which the motor should run (%, in, in/s)
      */
     public void set(ControlMode controlMode, double value)
     {
-        this.value = value;
+        this.targetValue = value;
         if (controlMode == ControlMode.Throttle)
         {
             if (controller != null)
@@ -169,9 +169,9 @@ public class Transmission implements PIDInput, PIDOutput
         }
     }
 
-    public double getValue()
+    public double getTargetValue()
     {
-        return value;
+        return targetValue;
     }
 
     /**

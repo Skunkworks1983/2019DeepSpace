@@ -1,14 +1,11 @@
 package frc.team1983.utilities.motors;
 
-import frc.team1983.constants.RobotMap;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.control.PIDFController;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 
 import java.util.ArrayList;
 
@@ -18,9 +15,9 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class UT_Transmission
+public class UT_MotorGroup
 {
-    private Transmission transmission;
+    private MotorGroup transmission;
 
     @Mock
     public Logger logger;
@@ -41,8 +38,7 @@ public class UT_Transmission
     {
         initMocks(this);
 
-        transmission = new Transmission("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
-        transmission.setTicksPerInch(100);
+        transmission = new MotorGroup("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
     }
 
     @Test
@@ -84,15 +80,15 @@ public class UT_Transmission
     public void correctlyZerosTransmission()
     {
         when(motor1.getPosition()).thenReturn(100.0);
-        assertThat(transmission.getPositionInches(), is(1.0));
+        assertThat(transmission.getPositionTicks(), is(100.0));
         transmission.zero();
-        assertThat(transmission.getPositionInches(), is(0.0));
+        assertThat(transmission.getPositionTicks(), is(0.0));
     }
 
     @Test
     public void usesDigitalInputEncoder()
     {
-        //Transmission transmission = new Transmission("Test Transmission", FeedbackType.VELOCITY, 1, motor1);
+        //MotorGroup transmission = new MotorGroup("Test MotorGroup", FeedbackType.VELOCITY, 1, motor1);
         //assertThat(transmission.encoder instanceof DigitalInputEncoder, is(true));
     }
 
@@ -134,18 +130,6 @@ public class UT_Transmission
         assertThat(transmission.getP(), is(1.0));
         assertThat(transmission.getI(), is(2.0));
         assertThat(transmission.getD(), is(3.0));
-    }
-
-    @Test
-    public void convertsTicksAndInches()
-    {
-        assertThat(transmission.toTicks(1.0), equalTo(100.0));
-        assertThat(transmission.toTicks(1.5), equalTo(150.0));
-        assertThat(transmission.toTicks(2.0), equalTo(200.0));
-
-        assertThat(transmission.toInches(200.0), equalTo(2.0));
-        assertThat(transmission.toInches(300.0), equalTo(3.0));
-        assertThat(transmission.toInches(400.0), equalTo(4.0));
     }
 
     @Test

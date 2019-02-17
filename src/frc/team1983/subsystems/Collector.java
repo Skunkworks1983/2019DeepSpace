@@ -1,19 +1,18 @@
 package frc.team1983.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.FeedbackType;
+import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
-import frc.team1983.utilities.motors.Transmission;
 
 public class Collector extends Subsystem
 {
     private Spark roller;
     private DoubleSolenoid piston;
-    private Transmission wrist;
+    private MotorGroup wrist;
 
     private static final double ticksPerDegree = 1; //TODO
     // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
@@ -27,7 +26,7 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wrist = new Transmission("Collector wrist", FeedbackType.POSITION,
+        wrist = new MotorGroup("Collector wrist", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
@@ -41,19 +40,26 @@ public class Collector extends Subsystem
 
     }
 
+    @Override
+    public void initDefaultCommand()
+    {
+
+    }
+
+    @Override
+    public void periodic()
+    {
+
+    }
+
     public void setWristThrottle(double output)
     {
         wrist.set(ControlMode.Throttle, output);
     }
 
-    public void setWristBrakeMode(boolean brake)
+    public void setWristBrake(boolean brake)
     {
         wrist.setBrake(brake);
-    }
-
-    public void setWristCurrentLimit(int limit)
-    {
-        wrist.setCurrentLimit(limit);
     }
 
     public void setAngle(double angle)
@@ -63,16 +69,11 @@ public class Collector extends Subsystem
 
     public double getTargetAngle()
     {
-        return wrist.getValue() / ticksPerDegree;
+        return wrist.getTargetValue() / ticksPerDegree;
     }
 
     public double getAngle()
     {
-        return wrist.getPositionTicks() * ticksPerDegree;
-    }
-
-    @Override
-    public void initDefaultCommand()
-    {
+        return wrist.getPositionTicks() / ticksPerDegree;
     }
 }

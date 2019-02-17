@@ -54,6 +54,18 @@ public class Manipulator extends Subsystem
         rightGripper.setInverted(RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
     }
 
+    @Override
+    protected void initDefaultCommand()
+    {
+
+    }
+
+    @Override
+    public void periodic()
+    {
+        
+    }
+
     /**
      * @param shouldExtend If the manipulator should be extended or not
      */
@@ -113,11 +125,5 @@ public class Manipulator extends Subsystem
     public boolean isOpen()
     {
         return isOpen;
-    }
-
-    @Override
-    protected void initDefaultCommand()
-    {
-
     }
 }
