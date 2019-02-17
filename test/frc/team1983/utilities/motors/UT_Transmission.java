@@ -54,6 +54,12 @@ public class UT_Transmission
     }
 
     @Test
+    public void disableControllerDoesNotDisableNullController()
+    {
+        transmission.disableController();
+    }
+
+    @Test
     public void disablesControllerOnSetThrottle()
     {
         transmission.controller = controller;
@@ -140,5 +146,12 @@ public class UT_Transmission
         assertThat(transmission.toInches(200.0), equalTo(2.0));
         assertThat(transmission.toInches(300.0), equalTo(3.0));
         assertThat(transmission.toInches(400.0), equalTo(4.0));
+    }
+
+    @Test
+    public void pidGetRespectsFeedbackType()
+    {
+        transmission.pidGet();
+        verify(motor1).getVelocity();
     }
 }
