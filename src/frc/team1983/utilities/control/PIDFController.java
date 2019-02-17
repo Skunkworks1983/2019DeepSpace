@@ -22,7 +22,7 @@ public class PIDFController extends Thread
     private PIDInput input;
     private PIDOutput output;
 
-    private MotionProfile motionProfile;
+    protected MotionProfile motionProfile;
 
     private double kP, kI, kD;
     private double prevValue, prevTime, cumulativeError = 0, setpoint, profileStartTime;

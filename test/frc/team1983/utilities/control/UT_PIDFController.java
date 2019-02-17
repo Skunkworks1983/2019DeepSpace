@@ -10,11 +10,10 @@ import org.mockito.Mock;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UT_PIDFController
@@ -68,5 +67,37 @@ public class UT_PIDFController
         controller.disable();
         controller.start();
         verify(transmission, never()).pidWrite(anyDouble());
+    }
+
+    @Test
+    public void disablesProfileOnSetpointChanged()
+    {
+        controller.setSetpoint(10.0);
+        controller.motionProfile = MotionProfile.generateProfile(0, 10, 1, 1, FeedbackType.POSITION);
+        controller.setSetpoint(0);
+        assertNull(controller.motionProfile);
+    }
+
+    @Test
+    public void setsProfileToNullAfterDurationExceeded()
+    {
+        controller.setPID(0, 0, 0);
+        controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10, FeedbackType.POSITION));
+
+        try {TimeUnit.MILLISECONDS.sleep(10);} catch(Exception e) {assertEquals(0,1);}
+
+        controller.execute();
+        assertNull(controller.motionProfile);
+    }
+
+    @Test
+    public void feedforwardTest()
+    {
+        controller.setPID(0, 0, 0);
+        controller.addFeedforward(current -> current + 1);
+        controller.addFeedforward(current -> current * 3);
+
+        when(transmission.getFeedForwardValue()).thenReturn(1.0);
+        assertThat(controller.calculate(1.0), is(5.0));
     }
 }

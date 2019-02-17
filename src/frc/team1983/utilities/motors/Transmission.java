@@ -282,7 +282,7 @@ public class Transmission implements PIDInput, PIDOutput
     @Override
     public double getFeedForwardValue()
     {
-        return getVelocityInches();
+        return getPositionInches();
     }
 
     public double getP()
