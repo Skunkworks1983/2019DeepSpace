@@ -30,12 +30,17 @@ public class RobotMap
         public static final boolean RIGHT_REVERSED = false; // todo
     }
 
-    public static class Manipulator // todo: rename
+    public static class Manipulator
     {
-        public static final int LEFT = 0; // todo
-        public static final boolean LEFT_REVERSED = false; // todo
+        public static final int HOOKS_FORWARD = 0;
+        public static final int HOOKS_REVERSE = 0;
 
-        public static final int RIGHT = 0; // todo
-        public static final boolean RIGHT_REVERSED = false; // todo
+        public static final int EXTENDER_FORWARD = 0;
+        public static final int EXTENDER_REVERSE = 0;
+
+        public static final int LEFT_ROLLER = 0;
+        public static final boolean LEFT_ROLLER_REVERSED = false;
+        public static final int RIGHT_ROLLER = 0;
+        public static final boolean RIGHT_ROLLER_REVERSED = false;
     }
 }
