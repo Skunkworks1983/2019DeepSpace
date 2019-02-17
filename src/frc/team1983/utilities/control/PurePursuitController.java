@@ -32,7 +32,7 @@ public class PurePursuitController
         if(PurePursuitController.inDeadzone(pose, path))
             return new Pair(0.0, 0.0);
 
-//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPositionTicks());
 //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
 //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 

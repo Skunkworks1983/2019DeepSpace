@@ -1,6 +1,5 @@
 package frc.team1983.commands.collector;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
 import frc.team1983.commands.CommandBase;
 import frc.team1983.subsystems.Collector;
@@ -35,9 +34,8 @@ public class StubbornThread extends CommandBase implements PIDSource, PIDOutput
         System.out.println("initial pos: " + initialPos);
         this.sourceType = PIDSourceType.kDisplacement;
 
-        collector.getWristRight().setInverted(true);
-        collector.getWristRight().setSmartCurrentLimit(20); //had issues with overheating (NEO smoked)
-        collector.getWristRight().setIdleMode(CANSparkMax.IdleMode.kBrake); //we don't want it moving unless we tell it to, will fall slower in brake mode
+        collector.setWristCurrentLimit(20); //had issues with overheating (NEO smoked)
+        collector.setWristBrakeMode(true); //we don't want it moving unless we tell it to, will fall slower in brake mode
 
         this.stubbornPid = new PIDController(0.007, 0.000, 0.1, 0.0, this, this, .02);
         this.stubbornPid.setAbsoluteTolerance(17);
@@ -83,6 +81,6 @@ public class StubbornThread extends CommandBase implements PIDSource, PIDOutput
 
     public void pidWrite(double out)
     {
-        collector.getWristRight().set(out);
+        collector.setWristThrottle(out);
     } //PIDOutput Implementation
 }

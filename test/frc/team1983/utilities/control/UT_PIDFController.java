@@ -97,7 +97,7 @@ public class UT_PIDFController
         controller.addFeedforward(current -> current + 1);
         controller.addFeedforward(current -> current * 3);
 
-        when(transmission.getFeedForwardValue()).thenReturn(1.0);
+        when(transmission.getFF1()).thenReturn(1.0);
         assertThat(controller.calculate(1.0), is(5.0));
     }
 }

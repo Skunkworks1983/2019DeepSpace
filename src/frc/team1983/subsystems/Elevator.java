@@ -11,7 +11,7 @@ public class Elevator extends Subsystem
 {
     // TODO: add necessary things
 
-    public static final double TICKS_PER_INCH = 0;//TODO: add math
+    public static final double TICKS_PER_INCH = 1;//TODO: add math
 
     public Transmission transmission;
 
@@ -22,7 +22,6 @@ public class Elevator extends Subsystem
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
 
-        transmission.setTicksPerInch(TICKS_PER_INCH);
         transmission.setMovementAcceleration(12);
         transmission.setMovementVelocity(12);
         transmission.setPID(0.01, 0, 0); // todo: add values
@@ -54,12 +53,12 @@ public class Elevator extends Subsystem
 
     public double getPosition()
     {
-        return transmission.getPositionInches();
+        return transmission.getPositionTicks() / TICKS_PER_INCH;
     }
 
     public double getVelocity()
     {
-        return transmission.getVelocityInches();
+        return transmission.getVelocityTicks() / TICKS_PER_INCH;
     }
 
     public void setBrake(boolean brake)

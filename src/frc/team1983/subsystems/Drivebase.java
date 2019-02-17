@@ -24,7 +24,6 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        left.setTicksPerInch(TICKS_PER_INCH);
         left.setMovementVelocity(12 * 5);
         left.setMovementAcceleration(12 * 2);
         left.setPID(0.03, 0, 0);
@@ -36,7 +35,6 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
         );
 
-        right.setTicksPerInch(TICKS_PER_INCH);
         right.setMovementVelocity(12);
         right.setMovementAcceleration(24);
         right.setPID(0.03, 0, 0);
@@ -77,22 +75,22 @@ public class Drivebase extends Subsystem
 
     public double getLeftPosition()
     {
-        return left.getPositionInches();
+        return left.getPositionTicks() / TICKS_PER_INCH;
     }
 
     public double getLeftVelocity()
     {
-        return left.getVelocityInches();
+        return left.getVelocityTicks() / TICKS_PER_INCH;
     }
 
     public double getRightPosition()
     {
-        return right.getPositionInches();
+        return right.getPositionTicks() / TICKS_PER_INCH;
     }
 
     public double getRightVelocity()
     {
-        return right.getVelocityInches();
+        return right.getVelocityTicks() / TICKS_PER_INCH;
     }
 
 

@@ -21,13 +21,19 @@ public class RobotMap
         public static final boolean RIGHT_3_REVERSED = true;
     }
 
-    public static class Collector // todo: rename
+    public static class Collector
     {
-        public static final int LEFT = 0; // todo
-        public static final boolean LEFT_REVERSED = false; // todo
+        public static final int LEFT = 0;
+        public static final boolean LEFT_REVERSED = false;
 
-        public static final int RIGHT = 0; // todo
-        public static final boolean RIGHT_REVERSED = false; // todo
+        public static final int RIGHT = 15;
+        public static final boolean RIGHT_REVERSED = false;
+
+        public static final int ROLLER = 5;
+        public static final boolean ROLLER_REVERSED = false;
+
+        public static final int PISTON_FORWARD = 0;
+        public static final int PISTON_REVERSE = 1;
     }
 
     public static class Manipulator
@@ -44,12 +50,12 @@ public class RobotMap
         public static final boolean RIGHT_GRIPPER_REVERSED = false;
     }
 
-    public static class Elevator //todo: rename
+    public static class Elevator
     {
-        public static final int LEFT = 0; //todo: find actual value
-        public static final boolean LEFT_REVERSED = false; //todo: change
+        public static final int LEFT = 11;
+        public static final boolean LEFT_REVERSED = false;
 
-        public static final int RIGHT = 1; //todo: find actual value
-        public static final boolean RIGHT_REVERSED = false; // todo: change
+        public static final int RIGHT = 4;
+        public static final boolean RIGHT_REVERSED = false;
     }
 }
