@@ -11,7 +11,7 @@ import frc.team1983.services.logging.Logger;
  * The manipulator is mounted to the elevator, and is how we score game pieces. It has four actuators on it:
  * The extender pushes the entire mechanism out and in. The hooks grabs hatch panels by opening up. The rollers grab cargo.
  */
-public class Manipulator extends Subsystem
+public class Manipulator //extends Subsystem
 {
     private Logger logger;
 
@@ -114,7 +114,7 @@ public class Manipulator extends Subsystem
         return isOpen;
     }
 
-    @Override
+    //@Override
     protected void initDefaultCommand()
     {
 
