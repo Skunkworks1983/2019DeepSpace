@@ -22,6 +22,7 @@ public class PurePursuitController
 
     public static final double MIN_VELOCITY = 1.0; // feet / s
     public static final double VELOCITY_DEADZONE = 0.15; // feet
+    public static final double HEADING_DEADZONE = 5.0; // degrees
 
     /**
      * Evaluates the motor output
@@ -60,7 +61,10 @@ public class PurePursuitController
                 Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
-        velocity = Math.max(MIN_VELOCITY, velocity);
+        if(velocity > 0 && velocity < MIN_VELOCITY)
+            velocity = MIN_VELOCITY;
+        else if(velocity < 0 && velocity > -MIN_VELOCITY)
+            velocity = -MIN_VELOCITY;
 
         if(icc == null)
         {
@@ -74,20 +78,7 @@ public class PurePursuitController
         double angleCorrection = 0;
         if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
         {
-            // Find the target angle that the final pose is at [0, 360]
-            double target = Math.toDegrees(Math.atan2(endTangent.getY(), endTangent.getX()));
-            if (target < 0) target += 360;
-
-            // Find heading [0, 360]
-            double heading = pose.getHeading();
-            if (heading < 0) heading += 360;
-
-            // Find error and angle correction
-            double error = (target - heading);
-            if (error > 180) error -= 360;
-            else if (error < -180) error += 360;
-
-            angleCorrection = error / 180.0 * ANGLE_CORRECTION;
+            angleCorrection = getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION;
         }
 
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
@@ -153,6 +144,41 @@ public class PurePursuitController
     }
 
     /**
+     * Find the angle error, between [-180, 180], from an angle and a pose
+     * @param target target angle
+     * @param pose current pose
+     * @return error in degrees
+     */
+    protected static double getAngleError(double target, Pose pose)
+    {
+        // Map target from [0, 360]
+        target %= 360;
+        if (target < 0) target += 360;
+
+        // Find heading [0, 360]
+        double heading = pose.getHeading();
+        if (heading < 0) heading += 360;
+
+        // Find error and angle correction
+        double error = (target - heading);
+        if (error >= 180) error -= 360;
+        else if (error <= -180) error += 360;
+
+        return error;
+    }
+
+    /**
+     * Find the angle error, between [-180, 180], from a direction and a pose
+     * @param direction target direction
+     * @param pose current pose
+     * @return error in degrees
+     */
+    protected static double getAngleError(Vector2 direction, Pose pose)
+    {
+        return getAngleError(Math.toDegrees(Math.atan2(direction.getY(), direction.getX())), pose);
+    }
+
+    /**
      * Find out if the robot is within a deadzone from the end point
      * @param pose pose of the robot
      * @param path path to follow
@@ -171,8 +197,10 @@ public class PurePursuitController
 
         double closeToEnd = path.evaluateClosestT(pose.getPosition());
 
+        double angleError = getAngleError(endTangent, pose);
         return closeToEnd > 1.0 - deadzoneT * 2 &&
                 Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
+                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2 &&
+                ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
     }
 }
