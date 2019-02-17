@@ -3,6 +3,10 @@ package frc.team1983.commands.collector;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.subsystems.Collector;
 
+/**
+ * Sets the throttle of the rollers. Also resets the throttle to 0 when the command is canceled (for instance when
+ * using whileHeld on a button).
+ */
 public class SetCollectorRollerThrottle extends Command
 {
     private Collector collector;
