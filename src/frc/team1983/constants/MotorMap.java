@@ -18,4 +18,18 @@ public class MotorMap
         public static final int RIGHT_3 = 2;
         public static final boolean RIGHT_3_REVERSED = false;
     }
+
+    public static class Manipulator
+    {
+        public static final int HOOKS_FORWARD = 0;
+        public static final int HOOKS_REVERSE = 0;
+
+        public static final int EXTENDER_FORWARD = 0;
+        public static final int EXTENDER_REVERSE = 0;
+
+        public static final int LEFT_ROLLER = 0;
+        public static final boolean LEFT_ROLLER_REVERSED = false;
+        public static final int RIGHT_ROLLER = 0;
+        public static final boolean RIGHT_ROLLER_REVERSED = false;
+    }
 }
