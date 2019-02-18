@@ -16,12 +16,12 @@ public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 2.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
+    public static final double CURVATURE_SLOWDOWN = 1.0; // unitless
 
-    public static final double ANGLE_CORRECTION = 3.5;
+    public static final double ANGLE_CORRECTION = 3.5; // unitless
     public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
-    public static final double MIN_VELOCITY = 1.0; // feet / s
     public static final double VELOCITY_DEADZONE = 0.15; // feet
     public static final double HEADING_DEADZONE = 3.0; // degrees
 
@@ -32,16 +32,16 @@ public class PurePursuitController
      * @param velocity the velocity to follow the path at
      * @return motor velocities, value1 is left, value2 is right
      */
-    public static Pair evaluateOutput(Pose pose, Path path, double velocity)
+    public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
-        Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
+        Pair<Double, Double> output = new Pair<>(velocity, velocity);
 
         if(PurePursuitController.inDeadzone(pose, path))
-            return new Pair(0.0, 0.0);
+            return new Pair<>(0.0, 0.0);
 
-//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
-//        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
-//        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
+        //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+        //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
+        //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
@@ -50,8 +50,8 @@ public class PurePursuitController
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
-//        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
-//        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
+        //        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
+        //        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
 
         Vector2 icc = evaluateCenterOfCurvature(pose, lookahead);
 
@@ -63,32 +63,32 @@ public class PurePursuitController
 
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
 
-        // Keep velocity from being below the minimum
-        if(velocity > 0 && velocity < MIN_VELOCITY)
-            velocity = MIN_VELOCITY;
-        else if(velocity < 0 && velocity > -MIN_VELOCITY)
-            velocity = -MIN_VELOCITY;
+        // Slow down around curves
+        double t = path.evaluateClosestT(pose.getPosition());
+        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
+        if(curveIcc != null)
+        {
+            double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
+            if(velocity >= 0)
+                velocity = Math.min(velocity, slowdown);
+            else
+                velocity = Math.max(velocity, -slowdown);
+        }
 
         // If there is no center of curvature, go straight
         if(icc == null)
-        {
-            output.setValue1(velocity);
-            output.setValue2(velocity);
-            return output;
-        }
+            return new Pair<>(velocity, velocity);
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
         // Correct for angle error
         double angleCorrection = 0;
         if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
-        {
             angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
-        }
 
         // Set velocities
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY + angleCorrection);
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
 
         return output;
     }

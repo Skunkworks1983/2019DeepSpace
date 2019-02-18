@@ -145,8 +145,8 @@ public class UT_PurePursuitController
                 new Pose(0, 10, 90)
         );
 
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class UT_PurePursuitController
                 new Pose(0, 10, 90)
         );
 
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue1() < 0, equalTo(true));
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue2() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue1() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue2() < 0, equalTo(true));
     }
 }

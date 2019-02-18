@@ -7,6 +7,7 @@ const Vector2 = require('./src/vector2');
 const Bezier = require('./src/bezier');
 const Pose = require('./src/pose');
 const Path = require('./src/path');
+const Location = require('./src/location');
 
 // ---------- Variable Init ----------
 var img; // Field image
@@ -19,6 +20,56 @@ var poseDragging = null; // The pose that is being dragged
 var robot = new Pose(0, 0, 90); // Default robot pose
 var lookahead = new Vector2(-1, -1);
 var closestPoint = new Vector2(-1, -1);
+
+// Field locations
+let LENGTH = ROBOT_HEIGHT / PIXELS_PER_FOOT;
+let dx = LENGTH / 2.0 * Math.cos(61.25 * Math.PI / 180.0);
+let dy = LENGTH / 2.0 * Math.sin(61.25 * Math.PI / 180.0);
+
+var test = new Location(10, 10, 90);
+
+const LOCATION = {
+  // Rockets
+  LEFT_ROCKET_CLOSE: new Location("LEFT_ROCKET_CLOSE", 1 + (6.5 / 12.0) + dx, 17 + (8.5 / 12.0) - dy, 118.75),
+  LEFT_ROCKET_MIDDLE: new Location("LEFT_ROCKET_MIDDLE", 2 + (3.5 / 12.0) + LENGTH / 2.0, 19, 180),
+  LEFT_ROCKET_FAR: new Location("LEFT_ROCKET_FAR", 1 + (6.5 / 12.0) + dx, 20 + (3.5 / 12.0) + dy, -118.75),
+  RIGHT_ROCKET_CLOSE: new Location("RIGHT_ROCKET_CLOSE", 25 + (5.5 / 12.0) - dx, 17 + (8.5 / 12.0) - dy, 61.25),
+  RIGHT_ROCKET_MIDDLE: new Location("RIGHT_ROCKET_MIDDLE", 24 + (8.5 / 12.0) - LENGTH / 2.0, 19, 0),
+  RIGHT_ROCKET_FAR: new Location("RIGHT_ROCKET_FAR", 25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25),
+
+  // Cargo ship
+  CARGO_SHIP_LEFT_CLOSE: new Location("CARGO_SHIP_LEFT_CLOSE", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 25 + (7.5 / 12.0), 0),
+  CARGO_SHIP_LEFT_MIDDLE: new Location("CARGO_SHIP_LEFT_MIDDLE", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 23 + (7.375 / 12.0), 0),
+  CARGO_SHIP_LEFT_FAR: new Location("CARGO_SHIP_LEFT_FAR", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 21 + (11.25 / 12.0), 0),
+  CARGO_SHIP_RIGHT_CLOSE: new Location("CARGO_SHIP_RIGHT_CLOSE", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 25 + (7.5 / 12.0), 180),
+  CARGO_SHIP_RIGHT_MIDDLE: new Location("CARGO_SHIP_RIGHT_MIDDLE", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 23 + (7.375 / 12.0), 180),
+  CARGO_SHIP_RIGHT_FAR: new Location("CARGO_SHIP_RIGHT_FAR", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 21 + (11.25 / 12.0), 180),
+  CARGO_SHIP_MIDDLE_LEFT: new Location("CARGO_SHIP_MIDDLE_LEFT", 12 + (7 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90),
+  CARGO_SHIP_MIDDLE_RIGHT: new Location("CARGO_SHIP_MIDDLE_RIGHT", 14 + (5 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90),
+
+  // Loading stations
+  LEFT_LOADING_STATION: new Location("LEFT_LOADING_STATION", 1 + (10.75 / 12.0), LENGTH / 2.0, -90),
+  RIGHT_LOADING_STATION: new Location("RIGHT_LOADING_STATION", 25 + (1.25 / 12.0), LENGTH / 2.0, -90),
+
+  // HAB
+  LEVEL_1_LEFT: new Location("LEVEL_1_LEFT", 9 + (8 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_1_MIDDLE: new Location("LEVEL_1_MIDDLE", 13 + (6 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_1_RIGHT: new Location("LEVEL_1_RIGHT", 17 + (4 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_2_LEFT: new Location("LEVEL_2_LEFT", 9 + (8 / 12.0), LENGTH / 2.0, 90),
+  LEVEL_2_RIGHT: new Location("LEVEL_2_RIGHT", 17 + (4 / 12.0), LENGTH / 2.0, 90)
+}
+
+const SNAP_HEADINGS = [0, 45, 61.25, 90, 118.75, 135, 180, -45, -61.25, -90, -118.75, -135, -180];
+
+function getLocation(key) {
+  for (let value in LOCATION) {
+    if (value == key)
+      return LOCATION[value];
+  }
+
+  throw "Location of key \'" + key + "\', not found";
+}
+
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 //functions when pressing buttons
@@ -147,62 +198,34 @@ function draw() {
 
     // Rotate pose
     if(poseDragging && mouseIsInCanvas()) {
-        if(mouseButton === LEFT)
-            poseDragging.position = new Vector2(mouseX, mouseY);
+        if(mouseButton === LEFT) {
+            let mousePosition = new Vector2(mouseX, mouseY);
+            for (let key in LOCATION) {
+              let location = getLocation(key);
+              if(Vector2.distance(new Vector2(location.x, 27 - location.y), new Vector2(mousePosition.x / PIXELS_PER_FOOT, mousePosition.y / PIXELS_PER_FOOT)) < SNAP_DISTANCE) {
+                mousePosition = new Vector2(location.x * PIXELS_PER_FOOT, (27 - location.y) * PIXELS_PER_FOOT);
+              }
+            }
 
-        if(mouseButton === RIGHT)
-            poseDragging.heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+            poseDragging.position = mousePosition;
+        }
+        else if(mouseButton === RIGHT) {
+            let heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+            for (let i in SNAP_HEADINGS) {
+              let snapHeading = SNAP_HEADINGS[i];
+              if(Math.abs(heading - snapHeading) < SNAP_HEADING) {
+                heading = snapHeading;
+                break;
+              }
+            }
+
+            poseDragging.heading = heading;
+        }
 
         // Draw mouse location
         fill(0, 255, 0)
         ellipse(mouseX, mouseY, 5);
     }
-
-    // Draw locations
-    var LENGTH = ROBOT_HEIGHT / PIXELS_PER_FOOT;
-
-    push();
-
-    scale(PIXELS_PER_FOOT, -PIXELS_PER_FOOT);
-    translate(0, -27);
-
-    strokeWeight(0);
-    fill(255, 0, 0);
-
-    // Rockets
-    var dx = LENGTH / 2.0 * Math.cos(61.25 * Math.PI / 180.0);
-    var dy = LENGTH / 2.0 * Math.sin(61.25 * Math.PI / 180.0);
-
-    arrow(1 + (6.5 / 12.0) + dx, 17 + (8.5 / 12.0) - dy, 118.75); // LEFT_ROCKET_CLOSE
-    arrow(2 + (3.5 / 12.0) + LENGTH / 2.0, 19, 180); // LEFT_ROCKET_MIDDLE
-    arrow(1 + (6.5 / 12.0) + dx, 20 + (3.5 / 12.0) + dy, -118.75); // LEFT_ROCKET_FAR
-
-    arrow(25 + (5.5 / 12.0) - dx, 17 + (8.5 / 12.0) - dy, 61.25); // RIGHT_ROCKET_CLOSE
-    arrow(24 + (8.5 / 12.0) - LENGTH / 2.0, 19, 0); // RIGHT_ROCKET_MIDDLE
-    arrow(25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25); // RIGHT_ROCKET_FAR
-
-    // Cargo ship
-    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 25 + (7.5 / 12.0), 0); // CARGO_SHIP_LEFT_CLOSE
-    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 23 + (7.375 / 12.0), 0); // CARGO_SHIP_LEFT_MIDDLE
-    arrow(11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 21 + (11.25 / 12.0), 0); // CARGO_SHIP_LEFT_FAR
-    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 25 + (7.5 / 12.0), 180); // CARGO_SHIP_RIGHT_CLOSE
-    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 23 + (7.375 / 12.0), 180); // CARGO_SHIP_RIGHT_MIDDLE
-    arrow(15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 21 + (11.25 / 12.0), 180); // CARGO_SHIP_RIGHT_FAR
-    arrow(12 + (7 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90); // CARGO_SHIP_MIDDLE_LEFT
-    arrow(14 + (5 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90); // CARGO_SHIP_MIDDLE_RIGHT
-
-    // Loading stations
-    arrow(1 + (10.75 / 12.0), LENGTH / 2.0, -90); // LEFT_LOADING_STATION
-    arrow(25 + (1.25 / 12.0), LENGTH / 2.0, -90); // RIGHT_LOADING_STATION
-
-    // HAB
-    arrow(9 + (8 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
-    arrow(13 + (6 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
-    arrow(17 + (4 / 12.0), 4 + LENGTH / 2.0, 90); // LEVEL_1_MIDDLE
-    arrow(9 + (8 / 12.0), LENGTH / 2.0, 90); // LEVEL_2_LEFT
-    arrow(17 + (4 / 12.0), LENGTH / 2.0, 90); // LEVEL_2_RIGHT
-
-    pop();
 
     // Draw poses
     fill(0, 0, 255);
@@ -269,6 +292,14 @@ function draw() {
 
     pop();
 
+    // Draw locations
+    strokeWeight(0);
+    fill(255, 0, 0);
+
+    for (let key in LOCATION) {
+      getLocation(key).show();
+    }
+
     // broken cuz reasons
     fill(255);
     stroke(0);
@@ -312,23 +343,4 @@ function mousePressed() {
 
 function mouseReleased() {
     poseDragging = null;
-}
-
-function arrow(x, y, heading) {
-  let size = 0.5;
-  let lineWeight = 0.1;
-
-  push();
-
-  translate(x, y);
-
-  ellipse(0, 0, size);
-
-  strokeWeight(0.1);
-  rotate(heading);
-  line(0, 0, size, 0);
-
-  strokeWeight(0);
-
-  pop();
 }

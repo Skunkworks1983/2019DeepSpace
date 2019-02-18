@@ -24,8 +24,6 @@ public class DrivePath extends Command
         this.estimator = estimator;
         this.path = path;
         this.velocity = velocity;
-
-        System.out.println("drive path constructor");
     }
 
     public DrivePath(Path path, double velocity)
@@ -38,8 +36,8 @@ public class DrivePath extends Command
     {
         Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
 
-        drivebase.setLeft(ControlMode.Throttle, (double) output.getValue1());
-        drivebase.setRight(ControlMode.Throttle, (double) output.getValue2());
+        drivebase.setLeft(ControlMode.Velocity, (double) output.getValue1());
+        drivebase.setRight(ControlMode.Velocity, (double) output.getValue2());
     }
 
     @Override
