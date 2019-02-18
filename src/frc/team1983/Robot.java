@@ -47,7 +47,7 @@ public class Robot extends TimedRobot
         elevator = new Elevator();
         elevator.zero();
 
-        //climber = new Climber();
+        climber = new Climber();
 
         collector = new Collector();
 
@@ -166,5 +166,10 @@ public class Robot extends TimedRobot
     public Manipulator getManipulator()
     {
         return manipulator;
+    }
+
+    public Collector getCollector()
+    {
+        return collector;
     }
 }
