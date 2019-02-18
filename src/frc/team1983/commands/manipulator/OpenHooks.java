@@ -20,16 +20,6 @@ public class OpenHooks extends Command
         this.shouldOpen = shouldOpen;
     }
 
-    /**
-     * This constructor toggles the state of the manipulator
-     *
-     * @param manipulator The manipulator
-     */
-    public OpenHooks(Manipulator manipulator)
-    {
-        this(manipulator, !manipulator.isOpen());
-    }
-
     @Override
     public void initialize()
     {

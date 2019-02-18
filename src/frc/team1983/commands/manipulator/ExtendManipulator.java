@@ -20,16 +20,6 @@ public class ExtendManipulator extends Command
         this.shouldExtend = shouldExtend;
     }
 
-    /**
-     * This constructor toggles the state of the manipulator
-     *
-     * @param manipulator The manipulator
-     */
-    public ExtendManipulator(Manipulator manipulator)
-    {
-        this(manipulator, !manipulator.isExtended());
-    }
-
     public void initialize()
     {
         manipulator.setExtender(shouldExtend);

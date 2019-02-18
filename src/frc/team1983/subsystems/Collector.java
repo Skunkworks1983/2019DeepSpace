@@ -22,21 +22,21 @@ public class Collector extends Subsystem
 
     public Collector()
     {
-        roller = new Spark(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        //roller = new Spark(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wrist = new MotorGroup("Collector wrist", FeedbackType.POSITION,
+        /*wrist = new MotorGroup("Collector Wrist", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wrist.setPID(0.03, 0, 0);
-        wrist.setMovementVelocity(3);
-        wrist.setMovementAcceleration(3);
+        wrist.setPID(0, 0, 0);
+        wrist.setMovementVelocity(0);
+        wrist.setMovementAcceleration(0);
         wrist.setFFOperator(this);
         wrist.addFFTerm((collector) ->
                 (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
-                        kG * Math.cos(((Collector) collector).getAngle()));
+                        kG * Math.cos(((Collector) collector).getAngle()));*/
 
     }
 
@@ -50,6 +50,11 @@ public class Collector extends Subsystem
     public void periodic()
     {
 
+    }
+
+    public void setFolded(boolean folded)
+    {
+        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
 
     public void setWristThrottle(double output)

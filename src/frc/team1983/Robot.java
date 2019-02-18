@@ -10,9 +10,8 @@ import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
-import frc.team1983.subsystems.Drivebase;
-import frc.team1983.subsystems.Elevator;
-import frc.team1983.subsystems.Manipulator;
+import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -20,9 +19,13 @@ import frc.team1983.utilities.sensors.NavX;
 public class Robot extends TimedRobot
 {
     private static Robot instance;
+
     private Drivebase drivebase;
     private Elevator elevator;
+    private Climber climber;
+    private Collector collector;
     private Manipulator manipulator;
+
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
@@ -44,6 +47,10 @@ public class Robot extends TimedRobot
         elevator = new Elevator();
         elevator.zero();
 
+        //climber = new Climber();
+
+        collector = new Collector();
+
         manipulator = new Manipulator();
 
         navx = new NavX();
@@ -59,12 +66,6 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         navx.reset();
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-        Scheduler.getInstance().run();
     }
 
     @Override
@@ -97,8 +98,37 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        Scheduler.getInstance().add(new RunTankDrive());
+        //Scheduler.getInstance().add(new RunTankDrive());
         compressor.start();
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+        elevator.set(ControlMode.Throttle, oi.getLeftY() * 0.1);
+
+        if(oi.getButton(OI.Joysticks.LEFT, 1).get())
+            manipulator.setHooks(true);
+        else if(oi.getButton(OI.Joysticks.LEFT, 2).get())
+            manipulator.setHooks(false);
+
+        if(oi.getButton(OI.Joysticks.LEFT, 4).get())
+            collector.setFolded(true);
+        else if(oi.getButton(OI.Joysticks.LEFT, 5).get())
+            collector.setFolded(false);
+
+
+        if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
+            manipulator.setExtender(true);
+        else if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
+            manipulator.setExtender(false);
+
+        /*
+        if(oi.getButton(OI.Joysticks.RIGHT, 0).get())
+            manipulator.setHooks(true);
+        else if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
+            manipulator.setHooks(false);
+        */
     }
 
     public static Robot getInstance()

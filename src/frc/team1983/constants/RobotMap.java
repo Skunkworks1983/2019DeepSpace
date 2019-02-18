@@ -38,11 +38,11 @@ public class RobotMap
 
     public static class Manipulator
     {
-        public static final int HOOKS_FORWARD = 0;
-        public static final int HOOKS_REVERSE = 0;
+        public static final int HOOKS_FORWARD = 2;
+        public static final int HOOKS_REVERSE = 3;
 
-        public static final int EXTENDER_FORWARD = 0;
-        public static final int EXTENDER_REVERSE = 0;
+        public static final int EXTENDER_FORWARD = 4;
+        public static final int EXTENDER_REVERSE = 5;
 
         public static final int LEFT_GRIPPER = 0;
         public static final boolean LEFT_GRIPPER_REVERSED = false;
@@ -53,9 +53,15 @@ public class RobotMap
     public static class Elevator
     {
         public static final int LEFT = 11;
-        public static final boolean LEFT_REVERSED = false;
+        public static final boolean LEFT_REVERSED = true;
 
         public static final int RIGHT = 4;
+        public static final boolean RIGHT_REVERSED = false;
+    }
+
+    public static class Climber
+    {
+        public static final int RIGHT = 6;
         public static final boolean RIGHT_REVERSED = false;
     }
 }
