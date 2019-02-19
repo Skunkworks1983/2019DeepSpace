@@ -34,7 +34,7 @@ public class PurePursuitController
      */
     public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
-        Pair<Double, Double> output = new Pair<>(velocity, velocity);
+        Pair<Double, Double> output = new Pair<>(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
 
         if(PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
@@ -77,7 +77,7 @@ public class PurePursuitController
 
         // If there is no center of curvature, go straight
         if(icc == null)
-            return new Pair<>(velocity, velocity);
+            return output;
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
@@ -87,8 +87,8 @@ public class PurePursuitController
             angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
 
         // Set velocities
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY + angleCorrection);
 
         return output;
     }
