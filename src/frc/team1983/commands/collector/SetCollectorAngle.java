@@ -1,31 +1,21 @@
 package frc.team1983.commands.collector;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team1983.Robot;
 import frc.team1983.subsystems.Collector;
 
 /**
  * Sets the angle of the collector
  */
-public class SetCollectorAngle extends Command
+public class SetCollectorAngle extends InstantCommand
 {
-    private Collector collector;
-    private double angle;
-
     public SetCollectorAngle(Collector collector, double angle)
     {
-        this.collector = collector;
-        this.angle = angle;
+        super(collector, () -> collector.setAngle(angle));
     }
 
-    @Override
-    protected void initialize()
+    public SetCollectorAngle(double angle)
     {
-        collector.setAngle(angle);
-    }
-
-    @Override
-    protected boolean isFinished()
-    {
-        return true;
+        this(Robot.getInstance().getCollector(), angle);
     }
 }

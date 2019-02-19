@@ -1,4 +1,4 @@
-package frc.team1983.utilities;
+package frc.team1983;
 
 import org.junit.Assert;
 import org.junit.Test;

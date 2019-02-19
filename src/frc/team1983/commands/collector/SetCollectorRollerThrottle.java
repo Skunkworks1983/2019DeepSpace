@@ -1,6 +1,7 @@
 package frc.team1983.commands.collector;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team1983.Robot;
 import frc.team1983.subsystems.Collector;
 
 /**
@@ -18,6 +19,11 @@ public class SetCollectorRollerThrottle extends Command
         this.throttle = throttle;
     }
 
+    public SetCollectorRollerThrottle(double throttle)
+    {
+        this(Robot.getInstance().getCollector(), throttle);
+    }
+
     @Override
     protected void initialize()
     {
@@ -25,7 +31,7 @@ public class SetCollectorRollerThrottle extends Command
     }
 
     @Override
-    protected void interrupted()
+    protected void end()
     {
         collector.setRollerThrottle(0);
     }
