@@ -25,6 +25,12 @@ public class Talon extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements
     }
 
     @Override
+    public void setCurrentLimit(int limit)
+    {
+        //todo
+    }
+
+    @Override
     public void configure()
     {
         configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);

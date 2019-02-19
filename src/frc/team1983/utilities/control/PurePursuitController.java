@@ -34,14 +34,14 @@ public class PurePursuitController
      */
     public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
-        Pair<Double, Double> output = new Pair<>(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
+        Pair<Double, Double> output = new Pair<>(velocity, velocity);
 
         if(PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
 
-        //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
-        //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
-        //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
+//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPositionTicks());
+//        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
+//        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
@@ -87,8 +87,8 @@ public class PurePursuitController
             angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
 
         // Set velocities
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY - angleCorrection);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY + angleCorrection);
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
 
         return output;
     }

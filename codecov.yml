@@ -1,15 +1,15 @@
-coverage:
-  status:
-    patch:
-      default:
-        target: 50%
-        threshold: null
-        base: auto
-    project:
-      default:
-        target: auto
-        threshold: null
-        base: auto
+#coverage:
+#  status:
+#    patch:
+#      default:
+#        target: auto
+#        threshold: null
+#        base: auto
+#    project:
+#      default:
+#        target: auto
+#        threshold: null
+#        base: auto
 
 ignore:
   - "smellydash"
