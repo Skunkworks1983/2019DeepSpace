@@ -77,7 +77,7 @@ public class PurePursuitController
 
         // If there is no center of curvature, go straight
         if(icc == null)
-            return output;
+            return new Pair<>(velocity, velocity);
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
