@@ -2,10 +2,19 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team1983.Robot;
+import frc.team1983.commands.collector.SetCollectorAngle;
+import frc.team1983.commands.collector.SetCollectorPistons;
+import frc.team1983.commands.collector.SetCollectorRollerThrottle;
+import frc.team1983.commands.manipulator.ExtendManipulator;
+import frc.team1983.commands.manipulator.OpenHooks;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 
 import java.util.HashMap;
 public class OI
 {
+    private Robot robot = Robot.getInstance();
+
     public enum Joysticks
     {
         LEFT(0),
@@ -55,12 +64,12 @@ public class OI
 
     public double getLeftY()
     {
-        return scale(left.getY());
+        return scale(-left.getY());
     }
 
     public double getRightY()
     {
-        return scale(right.getY());
+        return scale(-right.getY());
     }
 
     public JoystickButton getButton(Joysticks joystickPort, int button)
@@ -89,6 +98,19 @@ public class OI
 
     public void initializeBindings()
     {
+//        buttons.get(Joysticks.PANEL).get(0).whenPressed(new OpenHooks(robot.getManipulator()));
+//        buttons.get(Joysticks.PANEL).get(1).whenPressed(new ExtendManipulator(robot.getManipulator()));
+//        buttons.get(Joysticks.PANEL).get(2).whileHeld(
+//                new SetManipulatorRollerSpeed(robot.getManipulator(), 0.25, true));
+//        buttons.get(Joysticks.PANEL).get(3).whileHeld(
+//                new SetManipulatorRollerSpeed(robot.getManipulator(), -0.25, true));
 
+        getButton(Joysticks.PANEL, 1).whenPressed(new SetCollectorAngle(robot.getCollector(), 5));
+        getButton(Joysticks.PANEL, 2).whenPressed(new SetCollectorAngle(robot.getCollector(), 45));
+
+        getButton(Joysticks.PANEL, 3).whenPressed(new SetCollectorPistons(robot.getCollector()));
+
+
+        getButton(Joysticks.PANEL, 3).whileHeld(new SetCollectorRollerThrottle(robot.getCollector(), .03));
     }
 }

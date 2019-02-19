@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class UT_Path
 {
@@ -93,42 +95,110 @@ public class UT_Path
     }
 
     @Test
+    public void evaluateNormalTest()
+    {
+
+    }
+
+    @Test
     public void evaluateClosestPointTest()
     {
+//        Path path = new Path(
+//                new Pose(0, 0, 90),
+//                new Pose(0, 2, 90),
+//                new Pose(0, 4, 90)
+//        );
+//
+//        Vector2 point = new Vector2(0, -10);
+//
+//        double closestT = path.evaluateClosestT(point);
+//        Vector2 closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.0));
+//
+//        point = new Vector2(0, 2);
+//
+//        closestT = path.evaluateClosestT(point);
+//        closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.5));
+//
+//        point = new Vector2(0, 3);
+//
+//        closestT = path.evaluateClosestT(point);
+//        closestPoint = path.evaluateClosestPoint(point);
+//
+//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
+//        assertThat(closestT, equalTo(0.75));
+
+
         Path path = new Path(
                 new Pose(0, 0, 90),
-                new Pose(0, 2, 90),
-                new Pose(0, 4, 90)
+                new Pose(10, 10, 90),
+                new Pose(0, 20, 90),
+                new Pose(10, 30, 90)
         );
 
-        Vector2 point = new Vector2(0, -10);
+        Vector2 point = new Vector2(5, 15);
 
-        Pair pair = path.evaluateClosestPoint(point);
+        double closestT = path.evaluateClosestT(point);
+        Vector2 closestPoint = path.evaluateClosestPoint(point);
 
-        double closestT = (double) pair.getValue1();
-        Vector2 closestPoint = (Vector2) pair.getValue2();
+//        System.out.println(closestT + ", " + closestPoint);
+        assertThat(closestPoint.getY() > 10.0, equalTo(true));
+        assertThat(closestPoint.getY() < 20.0, equalTo(true));
+        assertThat(closestT > 0.0, equalTo(true));
+        assertThat(closestT > 0.33, equalTo(true));
 
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.0));
+        point = new Vector2(0, 25);
 
-        point = new Vector2(0, 2);
+        closestT = path.evaluateClosestT(point);
+        closestPoint = path.evaluateClosestPoint(point);
 
-        pair = path.evaluateClosestPoint(point);
+//        System.out.println(closestT + ", " + closestPoint);
+        assertThat(closestPoint.getY() > 20.0, equalTo(true));
+        assertThat(closestPoint.getY() < 30.0, equalTo(true));
+        assertThat(closestT > 0.33, equalTo(true));
+        assertThat(closestT > 0.66, equalTo(true));
+    }
 
-        closestT = (double) pair.getValue1();
-        closestPoint = (Vector2) pair.getValue2();
+    @Test
+    public void equalPathsAreEqual()
+    {
+        assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7)));
+        Pose[] poses = {new Pose(6, 6, 6), new Pose(1, 3, 5)};
+        assertEquals(new Path(new Pose(1, 2, 3), new Pose(5, 6, 7), poses),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(5, 6, 7), poses));
+        assertEquals(new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
+                new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
+    }
 
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.5));
+    @Test
+    public void notEqualPathsAreNotEqual()
+    {
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(0.0, 0.0, 0.0)));
+        assertNotEquals(new Path(new Pose(10, 20, 30), new Pose(0,0,0), new Pose(12, 3, 1)),
+                new Path(new Pose(1.0,2.0, 3.0), new Pose(2, 3, 1)));
+        assertNotEquals(new Path(new Pose(0.5, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)),
+                new Path(new Pose(0, 0, 0), new Pose(10, 10, 10), new Pose(0, 0, 0)));
+    }
 
-        point = new Vector2(0, 3);
+    @Test
+    public void notPathIsNotEqualToPath()
+    {
+        assertNotEquals(new String(), new Path(new Pose(10, 20, 30), new Pose(1, 1, 1)));
+    }
 
-        pair = path.evaluateClosestPoint(point);
+    @Test
+    public void constructingWithMoreThanTwoPosesCreatesTheCorrectNumberOfBeziers()
+    {
+        assertEquals(2, new Path(new Pose(0, 0, 0), new Pose(5, 5, 5), new Pose(10, 10, 10)).curves.length);
 
-        closestT = (double) pair.getValue1();
-        closestPoint = (Vector2) pair.getValue2();
-
-        assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
-        assertThat(closestT, equalTo(0.75));
+        Pose[] poses = {new Pose(3, 3, 3), new Pose(1, 1, 1)};
+        assertEquals(3, new Path(new Pose(0, 0, 0), new Pose(2, 2, 2), poses).curves.length);
     }
 }

@@ -117,6 +117,24 @@ public class Vector2
     }
 
     /**
+     * Finds the 90 degree left of a vector
+     * @return left
+     */
+    public Vector2 getLeft()
+    {
+        return new Vector2(-y, x);
+    }
+
+    /**
+     * Finds the 90 degree right of a vector
+     * @return right
+     */
+    public Vector2 getRight()
+    {
+        return new Vector2(y, -x);
+    }
+
+    /**
      * Evaluates the distance between two vectors
      * @param vector1
      * @param vector2
@@ -145,7 +163,7 @@ public class Vector2
      */
     public static boolean equals(Vector2 vector1, Vector2 vector2)
     {
-        return Math.abs(vector1.x - vector2.x) < Constants.EPSILON && Math.abs(vector1.y - vector2.y) < Constants.EPSILON;
+        return Math.abs(vector1.x - vector2.x) <= Constants.EPSILON && Math.abs(vector1.y - vector2.y) <= Constants.EPSILON;
     }
 
     /**
@@ -153,9 +171,12 @@ public class Vector2
      * @param other
      * @return whether or not the vectors are equal
      */
-    public boolean equals(Vector2 other)
+    @Override
+    public boolean equals(Object other)
     {
-        return Vector2.equals(this, other);
+        if(other instanceof Vector2)
+            return Vector2.equals(this, (Vector2) other);
+        return false;
     }
 
     /**

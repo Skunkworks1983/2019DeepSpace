@@ -3,6 +3,10 @@ language: java
 jdk:
   oraclejdk11
 
+env:
+  global:
+    - CODECOV_TOKEN=37886b44-e6b6-4c27-9058-6a8a4b653a3a
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -10,3 +14,13 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+
+after_success:
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash) -t 37886b44-e6b6-4c27-9058-6a8a4b653a3a
