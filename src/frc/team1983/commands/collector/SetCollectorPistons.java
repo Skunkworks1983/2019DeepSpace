@@ -26,12 +26,12 @@ public class SetCollectorPistons extends Command
      */
     public SetCollectorPistons(Collector collector)
     {
-        this(collector, !collector.isPistonExtended());
+        this(collector, !collector.isFolded());
     }
 
     protected void initialize()
     {
-        collector.setPiston(shouldExtend);
+        collector.setFolded(shouldExtend);
     }
 
     @Override

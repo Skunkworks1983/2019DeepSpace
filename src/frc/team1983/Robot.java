@@ -4,14 +4,12 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
-import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -52,6 +50,7 @@ public class Robot extends TimedRobot
         climber = new Climber();
 
         collector = new Collector();
+        collector.zero();
 
         manipulator = new Manipulator();
 
@@ -78,16 +77,14 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
-
-//        System.out.println("Collector ticks: " + collector.getTicks());
     }
 
     @Override
     public void disabledInit()
     {
         Scheduler.getInstance().removeAll();
-        for(MotorGroup transmission : MotorGroup.transmissions)
-            transmission.disableController();
+        for(MotorGroup motorGroup : MotorGroup.motorGroups)
+            motorGroup.disableController();
         drivebase.setBrake(false);
         compressor.stop();
     }
@@ -109,14 +106,6 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-        if(abs(oi.getLeftY()) > .05) collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
-        collector.setRollerThrottle(oi.getRightY() * 0.1);
-
-        if(oi.getButton(OI.Joysticks.LEFT, 1).get()) collector.setAngle(90);
-        if(oi.getButton(OI.Joysticks.LEFT, 2).get()) collector.setAngle(180);
-
-        if(oi.getButton(OI.Joysticks.RIGHT, 1).get()) collector.setPiston(true);
-        if(oi.getButton(OI.Joysticks.RIGHT, 2).get()) collector.setPiston(false);
     }
 
     public static Robot getInstance()

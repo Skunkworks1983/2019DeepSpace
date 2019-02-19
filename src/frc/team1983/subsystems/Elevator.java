@@ -11,20 +11,20 @@ public class Elevator extends Subsystem
 {
     // TODO: add necessary things
 
-    public static final double TICKS_PER_INCH = 1;//TODO: add math
+    public static final double TICKS_PER_INCH = 95.0 / 22.0;//TODO: add math
 
-    public MotorGroup transmission;
+    public MotorGroup motorGroup;
 
     public Elevator()
     {
-        transmission = new MotorGroup("Left Elevator", FeedbackType.POSITION,
+        motorGroup = new MotorGroup("Left Elevator", FeedbackType.POSITION,
                 new Spark(RobotMap.Elevator.LEFT, RobotMap.Elevator.LEFT_REVERSED),
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
 
-        transmission.setMovementAcceleration(12);
-        transmission.setMovementVelocity(12);
-        transmission.setPID(0.01, 0, 0); // todo: add values
+        motorGroup.setMovementAcceleration(12);
+        motorGroup.setMovementVelocity(12);
+        motorGroup.setPID(0.01, 0, 0); // todo: add values
 
         zero();
     }
@@ -43,31 +43,31 @@ public class Elevator extends Subsystem
 
     public void zero()
     {
-        transmission.zero();
+        motorGroup.zero();
     }
 
     public void set(ControlMode mode, double value)
     {
-        transmission.set(mode, value);
+        motorGroup.set(mode, value);
     }
 
     public double getTargetPosition()
     {
-        return transmission.getTargetValue() / TICKS_PER_INCH;
+        return motorGroup.getTargetValue() / TICKS_PER_INCH;
     }
 
     public double getPosition()
     {
-        return transmission.getPositionTicks() / TICKS_PER_INCH;
+        return motorGroup.getPositionTicks() / TICKS_PER_INCH;
     }
 
     public double getVelocity()
     {
-        return transmission.getVelocityTicks() / TICKS_PER_INCH;
+        return motorGroup.getVelocityTicks() / TICKS_PER_INCH;
     }
 
     public void setBrake(boolean brake)
     {
-        transmission.setBrake(brake);
+        motorGroup.setBrake(brake);
     }
 }

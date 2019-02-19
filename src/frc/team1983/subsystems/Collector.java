@@ -18,11 +18,11 @@ public class Collector extends Subsystem
     private DoubleSolenoid piston;
     private MotorGroup wrist;
 
-    private static final double ticksPerDegree = 1; //TODO
+    private static final double ticksPerDegree = 1; //TODO find more exact value
     // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
-    private static final double kG = 0; //TODO
+    private static final double kG = 0; //TODO determine if needed
     // The length gain (is multiplied by the gravity gain if the piston is extended)
-    private static final double kL = 1.01; //TODO
+    private static final double kL = 1.01; //TODO determine if needed
 
     public Collector()
     {
@@ -38,9 +38,9 @@ public class Collector extends Subsystem
         wrist.setMovementVelocity(6);
         wrist.setMovementAcceleration(6);
         wrist.setFFOperator(this);
-//        wrist.addFFTerm((collector) ->
-//                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
-//                        kG * Math.cos(((Collector) collector).getAngle()));
+        //        wrist.addFFTerm((collector) ->
+        //                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
+        //                        kG * Math.cos(((Collector) collector).getAngle()));
     }
 
     @Override
@@ -55,11 +55,9 @@ public class Collector extends Subsystem
 
     }
 
-    public void setFolded(boolean folded)
-    {
-        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-    }
-
+    /**
+     * @param output Sets the percent output of the wrist motors
+     */
     public void setWristThrottle(double output)
     {
         wrist.set(ControlMode.Throttle, output);
@@ -92,17 +90,17 @@ public class Collector extends Subsystem
     }
 
     /**
-     * @param shouldExtend If the piston should be extended or not
+     * @param folded If the piston should be extended or not
      */
-    public void setPiston(boolean shouldExtend)
+    public void setFolded(boolean folded)
     {
-        piston.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
 
     /**
      * @return True if the piston is extended, false if not (or if the solenoid is off)
      */
-    public boolean isPistonExtended()
+    public boolean isFolded()
     {
         return piston.get() == DoubleSolenoid.Value.kForward;
     }
@@ -123,8 +121,19 @@ public class Collector extends Subsystem
         return wrist.getPositionTicks() / ticksPerDegree;
     }
 
+    /**
+     * @return The current ticks of the arm
+     */
     public double getTicks()
     {
         return wrist.getPositionTicks();
+    }
+
+    /**
+     * Zeros the wrist
+     */
+    public void zero()
+    {
+        wrist.zero();
     }
 }

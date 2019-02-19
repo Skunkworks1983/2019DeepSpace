@@ -40,7 +40,7 @@ public class Drivebase extends Subsystem
         right.setPID(0.03, 0, 0);
 
 
-        // todo: configure encoder properties of transmissions
+        // todo: configure encoder properties of motorGroups
 
         zero();
     }

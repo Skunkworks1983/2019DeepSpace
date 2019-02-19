@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public class MotorGroup implements PIDInput, PIDOutput
 {
-    public static ArrayList<MotorGroup> transmissions = new ArrayList<>();
+    public static ArrayList<MotorGroup> motorGroups = new ArrayList<>();
 
     private Function<Object, double[]> ffFunction;
     private Object ffOperator;
@@ -36,10 +36,10 @@ public class MotorGroup implements PIDInput, PIDOutput
     private double movementAcceleration = 0; // in/s
 
     /**
-     * Constructor for a transmission with a name, master, encoder, and other motors, regardless
+     * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
      * of whether or not the motor controllers are Talons or Sparks.
      *
-     * @param name         The name of this transmission. Is used for logging.
+     * @param name         The name of this motorGroup. Is used for logging.
      * @param feedbackType The feedback type that this motor should use in closed loop control
      * @param encoder      The encoder of this system. Usually attached to one of the motors.
      * @param master       The master motor. This doesn't mean much but it does ensure we always have at least one motor.
@@ -58,12 +58,12 @@ public class MotorGroup implements PIDInput, PIDOutput
         this.motors.add(master);
         this.motors.addAll(Arrays.asList(motors));
 
-        transmissions.add(this);
+        motorGroups.add(this);
         this.targetValue = 0;
     }
 
     /**
-     * Constructor for a transmission where the master motor is also the encoder (either a Talon with an encoder plugged in or
+     * Constructor for a motorGroup where the master motor is also the encoder (either a Talon with an encoder plugged in or
      * a NEO with the built-in encoder)
      *
      * @param master A motor with an attached encoder
@@ -74,7 +74,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * Constructor for a transmission where the transmission uses an encoder that is plugged directly into the roboRIO
+     * Constructor for a motorGroup where the motorGroup uses an encoder that is plugged directly into the roboRIO
      *
      * @param encoderPort The port that a new DigitalInputEncoder will be attached to.
      */
@@ -218,7 +218,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @return The name of this transmission (for logging)
+     * @return The name of this motorGroup (for logging)
      */
     public String getName()
     {
@@ -226,7 +226,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @return The configured cruise velocity for this transmission
+     * @return The configured cruise velocity for this motorGroup
      */
     public double getMovementVelocity()
     {
@@ -234,7 +234,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @param movementVelocity Sets the cruise velocity for this transmission
+     * @param movementVelocity Sets the cruise velocity for this motorGroup
      */
     public void setMovementVelocity(double movementVelocity)
     {
@@ -242,7 +242,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @return The configured max acceleration for this transmission
+     * @return The configured max acceleration for this motorGroup
      */
     public double getMovementAcceleration()
     {
@@ -250,7 +250,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @param movementAcceleration Sets the max acceleration of this transmission
+     * @param movementAcceleration Sets the max acceleration of this motorGroup
      */
     public void setMovementAcceleration(double movementAcceleration)
     {

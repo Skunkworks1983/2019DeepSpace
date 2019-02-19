@@ -9,11 +9,11 @@ import frc.team1983.utilities.motors.Talon;
 
 public class Climber extends Subsystem
 {
-    private MotorGroup transmission;
+    private MotorGroup motorGroup;
 
     public Climber()
     {
-        transmission = new MotorGroup("Climber", FeedbackType.POSITION,
+        motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
     }
 
@@ -31,6 +31,6 @@ public class Climber extends Subsystem
 
     public void setThrottle(double throttle)
     {
-        transmission.set(ControlMode.Throttle, throttle);
+        motorGroup.set(ControlMode.Throttle, throttle);
     }
 }

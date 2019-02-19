@@ -17,7 +17,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UT_MotorGroup
 {
-    private MotorGroup transmission;
+    private MotorGroup motorGroup;
 
     @Mock
     public Logger logger;
@@ -38,29 +38,29 @@ public class UT_MotorGroup
     {
         initMocks(this);
 
-        transmission = new MotorGroup("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
+        motorGroup = new MotorGroup("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
     }
 
     @Test
     public void disablesControllerOnDisable()
     {
-        transmission.controller = controller;
-        transmission.disableController();
-        verify(transmission.controller, atLeastOnce()).disable();
+        motorGroup.controller = controller;
+        motorGroup.disableController();
+        verify(motorGroup.controller, atLeastOnce()).disable();
     }
 
     @Test
     public void disableControllerDoesNotDisableNullController()
     {
-        transmission.disableController();
+        motorGroup.disableController();
     }
 
     @Test
     public void disablesControllerOnSetThrottle()
     {
-        transmission.controller = controller;
+        motorGroup.controller = controller;
 
-        transmission.set(ControlMode.Throttle, 0);
+        motorGroup.set(ControlMode.Throttle, 0);
         verify(controller, times(1)).disable();
         verify(motor1, times(1)).set(ControlMode.Throttle, 0);
         verify(motor2, times(1)).set(ControlMode.Throttle, 0);
@@ -73,44 +73,44 @@ public class UT_MotorGroup
         expected.add(motor1);
         expected.add(motor2);
 
-        assertThat(transmission.motors, is(expected));
+        assertThat(motorGroup.motors, is(expected));
     }
 
     @Test
-    public void correctlyZerosTransmission()
+    public void correctlyZerosmotorGroup()
     {
         when(motor1.getPosition()).thenReturn(100.0);
-        assertThat(transmission.getPositionTicks(), is(100.0));
-        transmission.zero();
-        assertThat(transmission.getPositionTicks(), is(0.0));
+        assertThat(motorGroup.getPositionTicks(), is(100.0));
+        motorGroup.zero();
+        assertThat(motorGroup.getPositionTicks(), is(0.0));
     }
 
     @Test
     public void usesDigitalInputEncoder()
     {
-        //MotorGroup transmission = new MotorGroup("Test MotorGroup", FeedbackType.VELOCITY, 1, motor1);
-        //assertThat(transmission.encoder instanceof DigitalInputEncoder, is(true));
+        //MotorGroup motorGroup = new MotorGroup("Test MotorGroup", FeedbackType.VELOCITY, 1, motor1);
+        //assertThat(motorGroup.encoder instanceof DigitalInputEncoder, is(true));
     }
 
     @Test
     public void castsTalonToEncoder()
     {
-        assertThat(transmission.encoder, equalTo(motor1));
-        verify(transmission.encoder, atLeastOnce()).configure();
+        assertThat(motorGroup.encoder, equalTo(motor1));
+        verify(motorGroup.encoder, atLeastOnce()).configure();
     }
 
     @Test
     public void createsControllerOnSetPosition()
     {
-        assertNull(transmission.controller);
-        transmission.set(ControlMode.Position, 0);
-        assertNotNull(transmission.controller);
+        assertNull(motorGroup.controller);
+        motorGroup.set(ControlMode.Position, 0);
+        assertNotNull(motorGroup.controller);
     }
 
     @Test
     public void setsThrottleWhenSetRawThrottle()
     {
-        transmission.setRawThrottle(0);
+        motorGroup.setRawThrottle(0);
         verify(motor1, times(1)).set(ControlMode.Throttle, 0);
         verify(motor2, times(1)).set(ControlMode.Throttle, 0);
     }
@@ -118,7 +118,7 @@ public class UT_MotorGroup
     @Test
     public void setsBrakeModeForAllMotors()
     {
-        transmission.setBrake(false);
+        motorGroup.setBrake(false);
         verify(motor1, times(1)).setBrake(false);
         verify(motor2, times(1)).setBrake(false);
     }
@@ -126,16 +126,16 @@ public class UT_MotorGroup
     @Test
     public void updatesPIDGains()
     {
-        transmission.setPID(1, 2, 3);
-        assertThat(transmission.getP(), is(1.0));
-        assertThat(transmission.getI(), is(2.0));
-        assertThat(transmission.getD(), is(3.0));
+        motorGroup.setPID(1, 2, 3);
+        assertThat(motorGroup.getP(), is(1.0));
+        assertThat(motorGroup.getI(), is(2.0));
+        assertThat(motorGroup.getD(), is(3.0));
     }
 
     @Test
     public void pidGetRespectsFeedbackType()
     {
-        transmission.pidGet();
+        motorGroup.pidGet();
         verify(motor1).getVelocity();
     }
 }

@@ -32,8 +32,8 @@ public class PIDFController extends Thread
     private boolean enabled = false;
 
     /**
-     * @param input   The input to the closed loop. Usually an encoder or transmission.
-     * @param output  The object that will be fed the output. Usually a motor or transmission.
+     * @param input   The input to the closed loop. Usually an encoder or motorGroup.
+     * @param output  The object that will be fed the output. Usually a motor or motorGroup.
      * @param p       The proportional gain
      * @param i       The integral gain
      * @param d       The derivative gain
@@ -51,14 +51,14 @@ public class PIDFController extends Thread
     }
 
     /**
-     * A constructor which passes a given transmission as source and output, zeros all the gains,
+     * A constructor which passes a given motorGroup as source and output, zeros all the gains,
      * and initializes an empty array for ffTerms.
      *
-     * @param transmission The transmission that this PIDFController should control
+     * @param motorGroup The motorGroup that this PIDFController should control
      */
-    public PIDFController(MotorGroup transmission)
+    public PIDFController(MotorGroup motorGroup)
     {
-        this(transmission, transmission, 0, 0, 0, new ArrayList<>());
+        this(motorGroup, motorGroup, 0, 0, 0, new ArrayList<>());
     }
 
     /**
@@ -196,7 +196,7 @@ public class PIDFController extends Thread
     /**
      * Enables the controller and sets the prev variables to prevent timing issues
      */
-    public synchronized void enable()
+    private synchronized void enable()
     {
         enabled = true;
     }
