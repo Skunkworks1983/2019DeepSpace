@@ -26,21 +26,21 @@ public class Collector extends Subsystem
 
     public Collector()
     {
-        //roller = new Spark(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        roller = new Spark(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        /*wrist = new MotorGroup("Collector Wrist", FeedbackType.POSITION,
+        wrist = new MotorGroup("Collector Wrist", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wrist.setPID(0, 0, 0);
-        wrist.setMovementVelocity(0);
-        wrist.setMovementAcceleration(0);
+        wrist.setPID(0.06, 0, 0);
+        wrist.setMovementVelocity(6);
+        wrist.setMovementAcceleration(6);
         wrist.setFFOperator(this);
-        wrist.addFFTerm((collector) ->
-                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
-                        kG * Math.cos(((Collector) collector).getAngle()));*/
+//        wrist.addFFTerm((collector) ->
+//                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
+//                        kG * Math.cos(((Collector) collector).getAngle()));
     }
 
     @Override
@@ -73,7 +73,9 @@ public class Collector extends Subsystem
         wrist.setBrake(brake);
     }
 
-    /**Sets the angle of the arm using motion profiling
+    /**
+     * Sets the angle of the arm using motion profiling
+     *
      * @param angle The desired angle of the arm
      */
     public void setAngle(double angle)
@@ -119,5 +121,10 @@ public class Collector extends Subsystem
     public double getAngle()
     {
         return wrist.getPositionTicks() / ticksPerDegree;
+    }
+
+    public double getTicks()
+    {
+        return wrist.getPositionTicks();
     }
 }

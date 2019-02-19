@@ -23,11 +23,11 @@ public class RobotMap
 
     public static class Collector
     {
-        public static final int LEFT = 0;
+        public static final int LEFT = 15;
         public static final boolean LEFT_REVERSED = false;
 
-        public static final int RIGHT = 15;
-        public static final boolean RIGHT_REVERSED = false;
+        public static final int RIGHT = 16;
+        public static final boolean RIGHT_REVERSED = true;
 
         public static final int ROLLER = 5;
         public static final boolean ROLLER_REVERSED = false;

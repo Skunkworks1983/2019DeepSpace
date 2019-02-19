@@ -16,6 +16,8 @@ import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
+import static java.lang.Math.abs;
+
 public class Robot extends TimedRobot
 {
     private static Robot instance;
@@ -76,6 +78,8 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
+
+//        System.out.println("Collector ticks: " + collector.getTicks());
     }
 
     @Override
@@ -105,30 +109,14 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-        elevator.set(ControlMode.Throttle, oi.getLeftY() * 0.1);
+        if(abs(oi.getLeftY()) > .05) collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
+        collector.setRollerThrottle(oi.getRightY() * 0.1);
 
-        if(oi.getButton(OI.Joysticks.LEFT, 1).get())
-            manipulator.setHooks(true);
-        else if(oi.getButton(OI.Joysticks.LEFT, 2).get())
-            manipulator.setHooks(false);
+        if(oi.getButton(OI.Joysticks.LEFT, 1).get()) collector.setAngle(90);
+        if(oi.getButton(OI.Joysticks.LEFT, 2).get()) collector.setAngle(180);
 
-        if(oi.getButton(OI.Joysticks.LEFT, 4).get())
-            collector.setFolded(true);
-        else if(oi.getButton(OI.Joysticks.LEFT, 5).get())
-            collector.setFolded(false);
-
-
-        if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
-            manipulator.setExtender(true);
-        else if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
-            manipulator.setExtender(false);
-
-        /*
-        if(oi.getButton(OI.Joysticks.RIGHT, 0).get())
-            manipulator.setHooks(true);
-        else if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
-            manipulator.setHooks(false);
-        */
+        if(oi.getButton(OI.Joysticks.RIGHT, 1).get()) collector.setPiston(true);
+        if(oi.getButton(OI.Joysticks.RIGHT, 2).get()) collector.setPiston(false);
     }
 
     public static Robot getInstance()

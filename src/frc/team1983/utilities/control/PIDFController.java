@@ -155,6 +155,7 @@ public class PIDFController extends Thread
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
+        System.out.println(error);
 
         //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
