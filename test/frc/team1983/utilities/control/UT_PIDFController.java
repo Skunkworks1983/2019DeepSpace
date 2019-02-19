@@ -2,7 +2,7 @@ package frc.team1983.utilities.control;
 
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.FeedbackType;
-import frc.team1983.utilities.motors.Transmission;
+import frc.team1983.utilities.motors.MotorGroup;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +19,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class UT_PIDFController
 {
     @Mock
-    Transmission transmission;
+    MotorGroup motorGroup;
 
     private PIDFController controller;
 
@@ -27,9 +27,9 @@ public class UT_PIDFController
     public void setup()
     {
         initMocks(this);
-        when(transmission.pidGet()).thenReturn(0.0);
-        when(transmission.getPositionTicks()).thenReturn(0.0);
-        controller = new PIDFController(transmission);
+        when(motorGroup.pidGet()).thenReturn(0.0);
+        when(motorGroup.getPositionTicks()).thenReturn(0.0);
+        controller = new PIDFController(motorGroup);
         controller.setPID(1,1,1);
     }
 
@@ -50,7 +50,7 @@ public class UT_PIDFController
         ArgumentCaptor<Double> argumentCaptor = ArgumentCaptor.forClass(Double.class);
         try {TimeUnit.SECONDS.sleep(1);} catch(Exception e) {assertEquals(0,1);}
         controller.execute();
-        verify(transmission).pidWrite(argumentCaptor.capture());
+        verify(motorGroup).pidWrite(argumentCaptor.capture());
         assertNotEquals(0.0, argumentCaptor.getValue());
     }
 
@@ -66,7 +66,7 @@ public class UT_PIDFController
     {
         controller.disable();
         controller.start();
-        verify(transmission, never()).pidWrite(anyDouble());
+        verify(motorGroup, never()).pidWrite(anyDouble());
     }
 
     @Test
@@ -88,16 +88,5 @@ public class UT_PIDFController
 
         controller.execute();
         assertNull(controller.motionProfile);
-    }
-
-    @Test
-    public void feedforwardTest()
-    {
-        controller.setPID(0, 0, 0);
-        controller.addFeedforward(current -> current + 1);
-        controller.addFeedforward(current -> current * 3);
-
-        when(transmission.getFeedForwardValue()).thenReturn(1.0);
-        assertThat(controller.calculate(1.0), is(5.0));
     }
 }

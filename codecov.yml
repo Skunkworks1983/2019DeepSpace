@@ -2,7 +2,7 @@
 #  status:
 #    patch:
 #      default:
-#        target: 50%
+#        target: auto
 #        threshold: null
 #        base: auto
 #    project:

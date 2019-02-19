@@ -30,12 +30,6 @@ public class SetElevatorPosition extends Command
     }
 
     @Override
-    public void execute()
-    {
-
-    }
-
-    @Override
     protected boolean isFinished()
     {
         return true;

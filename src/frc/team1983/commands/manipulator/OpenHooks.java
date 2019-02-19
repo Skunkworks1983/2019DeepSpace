@@ -1,9 +1,9 @@
 package frc.team1983.commands.manipulator;
 
-import frc.team1983.commands.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.subsystems.Manipulator;
 
-public class OpenHooks extends CommandBase
+public class OpenHooks extends Command
 {
     private Manipulator manipulator;
     private boolean shouldOpen;
@@ -20,16 +20,6 @@ public class OpenHooks extends CommandBase
         this.shouldOpen = shouldOpen;
     }
 
-    /**
-     * This constructor toggles the state of the manipulator
-     *
-     * @param manipulator The manipulator
-     */
-    public OpenHooks(Manipulator manipulator)
-    {
-        this(manipulator, !manipulator.isOpen());
-    }
-
     @Override
     public void initialize()
     {
@@ -37,26 +27,8 @@ public class OpenHooks extends CommandBase
     }
 
     @Override
-    public void execute()
-    {
-
-    }
-
-    @Override
     public boolean isFinished()
     {
         return true;
-    }
-
-    @Override
-    public void end()
-    {
-
-    }
-
-    @Override
-    public void interrupted()
-    {
-
     }
 }
