@@ -26,8 +26,8 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        left.setMovementVelocity(12 * 5);
-        left.setMovementAcceleration(12 * 2);
+        left.setMovementVelocity(5.0);
+        left.setMovementAcceleration(2.0);
         left.setPID(0.03, 0, 0);
 
 
@@ -37,8 +37,8 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
         );
 
-        right.setMovementVelocity(12);
-        right.setMovementAcceleration(24);
+        right.setMovementVelocity(5.0);
+        right.setMovementAcceleration(2.0);
         right.setPID(0.03, 0, 0);
 
         zero();
