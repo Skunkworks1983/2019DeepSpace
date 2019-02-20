@@ -6,6 +6,8 @@ const ntClient = remote.getGlobal('ntClient');
 const Vector2 = require('./src/vector2');
 const Bezier = require('./src/bezier');
 const Pose = require('./src/pose');
+const Path = require('./src/path');
+const Location = require('./src/location');
 
 // ---------- Variable Init ----------
 var img; // Field image
@@ -15,27 +17,64 @@ var wasConnected = true; // true so it will trigger the reconnect
 var wasPressed = false; // Whether the mouse was pressed last frame (for debounce)
 var poseDragging = null; // The pose that is being dragged
 
-var robot = new Pose(5, 5, 45); // Default robot pose
+var robot = new Pose(0, 0, 90); // Default robot pose
+var lookahead = new Vector2(-1, -1);
+var closestPoint = new Vector2(-1, -1);
+
+// Field locations
+let LENGTH = ROBOT_HEIGHT / PIXELS_PER_FOOT;
+let dx = LENGTH / 2.0 * Math.cos(61.25 * Math.PI / 180.0);
+let dy = LENGTH / 2.0 * Math.sin(61.25 * Math.PI / 180.0);
+
+var test = new Location(10, 10, 90);
+
+const LOCATION = {
+  // Rockets
+  LEFT_ROCKET_CLOSE: new Location("LEFT_ROCKET_CLOSE", 1 + (6.5 / 12.0) + dx, 17 + (8.5 / 12.0) - dy, 118.75),
+  LEFT_ROCKET_MIDDLE: new Location("LEFT_ROCKET_MIDDLE", 2 + (3.5 / 12.0) + LENGTH / 2.0, 19, 180),
+  LEFT_ROCKET_FAR: new Location("LEFT_ROCKET_FAR", 1 + (6.5 / 12.0) + dx, 20 + (3.5 / 12.0) + dy, -118.75),
+  RIGHT_ROCKET_CLOSE: new Location("RIGHT_ROCKET_CLOSE", 25 + (5.5 / 12.0) - dx, 17 + (8.5 / 12.0) - dy, 61.25),
+  RIGHT_ROCKET_MIDDLE: new Location("RIGHT_ROCKET_MIDDLE", 24 + (8.5 / 12.0) - LENGTH / 2.0, 19, 0),
+  RIGHT_ROCKET_FAR: new Location("RIGHT_ROCKET_FAR", 25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25),
+
+  // Cargo ship
+  CARGO_SHIP_LEFT_CLOSE: new Location("CARGO_SHIP_LEFT_CLOSE", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 25 + (7.5 / 12.0), 0),
+  CARGO_SHIP_LEFT_MIDDLE: new Location("CARGO_SHIP_LEFT_MIDDLE", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 23 + (7.375 / 12.0), 0),
+  CARGO_SHIP_LEFT_FAR: new Location("CARGO_SHIP_LEFT_FAR", 11 + (7.25 / 12.0) - (5.125 / 12.0) - LENGTH / 2.0, 21 + (11.25 / 12.0), 0),
+  CARGO_SHIP_RIGHT_CLOSE: new Location("CARGO_SHIP_RIGHT_CLOSE", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 25 + (7.5 / 12.0), 180),
+  CARGO_SHIP_RIGHT_MIDDLE: new Location("CARGO_SHIP_RIGHT_MIDDLE", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 23 + (7.375 / 12.0), 180),
+  CARGO_SHIP_RIGHT_FAR: new Location("CARGO_SHIP_RIGHT_FAR", 15 + (4.75 / 12.0) + (5.125 / 12.0) + LENGTH / 2.0, 21 + (11.25 / 12.0), 180),
+  CARGO_SHIP_MIDDLE_LEFT: new Location("CARGO_SHIP_MIDDLE_LEFT", 12 + (7 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90),
+  CARGO_SHIP_MIDDLE_RIGHT: new Location("CARGO_SHIP_MIDDLE_RIGHT", 14 + (5 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - LENGTH / 2.0, 90),
+
+  // Loading stations
+  LEFT_LOADING_STATION: new Location("LEFT_LOADING_STATION", 1 + (10.75 / 12.0), LENGTH / 2.0, -90),
+  RIGHT_LOADING_STATION: new Location("RIGHT_LOADING_STATION", 25 + (1.25 / 12.0), LENGTH / 2.0, -90),
+
+  // HAB
+  LEVEL_1_LEFT: new Location("LEVEL_1_LEFT", 9 + (8 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_1_MIDDLE: new Location("LEVEL_1_MIDDLE", 13 + (6 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_1_RIGHT: new Location("LEVEL_1_RIGHT", 17 + (4 / 12.0), 4 + LENGTH / 2.0, 90),
+  LEVEL_2_LEFT: new Location("LEVEL_2_LEFT", 9 + (8 / 12.0), LENGTH / 2.0, 90),
+  LEVEL_2_RIGHT: new Location("LEVEL_2_RIGHT", 17 + (4 / 12.0), LENGTH / 2.0, 90)
+}
+
+const SNAP_HEADINGS = [0, 45, 61.25, 90, 118.75, 135, 180, -45, -61.25, -90, -118.75, -135, -180];
+
+function getLocation(key) {
+  for (let value in LOCATION) {
+    if (value == key)
+      return LOCATION[value];
+  }
+
+  throw "Location of key \'" + key + "\', not found";
+}
+
 
 // Detects if the mouse is currently in the canvas, to prevent triggering pathing
 //functions when pressing buttons
 function mouseIsInCanvas() {
     return 0 <= mouseX && mouseX < CANVAS_WIDTH && 0 <= mouseY && mouseY < CANVAS_HEIGHT;
-}
-
-// Only returns truee if mouse is in canvas and was not pressed in the previous call
-function debounceMouse() {
-    if(!wasPressed && mouseIsPressed) {
-        wasPressed = true;
-
-        if(mouseIsInCanvas()) {
-            return true
-        }
-    }
-    else if(!mouseIsPressed) {
-        wasPressed = false;
-    }
-    return false;
 }
 
 // Trys to connect to the network tables
@@ -136,6 +175,18 @@ function draw() {
         robot.position.x = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotX")).val;
         robot.position.y = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotY")).val;
         robot.heading = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/robotAngle")).val;
+
+        // If there is a lookahead point in the network table, read value
+        let entryLookaheadX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadX"));
+        lookahead.x = typeof entryLookaheadX == 'undefined' ? 0 : entryLookaheadX.val;
+        let entryLookaheadY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/lookaheadY"));
+        lookahead.y = typeof entryLookaheadY == 'undefined' ? 0 : entryLookaheadY.val;
+
+        // If there is a closestPoint point in the network table, read value
+        let entryClosestPointX = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointX"));
+        closestPoint.x = typeof entryClosestPointX == 'undefined' ? 0 : entryClosestPointX.val;
+        let entryClosestPointY = ntClient.getEntry(ntClient.getKeyID("/SmartDashboard/closestPointY"));
+        closestPoint.y = typeof entryClosestPointY == 'undefined' ? 0 : entryClosestPointY.val;
     }
     else {
         notconnected();
@@ -147,11 +198,29 @@ function draw() {
 
     // Rotate pose
     if(poseDragging && mouseIsInCanvas()) {
-        if(mouseButton === LEFT)
-            poseDragging.position = new Vector2(mouseX, mouseY);
+        if(mouseButton === LEFT) {
+            let mousePosition = new Vector2(mouseX, mouseY);
+            for (let key in LOCATION) {
+              let location = getLocation(key);
+              if(Vector2.distance(new Vector2(location.x, 27 - location.y), new Vector2(mousePosition.x / PIXELS_PER_FOOT, mousePosition.y / PIXELS_PER_FOOT)) < SNAP_DISTANCE) {
+                mousePosition = new Vector2(location.x * PIXELS_PER_FOOT, (27 - location.y) * PIXELS_PER_FOOT);
+              }
+            }
 
-        if(mouseButton === RIGHT)
-            poseDragging.heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+            poseDragging.position = mousePosition;
+        }
+        else if(mouseButton === RIGHT) {
+            let heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);
+            for (let i in SNAP_HEADINGS) {
+              let snapHeading = SNAP_HEADINGS[i];
+              if(Math.abs(heading - snapHeading) < SNAP_HEADING) {
+                heading = snapHeading;
+                break;
+              }
+            }
+
+            poseDragging.heading = heading;
+        }
 
         // Draw mouse location
         fill(0, 255, 0)
@@ -163,64 +232,21 @@ function draw() {
     stroke(0);
     strokeWeight(1);
     poses.forEach(pose => {
-        push();
-
-        translate(pose.position.x, pose.position.y);
-        rotate(-(pose.heading + 90));
-        rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
-
-        fill(0);
-        triangle(0, 5, 5, 0, -5, 0);
-
-        pop();
+        pose.show();
     });
 
     // Draw path
     fill(0, 0, 0, 0);
     strokeWeight(2);
-    poses.forEach(pose => {
-        let index = poses.indexOf(pose);
-        if(index < poses.length - 1) {
-            nextPose = poses[index + 1];
-
-            let cp0 = Vector2.scale(pose.forward, TANGENT_LENGTH * PIXELS_PER_FOOT);
-            let cp1 = Vector2.scale(nextPose.forward, -TANGENT_LENGTH * PIXELS_PER_FOOT);
-
-            let points = [
-                new Vector2(pose.position.x, pose.position.y),
-                new Vector2(pose.position.x + cp0.x, pose.position.y + cp0.y),
-                new Vector2(nextPose.position.x + cp1.x, nextPose.position.y + cp1.y),
-                new Vector2(nextPose.position.x, nextPose.position.y)
-            ];
-
-            bezier(
-                points[0].x, points[0].y,
-                points[1].x, points[1].y,
-                points[2].x, points[2].y,
-                points[3].x, points[3].y
-            );
-
-            // Draw track
-            let resolution = 50; // should be constant but test
-            for(let offset = -ROBOT_WIDTH/2; offset < ROBOT_WIDTH; offset += ROBOT_WIDTH/2) {
-                for(let index = 0; index < resolution; index++) {
-                    let t = index / resolution;
-
-                    let p0 = Bezier.offset(index / resolution, offset, points);
-                    let p1 = Bezier.offset((index + 1) / resolution, offset, points);
-
-                    line(p0.x, p0.y, p1.x, p1.y);
-                }
-            }
-        }
-    })
+    Path.show(poses);
 
     // Draw pose text
     fill(255);
     stroke(0);
-    poses.forEach(pose => text(pose, pose.position.x, pose.position.y));
+    strokeWeight(2);
+    poses.forEach(pose => pose.showText());
 
-    // draw robot
+    // Draw robot
     push();
 
     fill(255, 0, 0);
@@ -236,9 +262,49 @@ function draw() {
 
     pop();
 
+    // Draw lookahead
+    push();
+
+    fill(0, 255, 0);
+    stroke(0);
+    strokeWeight(1);
+    translate(lookahead.x * PIXELS_PER_FOOT, (27 - lookahead.y) * PIXELS_PER_FOOT);
+    ellipse(0, 0, 10);
+
+    // stroke(0, 255, 0);
+    // strokeWeight(5);
+    // line(0, 0, robot.position.x * PIXELS_PER_FOOT, robot.position.y * PIXELS_PER_FOOT);
+
+    pop();
+
+    // Draw closest point
+    push();
+
+    fill(0, 0, 255);
+    stroke(0);
+    strokeWeight(1);
+    translate(closestPoint.x * PIXELS_PER_FOOT, (27 - closestPoint.y) * PIXELS_PER_FOOT);
+    ellipse(0, 0, 10);
+
+    // stroke(0, 255, 0);
+    // strokeWeight(5);
+    // line(0, 0, robot.position.x * PIXELS_PER_FOOT, robot.position.y * PIXELS_PER_FOOT);
+
+    pop();
+
+    // Draw locations
+    strokeWeight(0);
+    fill(255, 0, 0);
+
+    for (let key in LOCATION) {
+      getLocation(key).show();
+    }
+
+    // broken cuz reasons
     fill(255);
     stroke(0);
-    // broken cuz reasons
+    strokeWeight(1);
+
     text(
         robot.position.x.toFixed(2) + "," + robot.position.y.toFixed(2) + "," + robot.heading.toFixed(2)
         , robot.position.x * PIXELS_PER_FOOT, (27 - robot.position.y) * PIXELS_PER_FOOT);

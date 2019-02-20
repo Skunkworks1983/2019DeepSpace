@@ -1,6 +1,5 @@
 package frc.team1983.utilities.math;
 
-import frc.team1983.constants.Constants;
 import frc.team1983.utilities.Pair;
 
 import java.util.Arrays;
@@ -10,9 +9,10 @@ import java.util.Arrays;
  */
 public class Bezier
 {
-    public static int RESOLUTION = 20;
+    public static int RESOLUTION = 50;
+    public static double CAST_EPSILON = 1e-2;
 
-    private final Vector2[] points;
+    protected final Vector2[] points;
     private double length = 0;
 
     /**
@@ -25,10 +25,9 @@ public class Bezier
     {
         this.points = new Vector2[points.length + 2];
 
-        this.points[0] = point0;
-        this.points[1] = point1;
+        this.points[0] = point0; this.points[1] = point1;
 
-        for(int i = 0; i < points.length; i++)
+        for (int i = 0; i < points.length; i++)
             this.points[i + 2] = points[i];
     }
 
@@ -39,15 +38,9 @@ public class Bezier
      */
     public Vector2 evaluate(double t)
     {
-        if(points.length == 2)
-            return Vector2.add(points[0], Vector2.scale(Vector2.sub(points[1], points[0]), t));
+        if (points.length == 2) return Vector2.add(points[0], Vector2.scale(Vector2.sub(points[1], points[0]), t));
         else
-            return new Bezier(
-                    new Bezier(points[0], points[1],
-                               Arrays.copyOfRange(points, 2, points.length - 1)).evaluate(t),
-                    new Bezier(points[1], points[2],
-                               Arrays.copyOfRange(points, 3, points.length)).evaluate(t)
-            ).evaluate(t);
+            return new Bezier(new Bezier(points[0], points[1], Arrays.copyOfRange(points, 2, points.length - 1)).evaluate(t), new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t)).evaluate(t);
     }
 
     /**
@@ -56,10 +49,20 @@ public class Bezier
      */
     public double getLength()
     {
-        if(length == 0)
-            for(double i = 0; i < RESOLUTION; i++)
-                length += evaluate(i / RESOLUTION).getDistanceTo(evaluate((i + 1) / RESOLUTION));
-        return length;
+        if (length == 0) for (double i = 0; i < RESOLUTION; i++)
+            length += evaluate(i / RESOLUTION).getDistanceTo(evaluate((i + 1) / RESOLUTION)); return length;
+    }
+
+    /**
+     * Evaluates the derivative of the curve at a value of t
+     * @param t the percentage along the curve [0, 1]
+     * @return derivative vector
+     */
+    public Vector2 evaluateDerivative(double t)
+    {
+        if (points.length == 2) return Vector2.sub(points[1], points[0]).getNormalized();
+        else
+            return Vector2.sub(new Bezier(points[1], points[2], Arrays.copyOfRange(points, 3, points.length)).evaluate(t), new Bezier(points[0], points[1], Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t));
     }
 
     /**
@@ -69,15 +72,7 @@ public class Bezier
      */
     public Vector2 evaluateTangent(double t)
     {
-        if(points.length == 2)
-            return Vector2.sub(points[1], points[0]).getNormalized();
-        else
-            return Vector2.sub(
-                    new Bezier(points[1], points[2],
-                               Arrays.copyOfRange(points, 3, points.length)).evaluate(t),
-                    new Bezier(points[0], points[1],
-                               Arrays.copyOfRange(points, 0, points.length - 1)).evaluate(t)
-            ).getNormalized();
+        return evaluateDerivative(t).getNormalized();
     }
 
     /**
@@ -87,8 +82,7 @@ public class Bezier
      */
     public Vector2 evaluateNormal(double t)
     {
-        Vector2 tangent = evaluateTangent(t);
-        return new Vector2(-tangent.getY(), tangent.getX());
+        Vector2 tangent = evaluateTangent(t); return new Vector2(-tangent.getY(), tangent.getX());
     }
 
     /**
@@ -103,14 +97,14 @@ public class Bezier
     }
 
     /**
-     * Evaluates the center of curvature to generate motion profiles
+     * Evaluates the center of curvature of a point on the curve
      * @param t the percentage along the curve [0, 1]
      * @return center of curvature
      */
     public Vector2 evaluateCenterOfCurvature(double t)
     {
-        return Line.cast(new Line(evaluate(t - Constants.EPSILON), evaluateNormal(t - Constants.EPSILON)),
-                new Line(evaluate(t + Constants.EPSILON), evaluateNormal(t + Constants.EPSILON)));
+        return Line.cast(new Line(evaluate(t - CAST_EPSILON), evaluateNormal(t - CAST_EPSILON)),
+                         new Line(evaluate(t + CAST_EPSILON), evaluateNormal(t + CAST_EPSILON)));
     }
 
     /**
@@ -128,7 +122,7 @@ public class Bezier
      * @param point
      * @return closest point and t of closest point
      */
-    public Pair evaluateClosestPoint(Vector2 point)
+    public Pair evaluateClosestPointAndT(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = evaluate(closestT);
@@ -145,5 +139,47 @@ public class Bezier
             }
         }
         return new Pair(closestT, closest);
+    }
+
+    /**
+     * Evaluate the closest point from another point
+     * @param point
+     * @return closest point
+     */
+    public Vector2 evaluateClosestPoint(Vector2 point)
+    {
+        return (Vector2) evaluateClosestPointAndT(point).getValue2();
+    }
+
+    /**
+     * Evaluate the closest t from another point
+     * @param point
+     * @return closest t the percentage along the curve [0, 1]
+     */
+    public double evaluateClosestT(Vector2 point)
+    {
+        return (double) evaluateClosestPointAndT(point).getValue1();
+    }
+
+    /**
+     * Tests if another object (presumable another Bezier) are made up of the same points
+     * @param o another object to compare to this object
+     * @return if the two beziers share the same point values
+     */
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof Bezier)
+        {
+            Vector2[] oPoints = ((Bezier) o).points;
+            if (oPoints.length != points.length) return false;
+
+            for (int i = 0; i < points.length; i++)
+            {
+                if (!points[i].equals(oPoints[i])) return false;
+            }
+
+            return true;
+        } else return false;
     }
 }

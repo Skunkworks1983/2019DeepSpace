@@ -1,43 +1,45 @@
 package frc.team1983.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.constants.MotorMap;
+import frc.team1983.constants.RobotMap;
+import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.motors.FeedbackType;
+import frc.team1983.utilities.motors.MotorGroup;
+import frc.team1983.utilities.motors.Spark;
 
+/**
+ * Drivebase units are feet
+ */
 public class Drivebase extends Subsystem
 {
-    public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / 1360.0; // feet / tick of wheel encoders
+    public static final double TICKS_PER_FOOT = (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/) / (6.0 * Math.PI / 12.0); // encoder pulses / feet of travel
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
-    private TalonSRX left1, left2, left3;
-    private TalonSRX right1, right2, right3;
+    public MotorGroup left, right;
 
     public Drivebase()
     {
-        left1 = new TalonSRX(MotorMap.Drivebase.LEFT_1);
-        left1.setInverted(MotorMap.Drivebase.LEFT_1_REVERSED);
-        left1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        left2 = new TalonSRX(MotorMap.Drivebase.LEFT_2);
-        left2.setInverted(MotorMap.Drivebase.LEFT_2_REVERSED);
-        left2.follow(left1);
-        left3 = new TalonSRX(MotorMap.Drivebase.LEFT_3);
-        left3.setInverted(MotorMap.Drivebase.LEFT_3_REVERSED);
-        left3.follow(left2);
+        left = new MotorGroup("Left Drivebase", FeedbackType.VELOCITY,
+                new Spark(RobotMap.Drivebase.LEFT_1, RobotMap.Drivebase.LEFT_1_REVERSED),
+                new Spark(RobotMap.Drivebase.LEFT_2, RobotMap.Drivebase.LEFT_2_REVERSED),
+                new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
+        );
 
-        right1 = new TalonSRX(MotorMap.Drivebase.RIGHT_1);
-        right1.setInverted(MotorMap.Drivebase.RIGHT_1_REVERSED);
-        right1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        right2 = new TalonSRX(MotorMap.Drivebase.RIGHT_2);
-        right2.setInverted(MotorMap.Drivebase.RIGHT_2_REVERSED);
-        right2.follow(right1);
-        right3 = new TalonSRX(MotorMap.Drivebase.RIGHT_3);
-        right3.setInverted(MotorMap.Drivebase.RIGHT_3_REVERSED);
-        right3.follow(right2);
+        left.setMovementVelocity(5.0);
+        left.setMovementAcceleration(2.0);
+        left.setPID(0.03, 0, 0);
+
+
+        right = new MotorGroup("Right Drivebase", FeedbackType.VELOCITY,
+                new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
+                new Spark(RobotMap.Drivebase.RIGHT_2, RobotMap.Drivebase.RIGHT_2_REVERSED),
+                new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
+        );
+
+        right.setMovementVelocity(5.0);
+        right.setMovementAcceleration(2.0);
+        right.setPID(0.03, 0, 0);
 
         zero();
     }
@@ -45,7 +47,7 @@ public class Drivebase extends Subsystem
     @Override
     protected void initDefaultCommand()
     {
-        setDefaultCommand(new RunTankDrive());
+
     }
 
     @Override
@@ -56,72 +58,33 @@ public class Drivebase extends Subsystem
 
     public void zero()
     {
-        left1.setSelectedSensorPosition(0);
-        right1.setSelectedSensorPosition(0);
-    }
-
-    public TalonSRX getPigeonTalon()
-    {
-        return left3;
+        left.zero();
+        right.zero();
     }
 
     public void setLeft(ControlMode mode, double value)
     {
-        left1.set(mode, value);
+        left.set(mode, value);
     }
 
     public void setRight(ControlMode mode, double value)
     {
-        right1.set(mode, value);
-    }
-
-    public static double toFeet(double ticks)
-    {
-        return -ticks * FEET_PER_TICK;
-    }
-
-    public static double toTicks(double feet)
-    {
-        return -feet / FEET_PER_TICK;
-    }
-
-    public double getLeftTicks()
-    {
-        return left1.getSelectedSensorPosition();
-    }
-
-    public double getRightTicks()
-    {
-        return right1.getSelectedSensorPosition();
+        right.set(mode, value);
     }
 
     public double getLeftPosition()
     {
-        return toFeet(getLeftTicks());
+        return left.getPositionTicks() / TICKS_PER_FOOT;
     }
 
     public double getRightPosition()
     {
-        return toFeet(getRightTicks());
-    }
-
-    public double getLeftVelocity()
-    {
-        // multiplied by 10 because getSelectedSensorVelocity returns u/100ms
-        return toFeet(left1.getSelectedSensorVelocity() * 10);
-    }
-
-    public double getRightVelocity()
-    {
-        // multiplied by 10 because getSelectedSensorVelocity returns u/100ms
-        return toFeet(right1.getSelectedSensorVelocity() * 10);
+        return right.getPositionTicks() / TICKS_PER_FOOT;
     }
 
     public void setBrake(boolean brake)
     {
-        TalonSRX[] talons = {left1, left2, left3, right1, right2, right3};
-
-        for(TalonSRX talon : talons)
-            talon.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
+        left.setBrake(brake);
+        right.setBrake(brake);
     }
 }

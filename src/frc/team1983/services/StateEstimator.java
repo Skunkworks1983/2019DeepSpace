@@ -20,8 +20,9 @@ public class StateEstimator implements Runnable
 
     private double lastLeftPosition, lastRightPosition;
     // TODO: find real
-    private Vector2 position = new Vector2(0, 0);
-//    private Vector2 position = new Vector2(32.0 / 12.0 / 2.0 + (105.0 / 12.0), 37.0 / 12.0 / 2.0);
+//    private Vector2 position = new Vector2(0, 0);
+//    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
+    private Vector2 position = Pose.LEVEL_1_MIDDLE.getPosition();
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -54,7 +55,7 @@ public class StateEstimator implements Runnable
         this.position = position;
     }
 
-    private synchronized void execute()
+    protected synchronized void execute()
     {
         double leftPosition = drivebase.getLeftPosition();
         double rightPosition = drivebase.getRightPosition();

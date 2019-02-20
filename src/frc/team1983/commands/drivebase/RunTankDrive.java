@@ -1,11 +1,10 @@
 package frc.team1983.commands.drivebase;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
 import frc.team1983.services.OI;
 import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.motors.ControlMode;
 
 public class RunTankDrive extends Command
 {
@@ -28,8 +27,8 @@ public class RunTankDrive extends Command
     @Override
     public void execute()
     {
-        drivebase.setLeft(ControlMode.PercentOutput, oi.getLeftY());
-        drivebase.setRight(ControlMode.PercentOutput, oi.getRightY());
+        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY());
+        drivebase.setRight(ControlMode.Throttle, oi.getRightY());
     }
 
     @Override
@@ -41,7 +40,7 @@ public class RunTankDrive extends Command
     @Override
     public void end()
     {
-        drivebase.setLeft(ControlMode.PercentOutput, 0);
-        drivebase.setRight(ControlMode.PercentOutput, 0);
+        drivebase.setLeft(ControlMode.Throttle, 0);
+        drivebase.setRight(ControlMode.Throttle, 0);
     }
 }

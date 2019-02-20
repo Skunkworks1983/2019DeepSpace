@@ -1,0 +1,19 @@
+#coverage:
+#  status:
+#    patch:
+#      default:
+#        target: auto
+#        threshold: null
+#        base: auto
+#    project:
+#      default:
+#        target: auto
+#        threshold: null
+#        base: auto
+
+ignore:
+  - "smellydash"
+  - "src/frc/team1983/constants"
+  - "src/frc/team1983/Robot.java"
+  - "src/frc/team1983/Main.java"
+  - "src/frc/team1983/services/OI.java"

@@ -5,6 +5,9 @@ import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Path creates an array of beziers based on given poses.
  * Four points make one cubic bezier, the origin of one pose, two intermediate points, and the origin of the next pose.
@@ -26,23 +29,28 @@ public class Path
      * a control point in the direction of the first pose and TANGENT_LENGTH distance away,
      * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
      * and ending at the next pose.
-     * @param poses
+     * @param morePoses More poses that the path should have
      */
-    public Path(Pose... poses)
+    public Path(Pose pose1, Pose pose2, Pose... morePoses)
     {
-        curves = new Bezier[poses.length - 1];
+        ArrayList<Pose> poses = new ArrayList<>();
+        poses.add(pose1);
+        poses.add(pose2);
+        poses.addAll(Arrays.asList(morePoses));
 
-        for(int i = 0; i < poses.length - 1; i++)
+        curves = new Bezier[poses.size() - 1];
+
+        for(int i = 0; i < poses.size() - 1; i++)
         {
-            Vector2 position0 = poses[i].getPosition();
-            double theta0 = Math.toRadians(poses[i].getHeading());
+            Vector2 position0 = poses.get(i).getPosition();
+            double theta0 = Math.toRadians(poses.get(i).getHeading());
 
-            Vector2 position1 = poses[i + 1].getPosition();
-            double theta1 = Math.toRadians(poses[i + 1].getHeading());
+            Vector2 position1 = poses.get(i + 1).getPosition();
+            double theta1 = Math.toRadians(poses.get(i + 1).getHeading());
 
             boolean collinear = 1 - Vector2.dot(
                     Vector2.sub(position1, position0).getNormalized(),
-                    poses[i].getDirection().getNormalized()
+                    poses.get(i).getDirection().getNormalized()
             ) < Constants.EPSILON;
 
             if(collinear)
@@ -168,11 +176,33 @@ public class Path
     }
 
     /**
-     * Evaluate the closest point and t of the closest point
+     * Evaluates the center of curvature of a point on the path
+     * @param t the percentage along the curve [0, 1]
+     * @return center of curvature
+     */
+    public Vector2 evaluateCenterOfCurvature(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateCenterOfCurvature((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
+     * Evaluates the distance of the center of curvature
+     * @param t the percentage along the curve [0, 1]
+     * @return radius of curvature
+     */
+    public double evaluateRadiusOfCurvatuve(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateRadiusOfCurvatuve((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
+     * Evaluate the closest point and t from another point
      * @param point
      * @return closest point and t of closest point
      */
-    public Pair evaluateClosestPoint(Vector2 point)
+    protected Pair evaluateClosestPointAndT(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = getCurve(getCurveIndex(closestT)).evaluate(closestT);
@@ -180,10 +210,9 @@ public class Path
         for(double i = 0; i <= Bezier.RESOLUTION * curves.length; i++)
         {
             double step = i / (Bezier.RESOLUTION * curves.length);
-            int index = getCurveIndex(step);
-            double bezierT = (step - index / (double) curves.length) * curves.length;
+            double bezierT = (step - evaluateLengthToCurve(getCurve(step)) / getLength()) * curves.length;
 
-            Vector2 candidate = getCurve(index).evaluate(bezierT);
+            Vector2 candidate = getCurve(step).evaluate(bezierT);
             double candidateDistance = Vector2.getDistance(candidate, point);
             if(candidateDistance < closestDistance)
             {
@@ -193,5 +222,46 @@ public class Path
             }
         }
         return new Pair(closestT, closest);
+    }
+
+    /**
+     * Evaluate the closest point from another point
+     * @param point
+     * @return closest point
+     */
+    public Vector2 evaluateClosestPoint(Vector2 point)
+    {
+        return (Vector2) evaluateClosestPointAndT(point).getValue2();
+    }
+
+    /**
+     * Evaluate the closest t from another point
+     * @param point
+     * @return closest t the percentage along the curve [0, 1]
+     */
+    public double evaluateClosestT(Vector2 point)
+    {
+        return (double) evaluateClosestPointAndT(point).getValue1();
+    }
+
+    /**
+     * Test if another object (presumably another Path) is made up of the same Beziers
+     * @param o another object to compare to this one
+     * @return if the passed object is made up of the same bezier curves as this one
+     */
+    @Override
+    public boolean equals(Object o)
+    {
+        if(o instanceof Path)
+        {
+            Bezier[] oCurves = ((Path) o).curves;
+            if(oCurves.length != curves.length) return false;
+
+            for(int i = 0; i < curves.length; i++)
+                if(!curves[i].equals(oCurves[i])) return false;
+
+            return true;
+        }
+        return false;
     }
 }
