@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Line;
@@ -15,8 +14,16 @@ import frc.team1983.utilities.pathing.Pose;
  */
 public class PurePursuitController
 {
-    public static final double LOOKAHEAD_DISTANCE = 3.0; // feet
+    public static final double LOOKAHEAD_DISTANCE = 2.0; // feet
+    public static final double SLOWDOWN_DISTANCE = 4.0; // feet
+    public static final double CURVATURE_SLOWDOWN = 1.0; // unitless
+
+    public static final double ANGLE_CORRECTION = 3.5; // unitless
+    public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
+    public static final double MAX_ANGLE_CORRECTION = 0.4;
+
     public static final double VELOCITY_DEADZONE = 0.15; // feet
+    public static final double HEADING_DEADZONE = 3.0; // degrees
 
     /**
      * Evaluates the motor output
@@ -25,12 +32,12 @@ public class PurePursuitController
      * @param velocity the velocity to follow the path at
      * @return motor velocities, value1 is left, value2 is right
      */
-    public static Pair evaluateOutput(Pose pose, Path path, double velocity)
+    public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
-        Pair output = new Pair(velocity / Drivebase.MAX_VELOCITY, velocity / Drivebase.MAX_VELOCITY);
+        Pair<Double, Double> output = new Pair<>(velocity, velocity);
 
         if(PurePursuitController.inDeadzone(pose, path))
-            return new Pair(0.0, 0.0);
+            return new Pair<>(0.0, 0.0);
 
 //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPositionTicks());
 //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
@@ -43,8 +50,8 @@ public class PurePursuitController
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
-//        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
-//        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
+        //        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
+        //        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
 
         Vector2 icc = evaluateCenterOfCurvature(pose, lookahead);
 
@@ -54,19 +61,34 @@ public class PurePursuitController
         boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
                 Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
-        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / LOOKAHEAD_DISTANCE, 1);
+        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
 
-        if(icc == null)
+        // Slow down around curves
+        double t = path.evaluateClosestT(pose.getPosition());
+        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
+        if(curveIcc != null)
         {
-            output.setValue1(velocity);
-            output.setValue2(velocity);
-            return output;
+            double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
+            if(velocity >= 0)
+                velocity = Math.min(velocity, slowdown);
+            else
+                velocity = Math.max(velocity, -slowdown);
         }
+
+        // If there is no center of curvature, go straight
+        if(icc == null)
+            return new Pair<>(velocity, velocity);
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius / Drivebase.MAX_VELOCITY);
+        // Correct for angle error
+        double angleCorrection = 0;
+        if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
+            angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
+
+        // Set velocities
+        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
+        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
 
         return output;
     }
@@ -79,13 +101,13 @@ public class PurePursuitController
      */
     protected static Vector2 evaluateLookaheadPoint(Pose pose, Path path)
     {
-        // find closest point on path to robot
+        // Find closest point on path to robot
         double closestT = path.evaluateClosestT(pose.getPosition());
 
-        // find lookAhead point
+        // Find lookAhead point
         double lookaheadT = closestT + LOOKAHEAD_DISTANCE / path.getLength();
 
-        // if look ahead is outside of path bounds, evaluate along continuing tangent
+        // If look ahead is outside of path bounds, evaluate along continuing tangent
         Vector2 lookahead;
         if(lookaheadT > 1.0)
             lookahead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1.0) * path.getLength()));
@@ -128,6 +150,41 @@ public class PurePursuitController
     }
 
     /**
+     * Find the angle error, between [-180, 180], from an angle and a pose
+     * @param target target angle
+     * @param pose current pose
+     * @return error in degrees
+     */
+    protected static double getAngleError(double target, Pose pose)
+    {
+        // Map target from [0, 360]
+        target %= 360;
+        if (target < 0) target += 360;
+
+        // Find heading [0, 360]
+        double heading = pose.getHeading();
+        if (heading < 0) heading += 360;
+
+        // Find error and angle correction
+        double error = (target - heading);
+        if (error >= 180) error -= 360;
+        else if (error <= -180) error += 360;
+
+        return error;
+    }
+
+    /**
+     * Find the angle error, between [-180, 180], from a direction and a pose
+     * @param direction target direction
+     * @param pose current pose
+     * @return error in degrees
+     */
+    protected static double getAngleError(Vector2 direction, Pose pose)
+    {
+        return getAngleError(Math.toDegrees(Math.atan2(direction.getY(), direction.getX())), pose);
+    }
+
+    /**
      * Find out if the robot is within a deadzone from the end point
      * @param pose pose of the robot
      * @param path path to follow
@@ -146,8 +203,10 @@ public class PurePursuitController
 
         double closeToEnd = path.evaluateClosestT(pose.getPosition());
 
+        double angleError = getAngleError(endTangent, pose);
         return closeToEnd > 1.0 - deadzoneT * 2 &&
                 Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
+                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2 &&
+                ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
     }
 }

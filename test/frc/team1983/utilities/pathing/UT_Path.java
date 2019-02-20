@@ -1,7 +1,5 @@
 package frc.team1983.utilities.pathing;
 
-import frc.team1983.utilities.Pair;
-import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
@@ -97,43 +95,72 @@ public class UT_Path
     @Test
     public void evaluateNormalTest()
     {
+        Path path = new Path(
+                new Pose(0, 0, 0),
+                new Pose(10, 10, 90)
+        );
 
+        assertThat(Vector2.equals(path.evaluateNormal(0), new Vector2(0, 1)), equalTo(true));
+        assertThat(Vector2.equals(path.evaluateNormal(1), new Vector2(-1, 0)), equalTo(true));
+    }
+
+    @Test
+    public void centerOfCurvatureTest()
+    {
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(10, 10, 0)
+        );
+
+        Vector2 point = path.evaluate(0.5);
+        Vector2 icc = path.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() > point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(-10, 10, 180)
+        );
+
+        point = path.evaluate(0.5);
+        icc = path.evaluateCenterOfCurvature(0.5);
+        assertThat(icc.getX() < point.getX(), equalTo(true));
+        assertThat(icc.getY() < point.getY(), equalTo(true));
+
+        path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        icc = path.evaluateCenterOfCurvature(0.5);
+        assertThat(icc, equalTo(null));
+    }
+
+    @Test
+    public void radiusOfCurvatureTest()
+    {
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(10, 10, 0)
+        );
+
+        Vector2 point = path.evaluate(0.5);
+        Vector2 icc = path.evaluateCenterOfCurvature(0.5);
+        assertThat(path.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
+
+        path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(-10, 10, 180)
+        );
+
+        point = path.evaluate(0.5);
+        icc = path.evaluateCenterOfCurvature(0.5);
+        assertThat(path.evaluateRadiusOfCurvatuve(0.5), equalTo(point.getDistanceTo(icc)));
     }
 
     @Test
     public void evaluateClosestPointTest()
     {
-//        Path path = new Path(
-//                new Pose(0, 0, 90),
-//                new Pose(0, 2, 90),
-//                new Pose(0, 4, 90)
-//        );
-//
-//        Vector2 point = new Vector2(0, -10);
-//
-//        double closestT = path.evaluateClosestT(point);
-//        Vector2 closestPoint = path.evaluateClosestPoint(point);
-//
-//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 0.0)), equalTo(true));
-//        assertThat(closestT, equalTo(0.0));
-//
-//        point = new Vector2(0, 2);
-//
-//        closestT = path.evaluateClosestT(point);
-//        closestPoint = path.evaluateClosestPoint(point);
-//
-//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 2.0)), equalTo(true));
-//        assertThat(closestT, equalTo(0.5));
-//
-//        point = new Vector2(0, 3);
-//
-//        closestT = path.evaluateClosestT(point);
-//        closestPoint = path.evaluateClosestPoint(point);
-//
-//        assertThat(Vector2.equals(closestPoint, new Vector2(0, 3.0)), equalTo(true));
-//        assertThat(closestT, equalTo(0.75));
-
-
         Path path = new Path(
                 new Pose(0, 0, 90),
                 new Pose(10, 10, 90),
@@ -146,7 +173,6 @@ public class UT_Path
         double closestT = path.evaluateClosestT(point);
         Vector2 closestPoint = path.evaluateClosestPoint(point);
 
-//        System.out.println(closestT + ", " + closestPoint);
         assertThat(closestPoint.getY() > 10.0, equalTo(true));
         assertThat(closestPoint.getY() < 20.0, equalTo(true));
         assertThat(closestT > 0.0, equalTo(true));
@@ -157,7 +183,6 @@ public class UT_Path
         closestT = path.evaluateClosestT(point);
         closestPoint = path.evaluateClosestPoint(point);
 
-//        System.out.println(closestT + ", " + closestPoint);
         assertThat(closestPoint.getY() > 20.0, equalTo(true));
         assertThat(closestPoint.getY() < 30.0, equalTo(true));
         assertThat(closestT > 0.33, equalTo(true));

@@ -80,7 +80,8 @@ public class UT_PurePursuitController
     @Test
     public void inDeadzoneTest()
     {
-        double DEADZONE = PurePursuitController.VELOCITY_DEADZONE;
+        double VELOCITY_DEADZONE = PurePursuitController.VELOCITY_DEADZONE;
+        double HEADING_DEADZONE = PurePursuitController.HEADING_DEADZONE;
 
         Pose pose = new Pose(0, 10, 90);
 
@@ -91,19 +92,19 @@ public class UT_PurePursuitController
 
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
 
-        pose = new Pose(0, 10 + DEADZONE - 1e-3, 90);
+        pose = new Pose(0, 10 + VELOCITY_DEADZONE - 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
 
-        pose = new Pose(0, 10 - DEADZONE + 1e-3, 90);
+        pose = new Pose(0, 10 - VELOCITY_DEADZONE + 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
 
         assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), equalTo(0.0));
         assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue2(), equalTo(0.0));
 
-        pose = new Pose(0, 10 + DEADZONE + 1e-3, 90);
+        pose = new Pose(0, 10 + VELOCITY_DEADZONE + 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
-        pose = new Pose(0, 10 - DEADZONE - 1e-3, 90);
+        pose = new Pose(0, 10 - VELOCITY_DEADZONE - 1e-3, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
         pose = new Pose(0, 0, 90);
@@ -112,6 +113,24 @@ public class UT_PurePursuitController
         pose = new Pose(0, 20, 90);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
+        assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), 0.0);
+        assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue2(), 0.0);
+
+        pose = new Pose(0, 10, 90 + HEADING_DEADZONE - 1e-3);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
+
+        pose = new Pose(0, 10, 90 - HEADING_DEADZONE + 1e-3);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(true));
+
+        pose = new Pose(0, 10, 90 + HEADING_DEADZONE + 1e-3);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        pose = new Pose(0, 10, 90 - HEADING_DEADZONE - 1e-3);
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
+
+        pose = new Pose(0, 10, 0);
+
+        assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
         assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), 0.0);
         assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue2(), 0.0);
     }
@@ -126,8 +145,8 @@ public class UT_PurePursuitController
                 new Pose(0, 10, 90)
         );
 
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
     }
 
     @Test
@@ -140,7 +159,9 @@ public class UT_PurePursuitController
                 new Pose(0, 10, 90)
         );
 
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue1() < 0, equalTo(true));
-        assertThat((double) PurePursuitController.evaluateOutput(pose, path, 1).getValue2() < 0, equalTo(true));
+        Pair<Double, Double> output = PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(output.getValue1() < 0, equalTo(true));
+        assertThat(output.getValue2() < 0, equalTo(true));
     }
 }
