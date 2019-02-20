@@ -36,8 +36,8 @@ public class DrivePath extends Command
     {
         Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
 
-        drivebase.setLeft(ControlMode.Throttle, (double) output.getValue1());
-        drivebase.setRight(ControlMode.Throttle, (double) output.getValue2());
+        drivebase.setLeft(ControlMode.Throttle, (double) output.getValue1() / Drivebase.MAX_VELOCITY);
+        drivebase.setRight(ControlMode.Throttle, (double) output.getValue2() / Drivebase.MAX_VELOCITY);
     }
 
     @Override

@@ -44,9 +44,11 @@ public class Pose
     public static final Pose RIGHT_LOADING_STATION = new Pose(25 + (1.25 / 12.0), L / 2.0, -90);
 
     // HAB
-    public static final Pose LEVEL_1 = new Pose(9 + (8 / 12.0), L / 2.0, 90);
-    public static final Pose LEFT_LEVEL_2 = new Pose(17 + (4 / 12.0), L / 2.0, 90);
-    public static final Pose RIGHT_LEVEL_2 = new Pose(13 + (6 / 12.0), 4 + L / 2.0, 90);
+    public static final Pose LEVEL_1_LEFT = new Pose(9 + (8 / 12.0), 4 + L / 2.0, 90);
+    public static final Pose LEVEL_1_MIDDLE = new Pose(13 + (6 / 12.0), 4 + L / 2.0, 90);
+    public static final Pose LEVEL_1_RIGHT = new Pose(17 + (4 / 12.0), 4 + L / 2.0, 90);
+    public static final Pose LEVEL_2_LEFT = new Pose(9 + (8 / 12.0), L / 2.0, 90);
+    public static final Pose LEVEL_2_RIGHT = new Pose(17 + (4 / 12.0), L / 2.0, 90);
 
     private final Vector2 position, direction;
     private final double heading;

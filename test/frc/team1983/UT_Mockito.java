@@ -1,4 +1,4 @@
-package frc.team1983.utilities;
+package frc.team1983;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,7 +27,7 @@ public class UT_Mockito
         Assert.assertTrue(mockedClass.returnFalse());
     }
 
-    class ClassToBeMocked
+    static class ClassToBeMocked
     {
         boolean returnFalse()
         {

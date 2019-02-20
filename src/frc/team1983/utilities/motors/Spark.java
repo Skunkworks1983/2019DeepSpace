@@ -38,6 +38,12 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
     }
 
     @Override
+    public void setCurrentLimit(int limit)
+    {
+        this.setSmartCurrentLimit(limit);
+    }
+
+    @Override
     public void configure()
     {
 

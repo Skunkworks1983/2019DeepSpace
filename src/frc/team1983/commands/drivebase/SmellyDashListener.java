@@ -16,20 +16,24 @@ public class SmellyDashListener extends Command
     public SmellyDashListener()
     {
         logger = Logger.getInstance();
+        SmartDashboard.putBoolean("gotPath", true);
+        SmartDashboard.putString("path", "-1,-1,-1:-1,-1,-1");
     }
 
     @Override
     public void execute()
     {
-        if (!SmartDashboard.getBoolean("gotPath", true))
+        if(!SmartDashboard.getBoolean("gotPath", true))
         {
+            System.out.println("got path");
+
             logger.info("Got a path", getClass()); SmartDashboard.putBoolean("gotPath", true);
 
             Path pathFromString = constructPathFromString(SmartDashboard.getString("path", "-1,-1,-1:-1,-1, -1"));
             if(pathFromString.equals(new Path(new Pose(-1, -1, -1), new Pose(-1, -1, -1))))
                 return;
 
-            Scheduler.getInstance().add(new DrivePath(pathFromString, 4));
+            Scheduler.getInstance().add(new DrivePath(pathFromString, 4.0));
         }
     }
 

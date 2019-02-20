@@ -1,11 +1,11 @@
 package frc.team1983.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.logging.Logger;
+import frc.team1983.utilities.motors.Talon;
 
 /**
  * The manipulator is mounted to the elevator, and is how we score game pieces. It has four actuators on it:
@@ -18,39 +18,25 @@ public class Manipulator extends Subsystem
     private DoubleSolenoid extender;
     private DoubleSolenoid hooks;
 
-    private TalonSRX leftGripper;
-    private TalonSRX rightGripper;
+    private Talon leftGripper;
+    private Talon rightGripper;
 
-    private boolean isExtended;
-    private boolean isOpen;
-
-    /**
-     * This constructor is mainly for unit testing.
-     */
-    public Manipulator(DoubleSolenoid extender, DoubleSolenoid hooks, TalonSRX leftGripper, TalonSRX rightGripper, Logger logger)
-    {
-        this.extender = extender;
-        this.hooks = hooks;
-        this.leftGripper = leftGripper;
-        this.rightGripper = rightGripper;
-        this.logger = logger;
-
-        isExtended = extender.get() == DoubleSolenoid.Value.kForward;
-        isOpen = hooks.get() == DoubleSolenoid.Value.kForward;
-    }
-
-    /**
-     * This constructor creates all the solenoids and talons, and also inverts the talons
-     */
     public Manipulator()
     {
-        this(new DoubleSolenoid(RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE),
-                new DoubleSolenoid(RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE),
-                new TalonSRX(RobotMap.Manipulator.LEFT_GRIPPER), new TalonSRX(RobotMap.Manipulator.RIGHT_GRIPPER),
-                Logger.getInstance());
+        extender = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE);
+        hooks = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
+    }
 
-        leftGripper.setInverted(RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
-        rightGripper.setInverted(RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
+    @Override
+    protected void initDefaultCommand()
+    {
+
+    }
+
+    @Override
+    public void periodic()
+    {
+        
     }
 
     /**
@@ -59,8 +45,6 @@ public class Manipulator extends Subsystem
     public void setExtender(boolean shouldExtend)
     {
         extender.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-        logger.debug((shouldExtend ? "Extending" : "Retracting") + " manipulator", this.getClass());
-        this.isExtended = shouldExtend;
     }
 
     /**
@@ -69,8 +53,6 @@ public class Manipulator extends Subsystem
     public void setHooks(boolean shouldOpen)
     {
         hooks.set(shouldOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-        logger.debug((shouldOpen ? "Opening" : "Closing") + " hooks", this.getClass());
-        this.isOpen = shouldOpen;
     }
 
     /**
@@ -96,27 +78,5 @@ public class Manipulator extends Subsystem
     {
         setLeftGripper(output);
         setRightGripper(output);
-    }
-
-    /**
-     * @return if the manipulator is currently extended or not
-     */
-    public boolean isExtended()
-    {
-        return isExtended;
-    }
-
-    /**
-     * @return if the hooks is currently open or closed
-     */
-    public boolean isOpen()
-    {
-        return isOpen;
-    }
-
-    @Override
-    protected void initDefaultCommand()
-    {
-
     }
 }
