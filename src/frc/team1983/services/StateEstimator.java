@@ -1,6 +1,5 @@
 package frc.team1983.services;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
@@ -8,9 +7,11 @@ import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.Pigeon;
 
-// This class estimates the position of the robot. Coordinate system conventions are
-// that the origin is in the bottom left corner from the perspective of standing at
-// the driver station, and theta = 0 towards the x-axis.
+/**
+ * This class estimates the position of the robot. Coordinate system conventions are
+ * that the origin is in the bottom left corner from the perspective of standing at
+ * the driver station, and theta = 0 towards the x-axis.
+ */
 public class StateEstimator implements Runnable
 {
     public static final int UPDATE_RATE = 20;
@@ -19,10 +20,7 @@ public class StateEstimator implements Runnable
     private Gyro gyro;
 
     private double lastLeftPosition, lastRightPosition;
-    // TODO: find real
-//    private Vector2 position = new Vector2(0, 0);
-//    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
-    private Vector2 position = Pose.LEVEL_1_MIDDLE.getPosition();
+    private Vector2 position;
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -32,8 +30,10 @@ public class StateEstimator implements Runnable
         lastLeftPosition = drivebase.getLeftPosition();
         lastRightPosition = drivebase.getRightPosition();
 
+        position = Pose.LEVEL_1_MIDDLE.getPosition();
+
         new Thread(this).start();
-    }
+}
 
     public StateEstimator()
     {

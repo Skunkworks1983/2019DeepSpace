@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.LimeLightRead;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
@@ -14,6 +13,7 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.LimeLight;
 import frc.team1983.utilities.sensors.NavX;
 
 public class Robot extends TimedRobot
@@ -29,6 +29,7 @@ public class Robot extends TimedRobot
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
+    private LimeLight limeLight;
     private OI oi;
     private Logger logger;
 
@@ -57,6 +58,8 @@ public class Robot extends TimedRobot
         navx = new NavX();
 
         estimator = new StateEstimator();
+
+        limeLight = new LimeLight();
 
         oi = new OI();
         oi.initializeBindings();
@@ -97,7 +100,6 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
         Scheduler.getInstance().add(new RunTankDrive());
-        Scheduler.getInstance().add(new LimeLightRead());
     }
 
     @Override
@@ -141,6 +143,11 @@ public class Robot extends TimedRobot
     public StateEstimator getEstimator()
     {
         return estimator;
+    }
+
+    public LimeLight getLimeLight()
+    {
+        return limeLight;
     }
 
     public OI getOI()
