@@ -78,7 +78,7 @@ public class Transmission implements PIDInput, PIDOutput
     }
 
     /**
-     * Reset the encoder offset to that it reads zero at its current position
+     * Reset the encoder offset so that it reads zero at its current position
      */
     public void zero()
     {
