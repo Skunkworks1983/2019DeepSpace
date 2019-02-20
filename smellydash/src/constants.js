@@ -14,7 +14,7 @@ const CANVAS_HEIGHT = 555;
 const PIXELS_PER_FOOT = CANVAS_HEIGHT / 27;
 
 const LOOKAHEAD_DISTANCE = 3.5;
-const TANGENT_LENGTH = 3;
+const TANGENT_LENGTH = 5;
 
 // This is breakout, although it is only a visual thing
 const ROBOT_WIDTH = (32 / 12) * PIXELS_PER_FOOT;

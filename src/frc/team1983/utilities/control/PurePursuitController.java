@@ -68,11 +68,13 @@ public class PurePursuitController
         Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
         if(curveIcc != null)
         {
+            /*
             double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
             if(velocity >= 0)
                 velocity = Math.min(velocity, slowdown);
             else
                 velocity = Math.max(velocity, -slowdown);
+                */
         }
 
         // If there is no center of curvature, go straight

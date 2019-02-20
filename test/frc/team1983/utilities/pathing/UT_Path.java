@@ -1,5 +1,7 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.utilities.Pair;
+import frc.team1983.utilities.control.PurePursuitController;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
