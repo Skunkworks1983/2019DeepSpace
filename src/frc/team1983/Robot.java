@@ -1,7 +1,9 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -13,6 +15,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
@@ -20,6 +23,7 @@ import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.rint;
 
 public class Robot extends TimedRobot
 {
@@ -36,6 +40,8 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
+
+    private DigitalInput dio = new DigitalInput(7);
 
     Robot()
     {
@@ -83,6 +89,10 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
+
+//        System.out.println("DIO: " + dio.get());
+//        System.out.println("Wrist: " + collector.getTicks());
+//        System.out.println("Elevator: " + elevator.getTicks());
     }
 
     @Override
@@ -113,7 +123,7 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
         Scheduler.getInstance().add(new RunTankDrive());
-        compressor.start();
+        compressor.start();oi
     }
 
     public static Robot getInstance()
