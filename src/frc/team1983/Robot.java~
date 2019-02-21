@@ -102,11 +102,11 @@ public class Robot extends TimedRobot
         compressor.start();
 
         Scheduler.getInstance().add(new DrivePath(new Path(
-                new Pose(1, 1, 90),
-                new Pose(3, 10, 90),
-                new Pose(14, 13, 0),
-                new Pose(21, 21, 90)
-        ), 6));
+                Pose.DEFAULT,
+                new Pose(2.5, 7, 90),
+                new Pose(10, 13, 0),
+                new Pose(20, 19, 90)
+        ), 3));
     }
 
     @Override
