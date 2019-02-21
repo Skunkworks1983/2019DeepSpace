@@ -1,7 +1,9 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.constants.RobotMap;
@@ -10,11 +12,13 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.rint;
 
 public class Robot extends TimedRobot
 {
@@ -31,6 +35,8 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
+
+    private DigitalInput dio = new DigitalInput(7);
 
     Robot()
     {
@@ -77,6 +83,10 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
+
+//        System.out.println("DIO: " + dio.get());
+//        System.out.println("Wrist: " + collector.getTicks());
+//        System.out.println("Elevator: " + elevator.getTicks());
     }
 
     @Override
@@ -101,12 +111,72 @@ public class Robot extends TimedRobot
     {
         //Scheduler.getInstance().add(new RunTankDrive());
         compressor.start();
+
+
+        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
+                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
+
+        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(1)));
+        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(-1)));
+        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(0)));
+
+
+        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
+                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
+        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
+                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
+
+        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(1)));
+        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(0)));
+        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(-1)));
+
+        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
+                new InstantCommand(() -> elevator.set(ControlMode.Position, 70))
+        );
+        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
+                new InstantCommand(() -> elevator.set(ControlMode.Position, 20))
+        );
+        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
+                new InstantCommand(() -> elevator.set(ControlMode.Position, 0))
+        );
+
     }
 
     @Override
     public void teleopPeriodic()
     {
+
+//        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
+//        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
+
+        //climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
+
+        collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
+
+//        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
+//        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
     }
+
+    @Override
+    public void testInit()
+    {
+        compressor.start();
+    }
+
+    @Override
+    public void testPeriodic()
+    {
+
+
+
+    }
+
 
     public static Robot getInstance()
     {

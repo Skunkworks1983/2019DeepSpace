@@ -61,6 +61,11 @@ public class Elevator extends Subsystem
         return motorGroup.getPositionTicks() / TICKS_PER_INCH;
     }
 
+    public double getTicks()
+    {
+        return motorGroup.getPositionTicks();
+    }
+
     public double getVelocity()
     {
         return motorGroup.getVelocityTicks() / TICKS_PER_INCH;
