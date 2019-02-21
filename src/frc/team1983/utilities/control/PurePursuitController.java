@@ -1,11 +1,13 @@
 package frc.team1983.utilities.control;
 
+import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Line;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
+import frc.team1983.utilities.sensors.Limelight;
 
 /**
  * PurePursuitController determines motor outputs from the current position, a path to follow, and following velocity.
@@ -35,6 +37,8 @@ public class PurePursuitController
     public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
         Pair<Double, Double> output = new Pair<>(velocity, velocity);
+
+        // Adjust path to limelight
 
         if(PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);

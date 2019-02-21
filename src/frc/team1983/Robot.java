@@ -13,7 +13,7 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
-import frc.team1983.utilities.sensors.LimeLight;
+import frc.team1983.utilities.sensors.Limelight;
 import frc.team1983.utilities.sensors.NavX;
 
 public class Robot extends TimedRobot
@@ -29,7 +29,7 @@ public class Robot extends TimedRobot
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
-    private LimeLight limeLight;
+    private Limelight limelight;
     private OI oi;
     private Logger logger;
 
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot
 
         estimator = new StateEstimator();
 
-        limeLight = new LimeLight();
+        limelight = new Limelight();
 
         oi = new OI();
         oi.initializeBindings();
@@ -145,9 +145,9 @@ public class Robot extends TimedRobot
         return estimator;
     }
 
-    public LimeLight getLimeLight()
+    public Limelight getLimelight()
     {
-        return limeLight;
+        return limelight;
     }
 
     public OI getOI()

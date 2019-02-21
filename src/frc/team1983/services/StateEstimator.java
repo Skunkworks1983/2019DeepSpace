@@ -79,9 +79,9 @@ public class StateEstimator implements Runnable
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
             }
-            catch(InterruptedException exception)
+            catch(InterruptedException e)
             {
-                exception.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

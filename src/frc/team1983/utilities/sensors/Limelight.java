@@ -2,7 +2,7 @@ package frc.team1983.utilities.sensors;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-public class LimeLight implements Runnable
+public class Limelight implements Runnable
 {
     public static final int UPDATE_RATE = 20;
 
@@ -24,7 +24,7 @@ public class LimeLight implements Runnable
     private double xOffset, yOffset;
     private double pitch, yaw, roll;
 
-    public LimeLight()
+    public Limelight()
     {
         new Thread(this).start();
     }
@@ -109,9 +109,9 @@ public class LimeLight implements Runnable
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
             }
-            catch(InterruptedException exception)
+            catch(InterruptedException e)
             {
-                exception.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
