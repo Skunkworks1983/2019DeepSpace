@@ -123,7 +123,7 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
         Scheduler.getInstance().add(new RunTankDrive());
-        compressor.start();oi
+        compressor.start();
     }
 
     public static Robot getInstance()
