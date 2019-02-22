@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team1983.Robot;
 import frc.team1983.commands.collector.SetCollectorFolded;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
-import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.subsystems.Climber;
 import frc.team1983.subsystems.Collector;
