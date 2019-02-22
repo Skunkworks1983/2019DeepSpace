@@ -1,11 +1,15 @@
 package frc.team1983.utilities.control;
 
+import frc.team1983.Robot;
 import frc.team1983.services.logging.Logger;
+import frc.team1983.subsystems.Elevator;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.MotorGroup;
 
 import java.util.ArrayList;
 import java.util.function.Function;
+
+import static java.lang.Math.abs;
 
 /**
  * This is our custom implementation of a PIDF Controller. It also can be passed motion profiles, and allows for arbitrary
@@ -102,6 +106,7 @@ public class PIDFController extends Thread
      */
     protected void execute()
     {
+        double profileError = 0;
         if (motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
@@ -109,9 +114,15 @@ public class PIDFController extends Thread
             if (time > motionProfile.getDuration())
                 motionProfile = null;
             else
+            {
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
+                profileError = (setpoint / Elevator.TICKS_PER_INCH) - Robot.getInstance().getElevator().getTargetPosition();
+            }
         }
         double out = calculate(setpoint);
+        if(abs(profileError) > .1)
+            System.out.println((setpoint / Elevator.TICKS_PER_INCH) + " " +
+                    (input.pidGet() / Elevator.TICKS_PER_INCH) + " " + out);
         output.pidWrite(out);
     }
 
@@ -155,7 +166,7 @@ public class PIDFController extends Thread
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
-        System.out.println(error);
+//        if(abs(error) > .8) System.out.println(error / Elevator.TICKS_PER_INCH);
 
         //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
@@ -171,7 +182,6 @@ public class PIDFController extends Thread
         for (Function<Object, Double> ffTerm : ffTerms)
             output += ffTerm.apply(ffOperator);
 
-        System.out.println("pidf output: " + output);
         return output;
     }
 

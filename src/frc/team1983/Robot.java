@@ -91,7 +91,7 @@ public class Robot extends TimedRobot
 
         //        System.out.println("DIO: " + dio.get());
         //        System.out.println("Wrist: " + collector.getTicks());
-        //        System.out.println("Elevator: " + elevator.getTicks());
+//                System.out.println("Elevator: " + elevator.getPosition());
     }
 
     @Override
@@ -129,8 +129,41 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        Scheduler.getInstance().add(new RunTankDrive());
         compressor.start();
+
+        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
+                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
+
+        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(1)));
+        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(-1)));
+        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
+                new InstantCommand(() -> collector.setRollerThrottle(0)));
+
+
+        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
+                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
+        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
+                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
+
+        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(1)));
+        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(0)));
+        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
+                new InstantCommand(() -> manipulator.setGrippers(-1)));
+
+        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
+                new InstantCommand(() -> elevator.setPosInches(49))
+        );
+        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
+                new InstantCommand(() -> elevator.setPosInches(10))
+        );
+        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
+                new InstantCommand(() -> elevator.setPosInches(.01))
+        );
+
     }
 
     public static Robot getInstance()
