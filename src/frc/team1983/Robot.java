@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.collector.SetCollectorRollerThrottle;
+import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -94,6 +96,8 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
+
+        Scheduler.getInstance().add(new SetCollectorRollerThrottle(.5));
     }
 
     @Override
@@ -123,6 +127,11 @@ public class Robot extends TimedRobot
     public Elevator getElevator()
     {
         return elevator;
+    }
+
+    public Climber getClimber()
+    {
+        return climber;
     }
 
     public Gyro getGyro()

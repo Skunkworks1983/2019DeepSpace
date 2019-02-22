@@ -11,10 +11,27 @@ public class Climber extends Subsystem
 {
     private MotorGroup motorGroup;
 
+    public static final double TICKS_PER_INCH = 0; //TODO: add math
+
     public Climber()
     {
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
+    }
+
+    protected void zero()
+    {
+        motorGroup.zero();
+    }
+
+    protected void set(ControlMode mode, double value)
+    {
+        motorGroup.set(mode, value);
+    }
+
+    protected double getPosition()
+    {
+      return motorGroup.getPositionTicks() / TICKS_PER_INCH;
     }
 
     @Override
