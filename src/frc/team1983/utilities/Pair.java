@@ -33,4 +33,9 @@ public class Pair<Type1, Type2>
     {
         value2 = value;
     }
+
+    public String toString()
+    {
+        return value1 + ", " + value2;
+    }
 }
