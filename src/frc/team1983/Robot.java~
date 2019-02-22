@@ -1,9 +1,7 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -15,7 +13,6 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
-import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
@@ -39,8 +36,6 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
-
-    private DigitalInput dio = new DigitalInput(7);
 
     Robot()
     {
@@ -88,17 +83,13 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
-
-        //        System.out.println("DIO: " + dio.get());
-        //        System.out.println("Wrist: " + collector.getTicks());
-        //        System.out.println("Elevator: " + elevator.getTicks());
     }
 
     @Override
     public void disabledInit()
     {
         Scheduler.getInstance().removeAll();
-        for (MotorGroup motorGroup : MotorGroup.motorGroups)
+        for(MotorGroup motorGroup : MotorGroup.motorGroups)
             motorGroup.disableController();
         drivebase.setBrake(false);
         compressor.stop();
@@ -109,21 +100,13 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
-    }
 
-    @Override
-    public void teleopPeriodic()
-    {
-
-        //        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
-        //        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
-
-        //climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
-
-        collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
-
-        //        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
-        //        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                Pose.DEFAULT,
+                new Pose(2.5, 7, 90),
+                new Pose(10, 13, 0),
+                new Pose(20, 19, 90)
+        ), 3));
     }
 
     @Override

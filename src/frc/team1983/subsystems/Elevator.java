@@ -11,8 +11,8 @@ public class Elevator extends Subsystem
 {
     // TODO: add necessary things
 
-    public static final double TICKS_PER_INCH = 95.0 / 22.0;//TODO: add math
     public static final double kG = 0.05; //Tested on practice bot with full battery
+    public static final double TICKS_PER_INCH = 95.0 / (22.0 * 3.0);//TODO: add math
 
     public MotorGroup motorGroup;
 

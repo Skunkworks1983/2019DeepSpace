@@ -8,6 +8,11 @@ import frc.team1983.utilities.motors.ControlMode;
 
 public class SetElevatorPosition extends InstantCommand
 {
+    /**
+     *
+     * @param elevator The elevator object
+     * @param setpoint The height of the carriage in inches from the bottom stage
+     */
     public SetElevatorPosition(Elevator elevator, double setpoint)
     {
         super(elevator, () -> elevator.set(ControlMode.Position, setpoint));

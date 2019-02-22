@@ -1,5 +1,8 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.subsystems.Drivebase;
+import frc.team1983.utilities.Pair;
+import frc.team1983.utilities.control.PurePursuitController;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
@@ -187,6 +190,15 @@ public class UT_Path
         assertThat(closestPoint.getY() < 30.0, equalTo(true));
         assertThat(closestT > 0.33, equalTo(true));
         assertThat(closestT > 0.66, equalTo(true));
+
+        path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
+        );
+
+        point = new Vector2(0, 5);
+
+        closestT = path.evaluateClosestT(point);
     }
 
     @Test
