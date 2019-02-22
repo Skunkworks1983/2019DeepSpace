@@ -1,6 +1,5 @@
 package frc.team1983.utilities.control;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
 import frc.team1983.utilities.math.Line;
@@ -28,8 +27,9 @@ public class PurePursuitController
 
     /**
      * Evaluates the motor output
-     * @param pose position of the robot
-     * @param path path to follow
+     *
+     * @param pose     position of the robot
+     * @param path     path to follow
      * @param velocity the velocity to follow the path at
      * @return motor velocities, value1 is left, value2 is right
      */
@@ -37,20 +37,21 @@ public class PurePursuitController
     {
         Pair<Double, Double> output = new Pair<>(velocity, velocity);
 
-        if(PurePursuitController.inDeadzone(pose, path))
+        if (PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
 
-        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
-//        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
-//        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
+        //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+        //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
+        //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
 
-        if(velocity < 0)
+        if (velocity < 0)
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
+
 //        SmartDashboard.putNumber("lookaheadX", lookahead.getX());
 //        SmartDashboard.putNumber("lookaheadY", lookahead.getY());
 
@@ -67,7 +68,7 @@ public class PurePursuitController
         // Slow down around curves
         double t = path.evaluateClosestT(pose.getPosition());
         Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
-        if(curveIcc != null)
+        if (curveIcc != null)
         {
             /*
             double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
@@ -79,8 +80,8 @@ public class PurePursuitController
         }
 
         // If there is no center of curvature, go straight
-        if(icc == null)
-            return new Pair<>(0.0, 0.0);
+        if (icc == null)
+            return new Pair<>(velocity, velocity);
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
@@ -100,6 +101,7 @@ public class PurePursuitController
 
     /**
      * Evaluate a point ahead of the robot follow
+     *
      * @param pose pose of the robot
      * @param path path to follow
      * @return look ahead point
@@ -114,17 +116,18 @@ public class PurePursuitController
 
         // If look ahead is outside of path bounds, evaluate along continuing tangent
         Vector2 lookahead;
-        if(lookaheadT > 1.0)
+        if (lookaheadT > 1.0)
             lookahead = Vector2.add(path.evaluate(1.0), Vector2.scale(path.evaluateTangent(1.0), (lookaheadT - 1.0) * path.getLength()));
         else
-             lookahead = path.evaluate(lookaheadT);
+            lookahead = path.evaluate(lookaheadT);
 
         return lookahead;
     }
 
     /**
      * Evaluates a point the robot needs to rotate about in order to reach the look ahead point
-     * @param pose pose of the robot
+     *
+     * @param pose      pose of the robot
      * @param lookahead look ahead point for the robot to target
      * @return center of curvature
      */
@@ -133,7 +136,7 @@ public class PurePursuitController
         return Line.cast(
                 new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
                 new Line(Vector2.findCenter(pose.getPosition(), lookahead),
-                         Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()).getNormalized(), 90.0))
+                        Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()).getNormalized(), 90.0))
         );
     }
 
@@ -141,8 +144,9 @@ public class PurePursuitController
      * Evaluates the radius that the center of curvature is from the robot
      * Positive radius of curvature is to the right
      * Negative radius of curvature is to the left
+     *
      * @param pose pose of the robot
-     * @param icc center of curvature
+     * @param icc  center of curvature
      * @return radius of curvature
      */
     protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
@@ -156,8 +160,9 @@ public class PurePursuitController
 
     /**
      * Find the angle error, between [-180, 180], from an angle and a pose
+     *
      * @param target target angle
-     * @param pose current pose
+     * @param pose   current pose
      * @return error in degrees
      */
     protected static double getAngleError(double target, Pose pose)
@@ -180,8 +185,9 @@ public class PurePursuitController
 
     /**
      * Find the angle error, between [-180, 180], from a direction and a pose
+     *
      * @param direction target direction
-     * @param pose current pose
+     * @param pose      current pose
      * @return error in degrees
      */
     protected static double getAngleError(Vector2 direction, Pose pose)
@@ -191,6 +197,7 @@ public class PurePursuitController
 
     /**
      * Find out if the robot is within a deadzone from the end point
+     *
      * @param pose pose of the robot
      * @param path path to follow
      * @return in deadzone
