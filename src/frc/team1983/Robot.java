@@ -18,7 +18,6 @@ import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.rint;
 
 public class Robot extends TimedRobot
 {
@@ -84,16 +83,16 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
 
-//        System.out.println("DIO: " + dio.get());
-//        System.out.println("Wrist: " + collector.getTicks());
-//        System.out.println("Elevator: " + elevator.getTicks());
+        //        System.out.println("DIO: " + dio.get());
+        //        System.out.println("Wrist: " + collector.getTicks());
+        //        System.out.println("Elevator: " + elevator.getTicks());
     }
 
     @Override
     public void disabledInit()
     {
         Scheduler.getInstance().removeAll();
-        for(MotorGroup motorGroup : MotorGroup.motorGroups)
+        for (MotorGroup motorGroup : MotorGroup.motorGroups)
             motorGroup.disableController();
         drivebase.setBrake(false);
         compressor.stop();
@@ -152,15 +151,15 @@ public class Robot extends TimedRobot
     public void teleopPeriodic()
     {
 
-//        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
-//        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
+        //        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
+        //        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
 
         //climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
 
         collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
 
-//        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
-//        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
+        //        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
+        //        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
     }
 
     @Override
@@ -172,7 +171,6 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic()
     {
-
 
 
     }

@@ -171,6 +171,7 @@ public class PIDFController extends Thread
         for (Function<Object, Double> ffTerm : ffTerms)
             output += ffTerm.apply(ffOperator);
 
+        System.out.println("pidf output: " + output);
         return output;
     }
 

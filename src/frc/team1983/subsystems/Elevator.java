@@ -12,6 +12,7 @@ public class Elevator extends Subsystem
     // TODO: add necessary things
 
     public static final double TICKS_PER_INCH = 95.0 / 22.0;//TODO: add math
+    public static final double kG = 0.05; //Tested on practice bot with full battery
 
     public MotorGroup motorGroup;
 
@@ -25,6 +26,9 @@ public class Elevator extends Subsystem
         motorGroup.setMovementAcceleration(12);
         motorGroup.setMovementVelocity(12);
         motorGroup.setPID(0.01, 0, 0); // todo: add values
+
+        motorGroup.setFFOperator(this);
+        motorGroup.addFFTerm(Elevator -> kG);
 
         zero();
     }
