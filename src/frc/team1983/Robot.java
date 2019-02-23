@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.LimeLight;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
@@ -15,9 +14,8 @@ import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.Limelight;
 import frc.team1983.utilities.sensors.NavX;
-
-import static java.lang.Math.abs;
 
 public class Robot extends TimedRobot
 {
@@ -32,6 +30,7 @@ public class Robot extends TimedRobot
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
+    private Limelight limelight;
     private OI oi;
     private Logger logger;
 
@@ -61,6 +60,8 @@ public class Robot extends TimedRobot
 
         estimator = new StateEstimator();
 
+        limelight = new Limelight();
+
         oi = new OI();
         oi.initializeBindings();
     }
@@ -69,7 +70,44 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
+        compressor.start();
         navx.reset();
+    }
+
+
+    @Override
+    public void robotPeriodic()
+    {
+        Scheduler.getInstance().run();
+
+        SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
+        SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
+        SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
+    }
+
+    @Override
+    public void autonomousInit()
+    {
+        drivebase.setBrake(true);
+    }
+
+    @Override
+    public void autonomousPeriodic()
+    {
+
+    }
+
+    @Override
+    public void teleopInit()
+    {
+        Scheduler.getInstance().add(new RunTankDrive());
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+
+
     }
 
     @Override
@@ -80,26 +118,6 @@ public class Robot extends TimedRobot
             motorGroup.disableController();
         drivebase.setBrake(false);
         compressor.stop();
-    }
-
-    @Override
-    public void autonomousInit()
-    {
-        drivebase.setBrake(true);
-        compressor.start();
-    }
-
-    @Override
-    public void teleopInit()
-    {
-        //Scheduler.getInstance().add(new RunTankDrive());
-        compressor.start();
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-
     }
 
     public static Robot getInstance()
@@ -127,6 +145,11 @@ public class Robot extends TimedRobot
     public StateEstimator getEstimator()
     {
         return estimator;
+    }
+
+    public Limelight getLimelight()
+    {
+        return limelight;
     }
 
     public OI getOI()

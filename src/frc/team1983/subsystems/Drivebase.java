@@ -7,12 +7,14 @@ import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+/**
+ * Drivebase units are feet
+ */
 public class Drivebase extends Subsystem
 {
-    public static final double TICKS_PER_INCH = (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/) / (6.0 * Math.PI); // encoder pulses / inches of travel
-    public static final double MAX_VELOCITY = 14.0 * 12; // inches / second, empirically measured maximum drive velocity in a straight line
-    public static final double MAX_ACCELERATION = 3.0 * 12; // inches / second / second, a wild guess based on MAX_VELOCITY
-    public static final double TRACK_WIDTH = 26.0; // inches, horizontal distance between left and right wheels
+    public static final double TICKS_PER_FOOT = (8.69) / (6.0 * Math.PI / 12.0); // encoder pulses / feet of travel
+    public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
+    public static final double TRACK_WIDTH = 26.0 / 12.0; // feet, horizontal distance between left and right wheels
 
     public MotorGroup left, right;
 
@@ -24,8 +26,8 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        left.setMovementVelocity(12 * 5);
-        left.setMovementAcceleration(12 * 2);
+        left.setMovementVelocity(5.0);
+        left.setMovementAcceleration(2.0);
         left.setPID(0.03, 0, 0);
 
 
@@ -35,12 +37,9 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
         );
 
-        right.setMovementVelocity(12);
-        right.setMovementAcceleration(24);
+        right.setMovementVelocity(5.0);
+        right.setMovementAcceleration(2.0);
         right.setPID(0.03, 0, 0);
-
-
-        // todo: configure encoder properties of motorGroups
 
         zero();
     }
@@ -75,22 +74,12 @@ public class Drivebase extends Subsystem
 
     public double getLeftPosition()
     {
-        return left.getPositionTicks() / TICKS_PER_INCH;
-    }
-
-    public double getLeftVelocity()
-    {
-        return left.getVelocityTicks() / TICKS_PER_INCH;
+        return left.getPositionTicks() / TICKS_PER_FOOT;
     }
 
     public double getRightPosition()
     {
-        return right.getPositionTicks() / TICKS_PER_INCH;
-    }
-
-    public double getRightVelocity()
-    {
-        return right.getVelocityTicks() / TICKS_PER_INCH;
+        return right.getPositionTicks() / TICKS_PER_FOOT;
     }
 
     public void setBrake(boolean brake)

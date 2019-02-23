@@ -176,6 +176,28 @@ public class Path
     }
 
     /**
+     * Evaluates the center of curvature of a point on the path
+     * @param t the percentage along the curve [0, 1]
+     * @return center of curvature
+     */
+    public Vector2 evaluateCenterOfCurvature(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateCenterOfCurvature((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
+     * Evaluates the distance of the center of curvature
+     * @param t the percentage along the curve [0, 1]
+     * @return radius of curvature
+     */
+    public double evaluateRadiusOfCurvatuve(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluateRadiusOfCurvatuve((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
      * Evaluate the closest point and t from another point
      * @param point
      * @return closest point and t of closest point
