@@ -43,8 +43,8 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 5, 90);
 
         Path path = new Path(
-            new Pose(0, 0, 90),
-            new Pose(0, 10, 90)
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
         );
 
         assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
