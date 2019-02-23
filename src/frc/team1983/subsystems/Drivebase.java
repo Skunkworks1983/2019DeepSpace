@@ -13,7 +13,7 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Drivebase extends Subsystem
 {
-    public static final double TICKS_PER_FOOT = (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/) / (6.0 * Math.PI / 12.0); // encoder pulses / feet of travel
+    public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/); // encoder pulses / feet of travel
     public static final double MAX_VELOCITY = 14.0; // feet / second, empirically measured maximum drive velocity in a straight line
     public static final double TRACK_WIDTH = (Constants.ROBOT_WIDTH - (3.0 / 12.0)); // feet, horizontal distance between left and right wheels
 
@@ -27,10 +27,11 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
         );
 
-        left.setMovementVelocity(5.0);
+        left.setConversionRatio(FEET_PER_TICK);
+
+        left.setCruiseVelocity(5.0);
         left.setMovementAcceleration(2.0);
         left.setPID(0.03, 0, 0);
-
 
         right = new MotorGroup("Right Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
@@ -38,7 +39,9 @@ public class Drivebase extends Subsystem
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)
         );
 
-        right.setMovementVelocity(5.0);
+        right.setConversionRatio(FEET_PER_TICK);
+
+        right.setCruiseVelocity(5.0);
         right.setMovementAcceleration(2.0);
         right.setPID(0.03, 0, 0);
 
@@ -87,12 +90,12 @@ public class Drivebase extends Subsystem
 
     public double getLeftPosition()
     {
-        return left.getPositionTicks() / TICKS_PER_FOOT;
+        return left.getPosition();
     }
 
     public double getRightPosition()
     {
-        return right.getPositionTicks() / TICKS_PER_FOOT;
+        return right.getPosition();
     }
 
     public void setBrake(boolean brake)

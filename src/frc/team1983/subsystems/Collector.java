@@ -15,7 +15,7 @@ public class Collector extends Subsystem
     private DoubleSolenoid piston;
     private MotorGroup wrist;
 
-    private static final double TICKS_PER_DEGREE = 1; // TODO find more exact value
+    private static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
     // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
     private static final double K_G = 0; // TODO determine if needed
     // The length gain (is multiplied by the gravity gain if the piston is extended)
@@ -31,8 +31,10 @@ public class Collector extends Subsystem
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
+        wrist.setConversionRatio(DEGREES_PER_TICK);
+
         wrist.setPID(0.06, 0, 0);
-        wrist.setMovementVelocity(6);
+        wrist.setCruiseVelocity(6);
         wrist.setMovementAcceleration(6);
         wrist.setFFOperator(this);
         //        wrist.addFFTerm((collector) ->
@@ -75,7 +77,7 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wrist.set(ControlMode.Position, angle * TICKS_PER_DEGREE);
+        wrist.set(ControlMode.Position, angle);
     }
 
     /**
@@ -83,7 +85,7 @@ public class Collector extends Subsystem
      */
     public double getTargetAngle()
     {
-        return wrist.getTargetValue() / TICKS_PER_DEGREE;
+        return wrist.getTargetValue();
     }
 
     /**
@@ -115,7 +117,7 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wrist.getPositionTicks() / TICKS_PER_DEGREE;
+        return wrist.getPosition();
     }
 
     /**

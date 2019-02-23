@@ -11,16 +11,17 @@ public class Climber extends Subsystem
 {
     private MotorGroup motorGroup;
 
-    public static final double TICKS_PER_INCH = 1383.7; // TODO: math
+    public static final double INCHES_PER_TICK = 1 / 1383.7; // TODO: math
     public static final double MAX_EXTENTION_DISTANCE = 20.0; // inches, TODO: math
 
     public Climber()
     {
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
-        motorGroup.setMovementAcceleration(3);
-        motorGroup.setMovementVelocity(3);
-        motorGroup.setPID(0.01, 0, 0);
+        motorGroup.setConversionRatio(INCHES_PER_TICK);
+        motorGroup.setMovementAcceleration(1000);
+        motorGroup.setCruiseVelocity(1000);
+        motorGroup.setPID(0.2, 0, 0);
     }
 
     public void zero()
@@ -35,7 +36,7 @@ public class Climber extends Subsystem
 
     public double getPosition()
     {
-        return motorGroup.getPositionTicks() / TICKS_PER_INCH;
+        return motorGroup.getPosition();
     }
 
     @Override

@@ -53,7 +53,6 @@ public class PIDFController extends Thread
     /**
      * A constructor which passes a given motorGroup as source and output, zeros all the gains,
      * and initializes an empty array for ffTerms.
-     *
      * @param motorGroup The motorGroup that this PIDFController should control
      */
     public PIDFController(MotorGroup motorGroup)
@@ -88,7 +87,6 @@ public class PIDFController extends Thread
 
     /**
      * Setter method for adding a new arbitrary feedforward function
-     *
      * @param feedForward The new feedforward function
      */
     public synchronized void addFeedforward(Function<Object, Double> feedForward)
@@ -102,7 +100,6 @@ public class PIDFController extends Thread
      */
     protected void execute()
     {
-        //        double profileError = 0;
         if (motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
@@ -110,15 +107,9 @@ public class PIDFController extends Thread
             if (time > motionProfile.getDuration())
                 motionProfile = null;
             else
-            {
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
-                //                profileError = (setpoint / Elevator.TICKS_PER_INCH) - Robot.getInstance().getElevator().getTargetPosition();
-            }
         }
         double out = calculate(setpoint);
-        //        if(abs(profileError) > .1)
-        //            System.out.println((setpoint / Elevator.TICKS_PER_INCH) + " " +
-        //                    (input.pidGet() / Elevator.TICKS_PER_INCH) + " " + out);
         output.pidWrite(out);
     }
 
@@ -152,7 +143,6 @@ public class PIDFController extends Thread
 
     /**
      * Calculates the PIDF output
-     *
      * @param setpoint The setpoint value
      * @return the calculated output
      */
@@ -162,7 +152,6 @@ public class PIDFController extends Thread
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
-        //        if(abs(error) > .8) System.out.println(error / Elevator.TICKS_PER_INCH);
 
         //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
@@ -190,7 +179,6 @@ public class PIDFController extends Thread
 
     /**
      * Starts a motion profile and enables the controller
-     *
      * @param motionProfile The motion profile to be run
      */
     public synchronized void runMotionProfile(MotionProfile motionProfile)
