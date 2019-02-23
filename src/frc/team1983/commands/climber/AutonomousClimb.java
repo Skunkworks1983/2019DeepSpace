@@ -8,6 +8,7 @@ import frc.team1983.commands.collector.SetCollectorFolded;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.crossSubsystem.ClimbSetup;
 import frc.team1983.commands.crossSubsystem.Collapse;
+import frc.team1983.commands.crossSubsystem.PullForward;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.subsystems.Climber;
 import frc.team1983.subsystems.Collector;
@@ -31,19 +32,13 @@ public class AutonomousClimb extends CommandGroup
            drivebase = Robot.getInstance().getDrivebase();
            collector = Robot.getInstance().getCollector();
 
+           //"Grapples onto hab module"
            addSequential(new ClimbSetup());
 
-           //LiftRobot CommandGroup
+           //Drive Collector wheels forward
+           addSequential(new PullForward());
 
-           //Drive Collector wheels forward (Parallel) **CURRENTLY USING TESTING THROTTLES**
-           addParallel(new SetCollectorRollerThrottle(collector, .5));
-           drivebase.setLeft(ControlMode.Throttle, .5);
-           drivebase.setRight(ControlMode.Throttle, .5);
-
-           //Drivebase starts to roll
-           drivebase.setLeft(ControlMode.Throttle, .5);
-           drivebase.setRight(ControlMode.Throttle, .5);
-
+           //Retracts collector and sets motor brakes.
            addSequential(new Collapse());
        }
 }
