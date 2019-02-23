@@ -30,6 +30,7 @@ public class PIDFController extends Thread
     private ArrayList<Function<Object, Double>> ffTerms;
 
     private boolean enabled = false;
+    private PIDInput leader = null;
 
     /**
      * @param input   The input to the closed loop. Usually an encoder or motorGroup.
@@ -100,17 +101,15 @@ public class PIDFController extends Thread
      */
     protected void execute()
     {
-        if (motionProfile != null)
+        if(leader == null && motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
-            if (time > motionProfile.getDuration())
-                motionProfile = null;
-            else
-                setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
-        }
+            if(time > motionProfile.getDuration()) motionProfile = null;
+            else setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
+        } else if(leader != null)
+            setpoint = leader.pidGet();
         double out = calculate(setpoint);
-        System.out.println("SETPOINT: " + setpoint);
         output.pidWrite(out);
     }
 
@@ -189,10 +188,15 @@ public class PIDFController extends Thread
         enable();
     }
 
+    public synchronized void setFollowing(PIDInput leader)
+    {
+        this.leader = leader;
+    }
+
     /**
      * Enables the controller and sets the prev variables to prevent timing issues
      */
-    private synchronized void enable()
+    public synchronized void enable()
     {
         enabled = true;
     }

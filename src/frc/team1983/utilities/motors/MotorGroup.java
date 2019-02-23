@@ -25,18 +25,22 @@ public class MotorGroup implements PIDInput, PIDOutput
     protected ArrayList<Motor> motors;
     protected PIDFController controller;
 
+    private MotorGroup master;
+    private ArrayList<MotorGroup> followers;
+
     private double conversionRatio = 1;
     private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
 
     private boolean useMotionProfiles = true;
+    private boolean following = false;
 
     protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
     private double targetValue;
 
-    private double cruiseVelocity = 0; // in
-    private double movementAcceleration = 0; // in/s
+    private double cruiseVelocity = 0;
+    private double movementAcceleration = 0;
 
     /**
      * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
@@ -159,20 +163,24 @@ public class MotorGroup implements PIDInput, PIDOutput
             if (controller != null)
                 controller.disable();
             setRawThrottle(value);
+
+            for(MotorGroup follower : followers)
+                follower.set(ControlMode.Throttle, value);
         }
         else
         {
             createController();
 
-            if (cruiseVelocity == 0 || movementAcceleration == 0)
-                Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
-
-            feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
-
             if(useMotionProfiles)
-                controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
-            else
-                controller.setSetpoint(value);
+            {
+                if(cruiseVelocity == 0 || movementAcceleration == 0) Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
+                feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
+                if(useMotionProfiles) controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
+            }
+            else controller.setSetpoint(value);
+
+            for(MotorGroup follower : followers)
+                follower.enableController();
         }
     }
 
@@ -321,6 +329,26 @@ public class MotorGroup implements PIDInput, PIDOutput
     public double getD()
     {
         return controller.getkD();
+    }
+
+    public void addFollower(MotorGroup follower)
+    {
+        if(followers == null)
+            followers = new ArrayList<>();
+        followers.add(follower);
+    }
+
+    public void follow(MotorGroup leader)
+    {
+        useMotionProfiles = false;
+        leader.addFollower(this);
+        createController();
+        controller.setFollowing(leader);
+    }
+
+    public void enableController()
+    {
+        controller.enable();
     }
 
     public double getConversionRatio()

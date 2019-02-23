@@ -13,13 +13,9 @@ public class Collector extends Subsystem
 {
     private Talon roller;
     private DoubleSolenoid piston;
-    private MotorGroup wrist;
+    public MotorGroup wristLeft, wristRight;
 
-    private static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
-    // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
-    private static final double K_G = 0; // TODO determine if needed
-    // The length gain (is multiplied by the gravity gain if the piston is extended)
-    private static final double K_L = 1.01; // TODO determine if needed
+    public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
 
     public Collector()
     {
@@ -27,19 +23,19 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wrist = new MotorGroup("Collector Wrist", FeedbackType.POSITION,
-                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
+        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
+
+        wristLeft.setConversionRatio(DEGREES_PER_TICK);
+        wristLeft.setPID(0.06, 0, 0);
+        wristLeft.setCruiseVelocity(18);
+        wristLeft.setMovementAcceleration(18);
+
+        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wrist.setConversionRatio(DEGREES_PER_TICK);
-
-        wrist.setPID(0.06, 0, 0);
-        wrist.setCruiseVelocity(6);
-        wrist.setMovementAcceleration(6);
-        wrist.setFFOperator(this);
-        //        wrist.addFFTerm((collector) ->
-        //                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? K_L : 1) *
-        //                        K_G * Math.cos(((Collector) collector).getAngle()));
+        wristRight.setPID(0.1, 0, 0);
+        wristRight.follow(wristLeft);
     }
 
     @Override
@@ -59,7 +55,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
-        wrist.set(ControlMode.Throttle, output);
+        wristLeft.set(ControlMode.Throttle, output);
     }
 
     /**
@@ -67,7 +63,8 @@ public class Collector extends Subsystem
      */
     public void setWristBrake(boolean brake)
     {
-        wrist.setBrake(brake);
+        wristLeft.setBrake(brake);
+        wristRight.setBrake(brake);
     }
 
     /**
@@ -77,15 +74,7 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wrist.set(ControlMode.Position, angle);
-    }
-
-    /**
-     * @return The target angle of the motion profile (will be nonsense if not in position mode)
-     */
-    public double getTargetAngle()
-    {
-        return wrist.getTargetValue();
+        wristLeft.set(ControlMode.Position, angle);
     }
 
     /**
@@ -117,7 +106,7 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wrist.getPosition();
+        return wristLeft.getPosition();
     }
 
     /**
@@ -125,7 +114,7 @@ public class Collector extends Subsystem
      */
     public double getTicks()
     {
-        return wrist.getPositionTicks();
+        return wristLeft.getPositionTicks();
     }
 
     /**
@@ -133,6 +122,7 @@ public class Collector extends Subsystem
      */
     public void zero()
     {
-        wrist.zero();
+        wristLeft.zero();
+        wristRight.zero();
     }
 }
