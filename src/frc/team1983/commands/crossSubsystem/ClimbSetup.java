@@ -2,6 +2,7 @@ package frc.team1983.commands.crossSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
+import frc.team1983.commands.climber.SetLiftPosition;
 import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Elevator;
 
@@ -25,6 +26,7 @@ public class ClimbSetup extends Command
     @Override
     protected void execute()
     {
+
 
     }
 

@@ -89,6 +89,7 @@ public class OI
 
     public void initializeBindings()
     {
+
 //        buttons.get(Joysticks.PANEL).get(0).whenPressed(new SetHooksOpen(robot.getManipulator()));
 //        buttons.get(Joysticks.PANEL).get(1).whenPressed(new SetManipulatorExtended(robot.getManipulator()));
 //        buttons.get(Joysticks.PANEL).get(2).whileHeld(

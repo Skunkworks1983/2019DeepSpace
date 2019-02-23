@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.climber.SetLiftPosition;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.constants.RobotMap;
@@ -107,7 +108,7 @@ public class Robot extends TimedRobot
         drivebase.setBrake(true);
         compressor.start();
 
-        Scheduler.getInstance().add(new SetCollectorRollerThrottle(.5));
+        Scheduler.getInstance().add(new SetLiftPosition(10));
     }
 
     @Override
@@ -116,40 +117,40 @@ public class Robot extends TimedRobot
         //Scheduler.getInstance().add(new RunTankDrive());
         compressor.start();
 
-
-        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
-                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
-
-        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(1)));
-        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(-1)));
-        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(0)));
-
-
-        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
-                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
-        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
-                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
-
-        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(1)));
-        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(0)));
-        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(-1)));
-
-        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 70))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 20))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 0))
-        );
-
+//
+//        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
+//                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
+//
+//        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
+//                new InstantCommand(() -> collector.setRollerThrottle(1)));
+//        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
+//                new InstantCommand(() -> collector.setRollerThrottle(-1)));
+//        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
+//                new InstantCommand(() -> collector.setRollerThrottle(0)));
+//
+//
+//        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
+//                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
+//        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
+//                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
+//
+//        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
+//                new InstantCommand(() -> manipulator.setGrippers(1)));
+//        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
+//                new InstantCommand(() -> manipulator.setGrippers(0)));
+//        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
+//                new InstantCommand(() -> manipulator.setGrippers(-1)));
+//
+//        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
+//                new InstantCommand(() -> elevator.set(ControlMode.Position, 70))
+//        );
+//        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
+//                new InstantCommand(() -> elevator.set(ControlMode.Position, 20))
+//        );
+//        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
+//                new InstantCommand(() -> elevator.set(ControlMode.Position, 0))
+//        );
+//
     }
 
     @Override

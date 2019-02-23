@@ -17,6 +17,9 @@ public class Climber extends Subsystem
     {
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
+        motorGroup.setMovementAcceleration(3);
+        motorGroup.setMovementVelocity(3);
+        motorGroup.setPID(0.01, 0, 0);
     }
 
     protected void zero()
@@ -24,7 +27,7 @@ public class Climber extends Subsystem
         motorGroup.zero();
     }
 
-    protected void set(ControlMode mode, double value)
+    public void set(ControlMode mode, double value)
     {
         motorGroup.set(mode, value);
     }
