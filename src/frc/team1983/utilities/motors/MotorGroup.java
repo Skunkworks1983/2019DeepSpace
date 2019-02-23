@@ -164,8 +164,9 @@ public class MotorGroup implements PIDInput, PIDOutput
         {
             createController();
 
-            if (cruiseVelocity == 0 || movementAcceleration == 0)
-                Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
+            // TODO: warning breaks everything, make sure it doesn't
+//            if (cruiseVelocity == 0 || movementAcceleration == 0)
+//                Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
 
             feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
 
