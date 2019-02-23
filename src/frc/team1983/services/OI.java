@@ -2,6 +2,18 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team1983.Robot;
+import frc.team1983.commands.collector.SetCollectorAngle;
+import frc.team1983.commands.collector.SetCollectorRollerThrottle;
+import frc.team1983.commands.collector.SetCollectorThrottle;
+import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.elevator.ManualClimber;
+import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetHooksOpen;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
+import frc.team1983.commands.manipulator.ToggleExtender;
+import frc.team1983.commands.manipulator.ToggleHooks;
+import frc.team1983.subsystems.Manipulator;
 
 import java.util.HashMap;
 public class OI
@@ -25,7 +37,7 @@ public class OI
     }
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 2;
+    protected static final double JOYSTICK_EXPONENT = 3;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -50,7 +62,7 @@ public class OI
     protected static double scale(double raw)
     {
         double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? raw : 0;
-        return Math.pow(deadzoned, JOYSTICK_EXPONENT) * Math.signum(deadzoned);
+        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
@@ -89,6 +101,47 @@ public class OI
 
     public void initializeBindings()
     {
+        //Controls for pneumatics
+        getButton(Joysticks.PANEL,14).whenPressed(new ToggleCollector());
+        getButton(Joysticks.PANEL,20).whenPressed(new ToggleExtender());
+        getButton(Joysticks.PANEL,18).whenPressed(new ToggleHooks());
+
+        //TODO Find actual collector angle for collection
+        //Controls for collector angle
+//        getButton(Joysticks.PANEL,19).whenPressed(new SetCollectorAngle(150));
+//        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(0));
+
+        //TODO Fix zeroOnInterrupt
+        //controls for throttle on collector roller and side roller
+        getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
+        getButton(Joysticks.PANEL,6).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,0.8,true));
+        getButton(Joysticks.PANEL,19).whileHeld(new SetCollectorRollerThrottle(1));
+        //getButton(Joysticks.PANEL,17).whileHeld(new SetCollectorRollerThrottle(1));
+
+        //Manual collector wrist control
+        getButton(Joysticks.PANEL,3).whileHeld(new SetCollectorThrottle(0.5));
+        getButton(Joysticks.PANEL,4).whileHeld(new SetCollectorThrottle(-0.25));
+
+        //TODO Add actual elevator set points
+        //Controls for elevator set points
+        getButton(Joysticks.PANEL,13).whenPressed(new SetElevatorPosition(0));
+        getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(12.5));
+        getButton(Joysticks.PANEL,11).whenPressed(new SetElevatorPosition(25));
+        getButton(Joysticks.PANEL,10).whenPressed(new SetElevatorPosition(35));
+        getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(75));
+        //getButton(Joysticks.PANEL,0).whenPressed(new SetElevatorPosition(0));
+
+//        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
+//        getButton(Joysticks.PANEL,6).whileHeld(new ManualClimber(-0.25));
+
+
+
+
+//        buttons.get(Joysticks.PANEL).get(13).whenPressed(new SetElevatorPosition(0));
+//        buttons.get(Joysticks.PANEL).get(12).whenPressed(new SetElevatorPosition(13.5));
+//        buttons.get(Joysticks.PANEL).get(17).whileHeld(new SetCollectorAngle(0));
+//        buttons.get(Joysticks.PANEL).get(18).whileHeld(new SetCollectorAngle(60));
+
 //        buttons.get(Joysticks.PANEL).get(0).whenPressed(new SetHooksOpen(robot.getManipulator()));
 //        buttons.get(Joysticks.PANEL).get(1).whenPressed(new SetManipulatorExtended(robot.getManipulator()));
 //        buttons.get(Joysticks.PANEL).get(2).whileHeld(

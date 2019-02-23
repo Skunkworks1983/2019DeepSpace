@@ -3,10 +3,7 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
-import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.motors.FeedbackType;
-import frc.team1983.utilities.motors.MotorGroup;
-import frc.team1983.utilities.motors.Spark;
+import frc.team1983.utilities.motors.*;
 
 /**
  * The collector arm mechanism on the front of the robot. This subsystem consists of the motors that control its angle,
@@ -14,7 +11,7 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Collector extends Subsystem
 {
-    private Spark roller;
+    private Talon roller;
     private DoubleSolenoid piston;
     private MotorGroup wrist;
 
@@ -26,7 +23,7 @@ public class Collector extends Subsystem
 
     public Collector()
     {
-        roller = new Spark(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -92,9 +89,18 @@ public class Collector extends Subsystem
     /**
      * @param folded If the piston should be extended or not
      */
+
     public void setFolded(boolean folded)
     {
         piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+    /**
+     *
+     * @return state of the collector //todo fix naming convention
+     */
+    public boolean getfolded()
+    {
+        return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**

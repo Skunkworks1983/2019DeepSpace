@@ -44,9 +44,9 @@ public class RobotMap
         public static final int EXTENDER_FORWARD = 4;
         public static final int EXTENDER_REVERSE = 5;
 
-        public static final int LEFT_GRIPPER = 0;
+        public static final int LEFT_GRIPPER = 10;
         public static final boolean LEFT_GRIPPER_REVERSED = false;
-        public static final int RIGHT_GRIPPER = 0;
+        public static final int RIGHT_GRIPPER = 9;
         public static final boolean RIGHT_GRIPPER_REVERSED = false;
     }
 

@@ -10,9 +10,11 @@ import frc.team1983.utilities.motors.Talon;
 public class Climber extends Subsystem
 {
     private MotorGroup motorGroup;
+    private Talon climber;
 
     public Climber()
     {
+        climber = new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED);
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
     }

@@ -25,6 +25,8 @@ public class Manipulator extends Subsystem
     {
         extender = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE);
         hooks = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
+        leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
+        rightGripper = new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
     }
 
     @Override
@@ -48,11 +50,29 @@ public class Manipulator extends Subsystem
     }
 
     /**
+     *
+     * @return state of the extender //todo fix naming convention
+     */
+    public boolean getExtender()
+    {
+        return extender.get() == DoubleSolenoid.Value.kForward;
+    }
+
+    /**
      * @param shouldOpen If the hooks should be opened or closed
      */
     public void setHooks(boolean shouldOpen)
     {
         hooks.set(shouldOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+
+    /**
+     *
+     * @return state of the hooks //todo fix naming convention
+     */
+    public boolean getHooks()
+    {
+        return hooks.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
