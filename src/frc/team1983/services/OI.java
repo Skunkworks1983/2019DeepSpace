@@ -3,17 +3,13 @@ package frc.team1983.services;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
-import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
-import frc.team1983.commands.collector.SetCollectorThrottle;
+import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
-import frc.team1983.commands.elevator.ManualClimber;
 import frc.team1983.commands.elevator.SetElevatorPosition;
-import frc.team1983.commands.manipulator.SetHooksOpen;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
-import frc.team1983.subsystems.Manipulator;
 
 import java.util.HashMap;
 public class OI
@@ -111,7 +107,6 @@ public class OI
 //        getButton(Joysticks.PANEL,19).whenPressed(new SetCollectorAngle(150));
 //        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(0));
 
-        //TODO Fix zeroOnInterrupt
         //controls for throttle on collector roller and side roller
         getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
         getButton(Joysticks.PANEL,6).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,0.8,true));
@@ -119,8 +114,8 @@ public class OI
         //getButton(Joysticks.PANEL,17).whileHeld(new SetCollectorRollerThrottle(1));
 
         //Manual collector wrist control
-        getButton(Joysticks.PANEL,3).whileHeld(new SetCollectorThrottle(0.5));
-        getButton(Joysticks.PANEL,4).whileHeld(new SetCollectorThrottle(-0.25));
+        getButton(Joysticks.PANEL,3).whileHeld(new SetCollectorWristThrottle(0.5));
+        getButton(Joysticks.PANEL,4).whileHeld(new SetCollectorWristThrottle(-0.25));
 
         //TODO Add actual elevator set points
         //Controls for elevator set points
@@ -133,30 +128,5 @@ public class OI
 
 //        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
 //        getButton(Joysticks.PANEL,6).whileHeld(new ManualClimber(-0.25));
-
-
-
-
-//        buttons.get(Joysticks.PANEL).get(13).whenPressed(new SetElevatorPosition(0));
-//        buttons.get(Joysticks.PANEL).get(12).whenPressed(new SetElevatorPosition(13.5));
-//        buttons.get(Joysticks.PANEL).get(17).whileHeld(new SetCollectorAngle(0));
-//        buttons.get(Joysticks.PANEL).get(18).whileHeld(new SetCollectorAngle(60));
-
-//        buttons.get(Joysticks.PANEL).get(0).whenPressed(new SetHooksOpen(robot.getManipulator()));
-//        buttons.get(Joysticks.PANEL).get(1).whenPressed(new SetManipulatorExtended(robot.getManipulator()));
-//        buttons.get(Joysticks.PANEL).get(2).whileHeld(
-//                new SetManipulatorRollerSpeed(robot.getManipulator(), 0.25, true));
-//        buttons.get(Joysticks.PANEL).get(3).whileHeld(
-//                new SetManipulatorRollerSpeed(robot.getManipulator(), -0.25, true));
-
-        /*
-        getButton(Joysticks.PANEL, 1).whenPressed(new SetCollectorAngle(5));
-        getButton(Joysticks.PANEL, 2).whenPressed(new SetCollectorAngle(45));
-
-        getButton(Joysticks.PANEL, 3).whenPressed(new SetCollectorFolded(true));
-
-
-        getButton(Joysticks.PANEL, 3).whileHeld(new SetCollectorRollerThrottle(robot.getCollector(), .03));
-        */
     }
 }
