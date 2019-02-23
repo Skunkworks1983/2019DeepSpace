@@ -18,7 +18,7 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 5, 90);
 
         Path path = new Path(
-                new Pose(0, 0, 90),
+                Pose.ORIGIN,
                 new Pose(0, 10, 90)
         );
 
@@ -43,8 +43,8 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 5, 90);
 
         Path path = new Path(
-            new Pose(0, 0, 90),
-            new Pose(0, 10, 90)
+                new Pose(0, 0, 90),
+                new Pose(0, 10, 90)
         );
 
         assertThat(Vector2.getDistance(new Vector2(0, 5 + PurePursuitController.LOOKAHEAD_DISTANCE), PurePursuitController.evaluateLookaheadPoint(pose, path)) <= 0.01, equalTo(true));
@@ -128,7 +128,7 @@ public class UT_PurePursuitController
         pose = new Pose(0, 10, 90 - HEADING_DEADZONE - 1e-3);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
-        pose = new Pose(0, 10, 0);
+        pose = new Pose(0, 5, 0);
 
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
         assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), 0.0);

@@ -20,7 +20,13 @@ public class StateEstimator implements Runnable
     private Gyro gyro;
 
     private double lastLeftPosition, lastRightPosition;
+
     private Vector2 position;
+    // TODO: find real
+//    private Vector2 position = new Vector2(0, 0);
+//    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
+    //private Vector2 position = Vector2.ZERO;
+
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -40,19 +46,20 @@ public class StateEstimator implements Runnable
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getGyro());
     }
 
-    public Pose getCurrentPose()
+    public synchronized void setPose(Pose pose)
+    {
+        position = pose.getPosition();
+        gyro.setHeading(pose.getHeading());
+    }
+
+    public synchronized Pose getCurrentPose()
     {
         return new Pose(position, gyro.getHeading());
     }
 
-    public Vector2 getPosition()
+    public synchronized Vector2 getPosition()
     {
         return position;
-    }
-
-    public void setPosition(Vector2 position)
-    {
-        this.position = position;
     }
 
     protected synchronized void execute()

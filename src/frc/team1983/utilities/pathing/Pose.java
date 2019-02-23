@@ -13,7 +13,8 @@ import frc.team1983.utilities.math.Vector2;
  */
 public class Pose
 {
-    public static final Pose ORIGIN = new Pose(0, 0, 90);
+    public static final Pose ORIGIN = new Pose(0, 0, 0);
+    public static final Pose DEFAULT = new Pose(Constants.ROBOT_WIDTH / 2, Constants.ROBOT_LENGTH / 2, 90);
 
     static double L = Constants.ROBOT_LENGTH;
 
