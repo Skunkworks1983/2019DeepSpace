@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.climber.SetLiftPosition;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
@@ -106,6 +107,8 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
+
+        Scheduler.getInstance().add(new SetLiftPosition(10));
     }
 
     @Override
@@ -160,7 +163,6 @@ public class Robot extends TimedRobot
         oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
                 new InstantCommand(() -> elevator.setPosInches(.01))
         );
-
     }
 
     public static Robot getInstance()
@@ -178,6 +180,11 @@ public class Robot extends TimedRobot
     public Elevator getElevator()
     {
         return elevator;
+    }
+
+    public Climber getClimber()
+    {
+        return climber;
     }
 
     public Gyro getGyro()
