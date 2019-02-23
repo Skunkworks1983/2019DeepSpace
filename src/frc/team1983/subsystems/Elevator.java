@@ -13,10 +13,8 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Elevator extends Subsystem
 {
-    // TODO: add necessary things
-
     public static final double kG = 0.05; //Tested on practice bot with full battery
-    public static final double TICKS_PER_INCH = 95.0 / (22.0 * 3.0);//TODO: add math
+    public static final double TICKS_PER_INCH = 95.0 / (22.0 * 3.0); // TODO: add math
 
     public MotorGroup motorGroup;
 
@@ -29,7 +27,7 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(140);
         motorGroup.setMovementVelocity(140);
-        motorGroup.setPID(0.18, 0, 0); // todo: add values
+        motorGroup.setPID(0.18, 0, 0); // TODO: add values
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);

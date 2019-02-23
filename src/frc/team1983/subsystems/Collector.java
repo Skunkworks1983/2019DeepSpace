@@ -15,11 +15,11 @@ public class Collector extends Subsystem
     private DoubleSolenoid piston;
     private MotorGroup wrist;
 
-    private static final double ticksPerDegree = 1; //TODO find more exact value
+    private static final double TICKS_PER_DEGREE = 1; // TODO find more exact value
     // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
-    private static final double kG = 0; //TODO determine if needed
+    private static final double K_G = 0; // TODO determine if needed
     // The length gain (is multiplied by the gravity gain if the piston is extended)
-    private static final double kL = 1.01; //TODO determine if needed
+    private static final double K_L = 1.01; // TODO determine if needed
 
     public Collector()
     {
@@ -36,8 +36,8 @@ public class Collector extends Subsystem
         wrist.setMovementAcceleration(6);
         wrist.setFFOperator(this);
         //        wrist.addFFTerm((collector) ->
-        //                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
-        //                        kG * Math.cos(((Collector) collector).getAngle()));
+        //                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? K_L : 1) *
+        //                        K_G * Math.cos(((Collector) collector).getAngle()));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wrist.set(ControlMode.Position, angle * ticksPerDegree);
+        wrist.set(ControlMode.Position, angle * TICKS_PER_DEGREE);
     }
 
     /**
@@ -83,7 +83,7 @@ public class Collector extends Subsystem
      */
     public double getTargetAngle()
     {
-        return wrist.getTargetValue() / ticksPerDegree;
+        return wrist.getTargetValue() / TICKS_PER_DEGREE;
     }
 
     /**
@@ -115,7 +115,7 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wrist.getPositionTicks() / ticksPerDegree;
+        return wrist.getPositionTicks() / TICKS_PER_DEGREE;
     }
 
     /**

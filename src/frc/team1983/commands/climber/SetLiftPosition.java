@@ -1,10 +1,8 @@
 package frc.team1983.commands.climber;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Climber;
-import frc.team1983.subsystems.Elevator;
 import frc.team1983.utilities.motors.ControlMode;
 
 public class SetLiftPosition extends InstantCommand

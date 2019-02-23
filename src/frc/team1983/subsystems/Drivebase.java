@@ -73,6 +73,18 @@ public class Drivebase extends Subsystem
         right.set(mode, value);
     }
 
+    public void set(ControlMode mode, double leftValue, double rightValue)
+    {
+        setLeft(mode, leftValue);
+        setRight(mode, rightValue);
+    }
+
+    public void set(ControlMode mode, double value)
+    {
+        setLeft(mode, value);
+        setRight(mode, value);
+    }
+
     public double getLeftPosition()
     {
         return left.getPositionTicks() / TICKS_PER_FOOT;

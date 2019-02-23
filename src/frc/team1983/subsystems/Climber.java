@@ -11,7 +11,8 @@ public class Climber extends Subsystem
 {
     private MotorGroup motorGroup;
 
-    public static final double TICKS_PER_INCH = 0; //TODO: add math
+    public static final double TICKS_PER_INCH = 1383.7; // TODO: math
+    public static final double MAX_EXTENTION_DISTANCE = 20.0; // inches, TODO: math
 
     public Climber()
     {
@@ -22,7 +23,7 @@ public class Climber extends Subsystem
         motorGroup.setPID(0.01, 0, 0);
     }
 
-    protected void zero()
+    public void zero()
     {
         motorGroup.zero();
     }
@@ -32,9 +33,9 @@ public class Climber extends Subsystem
         motorGroup.set(mode, value);
     }
 
-    protected double getPosition()
+    public double getPosition()
     {
-      return motorGroup.getPositionTicks() / TICKS_PER_INCH;
+        return motorGroup.getPositionTicks() / TICKS_PER_INCH;
     }
 
     @Override

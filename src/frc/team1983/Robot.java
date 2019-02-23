@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.climber.SetLiftPosition;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
@@ -56,6 +57,7 @@ public class Robot extends TimedRobot
         elevator.zero();
 
         climber = new Climber();
+        climber.zero();
 
         collector = new Collector();
         collector.zero();
@@ -108,7 +110,7 @@ public class Robot extends TimedRobot
         drivebase.setBrake(true);
         compressor.start();
 
-        Scheduler.getInstance().add(new SetLiftPosition(10));
+        Scheduler.getInstance().add(new Climb());
     }
 
     @Override
