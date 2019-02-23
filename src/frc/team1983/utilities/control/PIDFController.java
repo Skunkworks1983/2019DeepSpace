@@ -1,5 +1,6 @@
 package frc.team1983.utilities.control;
 
+import edu.wpi.first.wpilibj.RobotController;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.MotorGroup;
@@ -134,7 +135,8 @@ public class PIDFController extends Thread
             try
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
-            } catch (InterruptedException exception)
+            }
+            catch (InterruptedException exception)
             {
                 exception.printStackTrace();
             }

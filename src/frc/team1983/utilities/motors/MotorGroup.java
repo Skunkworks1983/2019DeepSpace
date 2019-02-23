@@ -170,7 +170,7 @@ public class MotorGroup implements PIDInput, PIDOutput
         else
         {
             createController();
-
+            
             if(useMotionProfiles)
             {
                 if(cruiseVelocity == 0 || movementAcceleration == 0) Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
