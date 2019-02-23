@@ -18,7 +18,7 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 5, 90);
 
         Path path = new Path(
-                new Pose(0, 0, 90),
+                Pose.ORIGIN,
                 new Pose(0, 10, 90)
         );
 
@@ -128,7 +128,7 @@ public class UT_PurePursuitController
         pose = new Pose(0, 10, 90 - HEADING_DEADZONE - 1e-3);
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
 
-        pose = new Pose(0, 10, 0);
+        pose = new Pose(0, 5, 0);
 
         assertThat(PurePursuitController.inDeadzone(pose, path), equalTo(false));
         assertNotEquals(PurePursuitController.evaluateOutput(pose, path, 1).getValue1(), 0.0);
@@ -163,5 +163,78 @@ public class UT_PurePursuitController
 
         assertThat(output.getValue1() < 0, equalTo(true));
         assertThat(output.getValue2() < 0, equalTo(true));
+    }
+
+    @Test
+    public void constantsStayConstantTest()
+    {
+        Pose before = Pose.LEVEL_1_MIDDLE.copy();
+
+        System.out.println("before: " + before);
+
+        Pose pose = new Pose(Vector2.add(Pose.LEVEL_1_MIDDLE.getPosition(), new Vector2(5, 5)), 90);
+
+        Path path = new Path(
+                Pose.LEVEL_1_MIDDLE,
+                Pose.LEFT_ROCKET_CLOSE
+        );
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.LEVEL_1_MIDDLE), equalTo(true));
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.LEVEL_1_MIDDLE), equalTo(true));
+
+        System.out.println("after: " + Pose.LEVEL_1_MIDDLE);
+
+
+
+        before = Pose.DEFAULT.copy();
+
+        System.out.println("before: " + before);
+
+        pose = new Pose(Vector2.add(Pose.DEFAULT.getPosition(), new Vector2(5, 5)), 135);
+
+        path = new Path(
+                Pose.DEFAULT,
+                Pose.CARGO_SHIP_MIDDLE_LEFT,
+                Pose.LEVEL_1_MIDDLE
+        );
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.DEFAULT), equalTo(true));
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.DEFAULT), equalTo(true));
+
+        System.out.println("after: " + Pose.DEFAULT);
+
+
+
+        before = Pose.ORIGIN.copy();
+
+        System.out.println("before: " + before);
+
+        pose = new Pose(-1, -1, 135);
+
+        path = new Path(
+                Pose.ORIGIN,
+                Pose.CARGO_SHIP_MIDDLE_LEFT,
+                Pose.LEVEL_1_MIDDLE
+        );
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.ORIGIN), equalTo(true));
+
+        PurePursuitController.evaluateOutput(pose, path, 1);
+
+        assertThat(Pose.equals(before, Pose.ORIGIN), equalTo(true));
+
+        System.out.println("after: " + Pose.ORIGIN);
     }
 }

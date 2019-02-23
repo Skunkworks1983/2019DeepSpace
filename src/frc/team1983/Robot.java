@@ -112,7 +112,7 @@ public class Robot extends TimedRobot
         compressor.start();
 
         Scheduler.getInstance().add(new DrivePath(new Path(
-                new Pose(1, 1, 90),
+                Pose.DEFAULT.copy(),
                 new Pose(3, 10, 90),
                 new Pose(14, 13, 0),
                 new Pose(21, 21, 90)

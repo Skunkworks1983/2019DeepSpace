@@ -40,7 +40,7 @@ public class PurePursuitController
         if(PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
 
-        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
+//        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());
 //        SmartDashboard.putNumber("closestPointX", closestPoint.getX());
 //        SmartDashboard.putNumber("closestPointY", closestPoint.getY());
 
@@ -80,7 +80,7 @@ public class PurePursuitController
 
         // If there is no center of curvature, go straight
         if(icc == null)
-            return new Pair<>(0.0, 0.0);
+            return new Pair<>(velocity, velocity);
 
         double radius = evaluateRadiusOfCurvature(pose, icc);
 
