@@ -11,7 +11,8 @@ public class Elevator extends Subsystem
 {
     // TODO: add necessary things
 
-    public static final double TICKS_PER_INCH = 95.0 / 22.0;//TODO: add math
+    public static final double kG = 0.05; //Tested on practice bot with full battery
+    public static final double TICKS_PER_INCH = 95.0 / (22.0 * 3.0);//TODO: add math
 
     public MotorGroup motorGroup;
 
@@ -22,9 +23,12 @@ public class Elevator extends Subsystem
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
 
-        motorGroup.setMovementAcceleration(12);
-        motorGroup.setMovementVelocity(12);
-        motorGroup.setPID(0.01, 0, 0); // todo: add values
+        motorGroup.setMovementAcceleration(140);
+        motorGroup.setMovementVelocity(140);
+        motorGroup.setPID(0.18, 0, 0); // todo: add values
+
+        motorGroup.setFFOperator(this);
+        motorGroup.addFFTerm(Elevator -> kG);
 
         zero();
     }
@@ -51,6 +55,11 @@ public class Elevator extends Subsystem
         motorGroup.set(mode, value);
     }
 
+    public void setPosInches(double inches)
+    {
+        motorGroup.set(ControlMode.Position, inches * TICKS_PER_INCH);
+    }
+
     public double getTargetPosition()
     {
         return motorGroup.getTargetValue() / TICKS_PER_INCH;
@@ -59,6 +68,11 @@ public class Elevator extends Subsystem
     public double getPosition()
     {
         return motorGroup.getPositionTicks() / TICKS_PER_INCH;
+    }
+
+    public double getTicks()
+    {
+        return motorGroup.getPositionTicks();
     }
 
     public double getVelocity()

@@ -122,7 +122,7 @@ public class Bezier
      * @param point
      * @return closest point and t of closest point
      */
-    public Pair evaluateClosestPointAndT(Vector2 point)
+    public Pair<Double, Vector2> evaluateClosestPointAndT(Vector2 point)
     {
         double closestT = 0;
         Vector2 closest = evaluate(closestT);
@@ -138,7 +138,7 @@ public class Bezier
                 closestDistance = candidateDistance;
             }
         }
-        return new Pair(closestT, closest);
+        return new Pair<>(closestT, closest);
     }
 
     /**

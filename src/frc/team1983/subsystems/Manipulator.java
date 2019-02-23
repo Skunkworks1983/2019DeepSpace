@@ -3,6 +3,7 @@ package frc.team1983.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motors.Talon;
@@ -23,6 +24,9 @@ public class Manipulator extends Subsystem
 
     public Manipulator()
     {
+        leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
+        rightGripper = new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
+
         extender = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE);
         hooks = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
         leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
@@ -49,6 +53,11 @@ public class Manipulator extends Subsystem
         extender.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
 
+    public boolean isExtenderExtended()
+    {
+        return extender.get() == DoubleSolenoid.Value.kForward;
+    }
+
     /**
      *
      * @return state of the extender //todo fix naming convention
@@ -64,6 +73,11 @@ public class Manipulator extends Subsystem
     public void setHooks(boolean shouldOpen)
     {
         hooks.set(shouldOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+
+    public boolean isHooksOpen()
+    {
+        return hooks.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
