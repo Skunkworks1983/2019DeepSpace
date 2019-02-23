@@ -6,7 +6,6 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 public class Pigeon extends PigeonIMU implements Gyro
 {
     public static final int PIGEON_HEADING_SIGN = 1;
-    public static final double PIGEON_HEADING_OFFSET = 90.0;
 
     private double offset = 0;
 
@@ -17,11 +16,16 @@ public class Pigeon extends PigeonIMU implements Gyro
 
     public double getHeading()
     {
-        return getFusedHeading() * PIGEON_HEADING_SIGN + offset + PIGEON_HEADING_OFFSET;
+        return getFusedHeading() * PIGEON_HEADING_SIGN + offset;
+    }
+
+    public void setHeading(double heading)
+    {
+        offset = heading - (getFusedHeading() * PIGEON_HEADING_SIGN);
     }
 
     public void reset()
     {
-        offset = 90.0 - getHeading();
+        setHeading(0);
     }
 }
