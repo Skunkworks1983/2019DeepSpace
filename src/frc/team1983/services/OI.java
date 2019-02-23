@@ -125,7 +125,7 @@ public class OI
         getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(12.5));
         getButton(Joysticks.PANEL,11).whenPressed(new SetElevatorPosition(25));
         getButton(Joysticks.PANEL,10).whenPressed(new SetElevatorPosition(35));
-        getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(75));
+        getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(60));
         //getButton(Joysticks.PANEL,0).whenPressed(new SetElevatorPosition(0));
 
 //        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
