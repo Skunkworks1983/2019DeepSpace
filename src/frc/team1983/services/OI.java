@@ -3,6 +3,7 @@ package frc.team1983.services;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team1983.commands.climber.Climb;
 import frc.team1983.utilities.motors.ControlMode;
 
 import java.util.HashMap;
@@ -91,6 +92,6 @@ public class OI
 
     public void initializeBindings()
     {
-
+        getButton(Joysticks.PANEL,24).whenPressed(new Climb());
     }
 }

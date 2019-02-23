@@ -18,9 +18,8 @@ public class Climber extends Subsystem
     {
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
+        motorGroup.setUseMotionProfiles(false);
         motorGroup.setConversionRatio(INCHES_PER_TICK);
-        motorGroup.setMovementAcceleration(1000);
-        motorGroup.setCruiseVelocity(1000);
         motorGroup.setPID(0.2, 0, 0);
     }
 

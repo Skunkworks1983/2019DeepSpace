@@ -84,6 +84,8 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
+        System.out.println("POSITION: " + climber.getPosition());
+
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());

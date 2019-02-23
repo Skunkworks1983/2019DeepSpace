@@ -110,6 +110,7 @@ public class PIDFController extends Thread
                 setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
         }
         double out = calculate(setpoint);
+        System.out.println("SETPOINT: " + setpoint);
         output.pidWrite(out);
     }
 

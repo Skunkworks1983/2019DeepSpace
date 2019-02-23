@@ -28,6 +28,8 @@ public class MotorGroup implements PIDInput, PIDOutput
     private double conversionRatio = 1;
     private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
 
+    private boolean useMotionProfiles = true;
+
     protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
@@ -167,7 +169,10 @@ public class MotorGroup implements PIDInput, PIDOutput
 
             feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
 
-            controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
+            if(useMotionProfiles)
+                controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
+            else
+                controller.setSetpoint(value);
         }
     }
 
@@ -326,5 +331,10 @@ public class MotorGroup implements PIDInput, PIDOutput
     public void setConversionRatio(double conversionRatio)
     {
         this.conversionRatio = conversionRatio;
+    }
+
+    public void setUseMotionProfiles(boolean useMotionProfiles)
+    {
+        this.useMotionProfiles = useMotionProfiles;
     }
 }
