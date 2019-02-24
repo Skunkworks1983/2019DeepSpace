@@ -14,6 +14,11 @@ public class LiftEngage extends Command
         this.climber = climber;
         this.throttle = throttle;
     }
+    
+    public LiftEngage(double throttle)
+    {
+        this(Robot.getInstance().getClimber(), throttle);
+    }
 
     @Override
     protected void initialize()

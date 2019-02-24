@@ -1,4 +1,4 @@
-package frc.team1983.commands.crossSubsystem;
+package frc.team1983.commands.climber;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team1983.Robot;

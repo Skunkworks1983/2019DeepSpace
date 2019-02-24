@@ -52,7 +52,7 @@ public class OI
     protected static double scale(double raw)
     {
         double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? raw : 0;
-        return Math.pow(deadzoned, JOYSTICK_EXPONENT) * Math.signum(deadzoned);
+        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
@@ -91,6 +91,13 @@ public class OI
 
     public void initializeBindings()
     {
+//        buttons.get(Joysticks.PANEL).get(0).whenPressed(new SetHooksOpen(robot.getManipulator()));
+//        buttons.get(Joysticks.PANEL).get(1).whenPressed(new SetManipulatorExtended(robot.getManipulator()));
+//        buttons.get(Joysticks.PANEL).get(2).whileHeld(
+//                new SetManipulatorRollerSpeed(robot.getManipulator(), 0.25, true));
+//        buttons.get(Joysticks.PANEL).get(3).whileHeld(
+//                new SetManipulatorRollerSpeed(robot.getManipulator(), -0.25, true));
+
         /*
         oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
                 new InstantCommand(() -> collector.setFolded(!collector.isFolded())));

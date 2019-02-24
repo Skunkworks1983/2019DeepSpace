@@ -7,6 +7,10 @@ import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+/**
+ * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
+ * so the distance traveled by the first stage times three.
+ */
 public class Elevator extends Subsystem
 {
     // TODO: add necessary things

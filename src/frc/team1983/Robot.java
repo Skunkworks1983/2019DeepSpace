@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.collector.SetCollectorRollerThrottle;
-import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.climber.SetLiftPosition;
+import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -15,6 +15,7 @@ import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
+import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -107,7 +108,7 @@ public class Robot extends TimedRobot
         drivebase.setBrake(true);
         compressor.start();
 
-        Scheduler.getInstance().add(new SetCollectorRollerThrottle(.5));
+        Scheduler.getInstance().add(new SetLiftPosition(10));
     }
 
     @Override
@@ -117,12 +118,12 @@ public class Robot extends TimedRobot
         //        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
         //        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
 
-        //climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
-
-        collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
-
-        //        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
-        //        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                Pose.DEFAULT.copy(),
+                new Pose(3, 10, 90),
+                new Pose(14, 13, 0),
+                new Pose(21, 21, 90)
+        ), 6));
     }
 
     @Override
@@ -162,7 +163,6 @@ public class Robot extends TimedRobot
         oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
                 new InstantCommand(() -> elevator.setPosInches(.01))
         );
-
     }
 
     public static Robot getInstance()
