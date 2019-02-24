@@ -25,15 +25,22 @@ public class MotorGroup implements PIDInput, PIDOutput
     protected ArrayList<Motor> motors;
     protected PIDFController controller;
 
+    private MotorGroup master;
+    private ArrayList<MotorGroup> followers;
+
+    private double conversionRatio = 1;
     private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
+
+    private boolean useMotionProfiles = true;
+    private boolean following = false;
 
     protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
     private double targetValue;
 
-    private double movementVelocity = 0; // in
-    private double movementAcceleration = 0; // in/s
+    private double cruiseVelocity = 0;
+    private double movementAcceleration = 0;
 
     /**
      * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
@@ -156,16 +163,24 @@ public class MotorGroup implements PIDInput, PIDOutput
             if (controller != null)
                 controller.disable();
             setRawThrottle(value);
-        } else
+
+            for(MotorGroup follower : followers)
+                follower.set(ControlMode.Throttle, value);
+        }
+        else
         {
             createController();
+            
+            if(useMotionProfiles)
+            {
+                if(cruiseVelocity == 0 || movementAcceleration == 0) Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
+                feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
+                if(useMotionProfiles) controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
+            }
+            else controller.setSetpoint(value);
 
-            if (movementVelocity == 0 || movementAcceleration == 0)
-                Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
-
-            feedbackType = controlMode == ControlMode.Position ? FeedbackType.POSITION : FeedbackType.VELOCITY;
-
-            controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, movementVelocity, movementAcceleration, feedbackType));
+            for(MotorGroup follower : followers)
+                follower.enableController();
         }
     }
 
@@ -218,6 +233,22 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
+     * @return Get the current position
+     */
+    public double getPosition()
+    {
+        return getPositionTicks() * conversionRatio;
+    }
+
+    /**
+     * @return Current encoder velocity
+     */
+    public double getVelocity()
+    {
+        return getVelocityTicks() * conversionRatio;
+    }
+
+    /**
      * @return The name of this motorGroup (for logging)
      */
     public String getName()
@@ -228,17 +259,17 @@ public class MotorGroup implements PIDInput, PIDOutput
     /**
      * @return The configured cruise velocity for this motorGroup
      */
-    public double getMovementVelocity()
+    public double getCruiseVelocity()
     {
-        return movementVelocity;
+        return cruiseVelocity;
     }
 
     /**
-     * @param movementVelocity Sets the cruise velocity for this motorGroup
+     * @param cruiseVelocity Sets the cruise velocity for this motorGroup
      */
-    public void setMovementVelocity(double movementVelocity)
+    public void setCruiseVelocity(double cruiseVelocity)
     {
-        this.movementVelocity = movementVelocity;
+        this.cruiseVelocity = cruiseVelocity;
     }
 
     /**
@@ -273,7 +304,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks();
+        return (feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks()) * conversionRatio;
     }
 
     /**
@@ -298,5 +329,40 @@ public class MotorGroup implements PIDInput, PIDOutput
     public double getD()
     {
         return controller.getkD();
+    }
+
+    public void addFollower(MotorGroup follower)
+    {
+        if(followers == null)
+            followers = new ArrayList<>();
+        followers.add(follower);
+    }
+
+    public void follow(MotorGroup leader)
+    {
+        useMotionProfiles = false;
+        leader.addFollower(this);
+        createController();
+        controller.setFollowing(leader);
+    }
+
+    public void enableController()
+    {
+        controller.enable();
+    }
+
+    public double getConversionRatio()
+    {
+        return conversionRatio;
+    }
+
+    public void setConversionRatio(double conversionRatio)
+    {
+        this.conversionRatio = conversionRatio;
+    }
+
+    public void setUseMotionProfiles(boolean useMotionProfiles)
+    {
+        this.useMotionProfiles = useMotionProfiles;
     }
 }

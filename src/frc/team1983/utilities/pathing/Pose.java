@@ -13,7 +13,7 @@ import frc.team1983.utilities.math.Vector2;
  */
 public class Pose
 {
-    public static final Pose ORIGIN = new Pose(0, 0, 0);
+    public static final Pose ORIGIN = new Pose(0, 0, 90);
     public static final Pose DEFAULT = new Pose(Constants.ROBOT_WIDTH / 2, Constants.ROBOT_LENGTH / 2, 90);
 
     static double L = Constants.ROBOT_LENGTH;
@@ -80,16 +80,40 @@ public class Pose
 
     public Vector2 getPosition()
     {
-        return position;
+        return position.copy();
     }
 
     public Vector2 getDirection()
     {
-        return direction;
+        return direction.copy();
     }
 
     public double getHeading()
     {
         return heading;
+    }
+
+    public Pose copy()
+    {
+        return new Pose(position, direction);
+    }
+
+    @Override
+    public String toString()
+    {
+        return position + ", " + heading;
+    }
+
+    public static boolean equals(Pose pose1, Pose pose2)
+    {
+        return Vector2.equals(pose1.getPosition(), pose2.getPosition()) && Vector2.equals(pose1.getDirection(), pose2.getDirection());
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if(other instanceof Pose)
+            return Pose.equals(this, (Pose) other);
+        return false;
     }
 }

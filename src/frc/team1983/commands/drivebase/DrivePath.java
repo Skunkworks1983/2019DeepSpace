@@ -32,7 +32,7 @@ public class DrivePath extends Command
     }
 
     @Override
-    public void execute()
+    protected void execute()
     {
         Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
 
@@ -47,7 +47,7 @@ public class DrivePath extends Command
     }
 
     @Override
-    public void end()
+    protected void end()
     {
         drivebase.setLeft(ControlMode.Throttle, 0);
         drivebase.setRight(ControlMode.Throttle, 0);

@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.commands.climber.Climb;
+import frc.team1983.commands.climber.SetLiftPosition;
+import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -14,13 +17,13 @@ import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
+import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.Limelight;
 import frc.team1983.utilities.sensors.NavX;
-
-import static java.lang.Math.abs;
 
 public class Robot extends TimedRobot
 {
@@ -57,6 +60,7 @@ public class Robot extends TimedRobot
         elevator.zero();
 
         climber = new Climber();
+        climber.zero();
 
         collector = new Collector();
         collector.zero();
@@ -91,20 +95,12 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
-
-        //        System.out.println("DIO: " + dio.get());
-        //        System.out.println("Wrist: " + collector.getTicks());
-        //                System.out.println("Elevator: " + elevator.getPosition());
     }
 
     @Override
     public void autonomousInit()
     {
-        Scheduler.getInstance().removeAll();
-        for (MotorGroup motorGroup : MotorGroup.motorGroups)
-            motorGroup.disableController();
-        drivebase.setBrake(false);
-        compressor.stop();
+        
     }
 
     @Override
@@ -116,7 +112,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-
+        compressor.start();
     }
 
     @Override
@@ -133,8 +129,6 @@ public class Robot extends TimedRobot
 //                if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
 //                else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
     }
-
-
 
     @Override
     public void disabledInit()
@@ -161,6 +155,11 @@ public class Robot extends TimedRobot
     public Elevator getElevator()
     {
         return elevator;
+    }
+
+    public Climber getClimber()
+    {
+        return climber;
     }
 
     public Gyro getGyro()
