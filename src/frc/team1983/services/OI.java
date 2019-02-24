@@ -11,6 +11,7 @@ import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team1983.commands.climber.Climb;
 import frc.team1983.utilities.motors.ControlMode;
 
 import java.util.HashMap;
