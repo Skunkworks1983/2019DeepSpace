@@ -12,14 +12,6 @@ public class SetCollectorAngle extends InstantCommand
     public SetCollectorAngle(Collector collector, double angle)
     {
         super(collector, () -> collector.setAngle(angle));
-        if (collector.getAngle() > 80)
-        {
-            collector.setFolded(false);
-        }
-        if (collector.getAngle() < 90)
-        {
-            collector.setFolded(true);
-        }
     }
 
     public SetCollectorAngle(double angle)
