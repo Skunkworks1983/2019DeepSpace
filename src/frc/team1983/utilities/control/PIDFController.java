@@ -1,5 +1,6 @@
 package frc.team1983.utilities.control;
 
+import edu.wpi.first.wpilibj.RobotController;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motion.MotionProfile;
 import frc.team1983.utilities.motors.MotorGroup;
@@ -30,6 +31,7 @@ public class PIDFController extends Thread
     private ArrayList<Function<Object, Double>> ffTerms;
 
     private boolean enabled = false;
+    private PIDInput leader = null;
 
     /**
      * @param input   The input to the closed loop. Usually an encoder or motorGroup.
@@ -53,7 +55,6 @@ public class PIDFController extends Thread
     /**
      * A constructor which passes a given motorGroup as source and output, zeros all the gains,
      * and initializes an empty array for ffTerms.
-     *
      * @param motorGroup The motorGroup that this PIDFController should control
      */
     public PIDFController(MotorGroup motorGroup)
@@ -88,7 +89,6 @@ public class PIDFController extends Thread
 
     /**
      * Setter method for adding a new arbitrary feedforward function
-     *
      * @param feedForward The new feedforward function
      */
     public synchronized void addFeedforward(Function<Object, Double> feedForward)
@@ -102,23 +102,15 @@ public class PIDFController extends Thread
      */
     protected void execute()
     {
-        //        double profileError = 0;
-        if (motionProfile != null)
+        if(leader == null && motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
-            if (time > motionProfile.getDuration())
-                motionProfile = null;
-            else
-            {
-                setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
-                //                profileError = (setpoint / Elevator.TICKS_PER_INCH) - Robot.getInstance().getElevator().getTargetPosition();
-            }
-        }
+            if(time > motionProfile.getDuration()) motionProfile = null;
+            else setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
+        } else if(leader != null)
+            setpoint = leader.pidGet();
         double out = calculate(setpoint);
-        //        if(abs(profileError) > .1)
-        //            System.out.println((setpoint / Elevator.TICKS_PER_INCH) + " " +
-        //                    (input.pidGet() / Elevator.TICKS_PER_INCH) + " " + out);
         output.pidWrite(out);
     }
 
@@ -143,7 +135,8 @@ public class PIDFController extends Thread
             try
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
-            } catch (InterruptedException exception)
+            }
+            catch (InterruptedException exception)
             {
                 exception.printStackTrace();
             }
@@ -152,7 +145,6 @@ public class PIDFController extends Thread
 
     /**
      * Calculates the PIDF output
-     *
      * @param setpoint The setpoint value
      * @return the calculated output
      */
@@ -162,7 +154,6 @@ public class PIDFController extends Thread
         double currentTime = System.currentTimeMillis() / 1000.0;
 
         double error = setpoint - currentValue; // Current error
-        //        if(abs(error) > .8) System.out.println(error / Elevator.TICKS_PER_INCH);
 
         //todo update prevValue and prevTime
         double de = currentValue - prevValue; // Change in error since last calculation
@@ -190,7 +181,6 @@ public class PIDFController extends Thread
 
     /**
      * Starts a motion profile and enables the controller
-     *
      * @param motionProfile The motion profile to be run
      */
     public synchronized void runMotionProfile(MotionProfile motionProfile)
@@ -200,10 +190,15 @@ public class PIDFController extends Thread
         enable();
     }
 
+    public synchronized void setFollowing(PIDInput leader)
+    {
+        this.leader = leader;
+    }
+
     /**
      * Enables the controller and sets the prev variables to prevent timing issues
      */
-    private synchronized void enable()
+    public synchronized void enable()
     {
         enabled = true;
     }
