@@ -112,6 +112,25 @@ public class Robot extends TimedRobot
         compressor.start();
     }
 
+    @Override
+    public void teleopPeriodic()
+    {
+        if(oi.getButton(OI.Joysticks.LEFT, 2).get())
+            elevator.set(ControlMode.Position, 0);
+        if(oi.getButton(OI.Joysticks.LEFT, 3).get())
+            elevator.set(ControlMode.Position, 30);
+
+        if(oi.getButton(OI.Joysticks.LEFT, 4).get())
+            collector.setAngle(0);
+        if(oi.getButton(OI.Joysticks.LEFT, 5).get())
+            collector.setAngle(130);
+
+        if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
+            collector.setFolded(false);
+        if(oi.getButton(OI.Joysticks.RIGHT, 3).get())
+            collector.setFolded(true);
+    }
+
     public static Robot getInstance()
     {
         if (instance == null)
