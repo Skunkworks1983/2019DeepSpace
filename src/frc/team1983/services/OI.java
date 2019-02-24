@@ -35,6 +35,21 @@ public class OI
             return port;
         }
     }
+    ///COLLECTION BUTTONS///
+    public static final int SWITCH = 12; //magic
+    //public static final int INTAKE = 13; //magic
+    public static final int FLOOR_COLLECT = 13;
+    public static final int STATION_COLLECT = 20;
+
+    ///PLACEMENT BUTTONS///
+    public static final int HIGH = 9;
+    public static final int MID = 10;
+    public static final int LOW =11;
+    public static final int CARGO_SHIP = 12;
+    public static final int RELEASE = 20; //expel & place
+
+    public static final int COL_FOLD = 17;
+    public static final int COL_UNFOLD = 19;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
     protected static final double JOYSTICK_EXPONENT = 3;
@@ -98,7 +113,11 @@ public class OI
 
         return buttons.get(joystickPort).get(button);
     }
+    public boolean isPressed(int button)
+    {
 
+        return panel.getRawButtonPressed(button + 1);
+    }
     public void initializeBindings()
     {
         //Controls for pneumatics
@@ -108,8 +127,8 @@ public class OI
 
         //TODO Find actual collector angle for collection
         //Controls for collector angle
-//        getButton(Joysticks.PANEL,19).whenPressed(new SetCollectorAngle(150));
-//        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(70));
+        getButton(Joysticks.PANEL,COL_UNFOLD).whenPressed(new SetCollectorAngle(0));
+        getButton(Joysticks.PANEL,COL_FOLD).whenPressed(new SetCollectorAngle(130));
 
         //controls for throttle on collector roller and side roller
         getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
@@ -123,51 +142,10 @@ public class OI
 
         //TODO Add actual elevator set points
         //Controls for elevator set points
-        getButton(Joysticks.PANEL,13).whenPressed(new SetElevatorPosition(0));
-        getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(12.5));
-        getButton(Joysticks.PANEL,11).whenPressed(new SetElevatorPosition(25));
-        getButton(Joysticks.PANEL,10).whenPressed(new SetElevatorPosition(35));
-        getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(60));
-        //getButton(Joysticks.PANEL,0).whenPressed(new SetElevatorPosition(0));
-
-//        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
-//        getButton(Joysticks.PANEL,6).whileHeld(new ManualClimber(-0.25));
-
-
-
-        /*
-        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
-                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
-
-        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(1)));
-        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(-1)));
-        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(0)));
-
-
-        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
-                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
-        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
-                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
-
-        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(1)));
-        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(0)));
-        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(-1)));
-
-        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 70))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 20))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 0))
-        );
-        */
+        getButton(Joysticks.PANEL,FLOOR_COLLECT).whenPressed(new SetElevatorPosition(0));
+        getButton(Joysticks.PANEL,CARGO_SHIP).whenPressed(new SetElevatorPosition(12.5));
+        getButton(Joysticks.PANEL,LOW).whenPressed(new SetElevatorPosition(25));
+        getButton(Joysticks.PANEL,MID).whenPressed(new SetElevatorPosition(35));
+        getButton(Joysticks.PANEL,HIGH).whenPressed(new SetElevatorPosition(60));
     }
 }

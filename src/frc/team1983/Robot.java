@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.climber.Climb;
@@ -111,6 +112,7 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
+        Scheduler.getInstance().add(new CollectionManager());
     }
 
     @Override

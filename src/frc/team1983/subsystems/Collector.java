@@ -2,6 +2,8 @@ package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.commands.collector.SetCollectorFolded;
+import frc.team1983.constants.CollectorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
 
@@ -14,6 +16,7 @@ public class Collector extends Subsystem
     private Talon roller;
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
+    public State currentState;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
 
@@ -36,8 +39,14 @@ public class Collector extends Subsystem
 
         wristRight.setPID(0.1, 0, 0);
         wristRight.follow(wristLeft);
-    }
 
+        currentState = State.STOPPED;
+    }
+    public enum State {
+        STOPPED,
+        UNFOLDING,
+        FOLDING
+    }
     @Override
     public void initDefaultCommand()
     {
@@ -74,6 +83,44 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
+        switch (currentState)
+        {
+            case STOPPED:
+                if(angle >= CollectorConstants.WristSetpoints.DZ)
+                {
+                    currentState = State.UNFOLDING;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                if(angle < CollectorConstants.WristSetpoints.DZ)
+                {
+                    currentState = State.FOLDING;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+            case UNFOLDING:
+                new SetCollectorFolded(false);
+                if(wristLeft.getVelocityTicks() <= 10 || wristLeft.getVelocityTicks() >= -10)
+                {
+                    currentState = State.STOPPED;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+            case FOLDING:
+                if(this.getAngle() <= CollectorConstants.WristSetpoints.DZ)
+                {
+                    new SetCollectorFolded(true);
+                }
+                if(wristLeft.getVelocityTicks() <= 10 || wristLeft.getVelocityTicks() >= -10)
+                {
+                    currentState = State.STOPPED;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+        }
         wristLeft.set(ControlMode.Position, angle);
     }
 
