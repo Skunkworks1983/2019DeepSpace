@@ -7,12 +7,14 @@ import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+/**
+ * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
+ * so the distance traveled by the first stage times three.
+ */
 public class Elevator extends Subsystem
 {
-    // TODO: add necessary things
-
     public static final double kG = 0.05; //Tested on practice bot with full battery
-    public static final double TICKS_PER_INCH = 95.0 / (22.0 * 3.0);//TODO: add math
+    public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
 
     public MotorGroup motorGroup;
 
@@ -23,12 +25,14 @@ public class Elevator extends Subsystem
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
 
-        motorGroup.setMovementAcceleration(140);
-        motorGroup.setMovementVelocity(140);
-        motorGroup.setPID(0.18, 0, 0); // todo: add values
+        motorGroup.setConversionRatio(INCHES_PER_TICK);
 
-        motorGroup.setFFOperator(this);
-        motorGroup.addFFTerm(Elevator -> kG);
+        motorGroup.setMovementAcceleration(6);
+        motorGroup.setCruiseVelocity(6);
+        motorGroup.setPID(0.18, 0, 0); // TODO: add values
+
+        //motorGroup.setFFOperator(this);
+        //motorGroup.addFFTerm(Elevator -> kG);
 
         zero();
     }
@@ -55,29 +59,14 @@ public class Elevator extends Subsystem
         motorGroup.set(mode, value);
     }
 
-    public void setPosInches(double inches)
-    {
-        motorGroup.set(ControlMode.Position, inches * TICKS_PER_INCH);
-    }
-
-    public double getTargetPosition()
-    {
-        return motorGroup.getTargetValue() / TICKS_PER_INCH;
-    }
-
     public double getPosition()
     {
-        return motorGroup.getPositionTicks() / TICKS_PER_INCH;
-    }
-
-    public double getTicks()
-    {
-        return motorGroup.getPositionTicks();
+        return motorGroup.getPositionTicks() * INCHES_PER_TICK;
     }
 
     public double getVelocity()
     {
-        return motorGroup.getVelocityTicks() / TICKS_PER_INCH;
+        return motorGroup.getVelocity();
     }
 
     public void setBrake(boolean brake)
