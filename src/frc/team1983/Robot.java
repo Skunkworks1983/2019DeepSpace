@@ -112,21 +112,6 @@ public class Robot extends TimedRobot
         compressor.start();
     }
 
-    @Override
-    public void teleopPeriodic()
-    {
-        if(oi.getButton(OI.Joysticks.LEFT, 1).get())
-            collector.setAngle(90);
-        if(oi.getButton(OI.Joysticks.LEFT, 2).get())
-            collector.setAngle(0);
-
-        if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
-            collector.setFolded(true);
-        if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
-            collector.setFolded(false);
-
-    }
-
     public static Robot getInstance()
     {
         if (instance == null)
