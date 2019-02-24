@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.climber.SetLiftPosition;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -37,8 +39,6 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private OI oi;
     private Logger logger;
-
-    private DigitalInput dio = new DigitalInput(7);
 
     Robot()
     {
@@ -110,6 +110,7 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
         compressor.start();
+        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     public static Robot getInstance()
@@ -158,4 +159,5 @@ public class Robot extends TimedRobot
     {
         return collector;
     }
+
 }
