@@ -26,7 +26,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     protected PIDFController controller;
 
     private MotorGroup master;
-    private ArrayList<MotorGroup> followers;
+    private ArrayList<MotorGroup> followers = new ArrayList<>();
 
     private double conversionRatio = 1;
     private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
@@ -170,7 +170,7 @@ public class MotorGroup implements PIDInput, PIDOutput
         else
         {
             createController();
-            
+
             if(useMotionProfiles)
             {
                 if(cruiseVelocity == 0 || movementAcceleration == 0) Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
