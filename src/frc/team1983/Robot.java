@@ -40,8 +40,6 @@ public class Robot extends TimedRobot
     private OI oi;
     private Logger logger;
 
-    private DigitalInput dio = new DigitalInput(7);
-
     Robot()
     {
         instance = this;
@@ -111,25 +109,8 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-//        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY());
-//        drivebase.setRight(ControlMode.Throttle, oi.getRightY());
-        compressor.start();
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
-
-//        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
-//        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
-//        climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
-
-//        collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
-
-//        if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
-//        else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
     }
 
     public static Robot getInstance()

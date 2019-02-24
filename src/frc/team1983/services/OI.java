@@ -3,6 +3,7 @@ package frc.team1983.services;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
+import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
@@ -108,7 +109,7 @@ public class OI
         //TODO Find actual collector angle for collection
         //Controls for collector angle
 //        getButton(Joysticks.PANEL,19).whenPressed(new SetCollectorAngle(150));
-//        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(0));
+//        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(70));
 
         //controls for throttle on collector roller and side roller
         getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));

@@ -50,4 +50,3 @@ public class Climb extends Command
 
     }
 }
-

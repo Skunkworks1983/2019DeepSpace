@@ -26,7 +26,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     protected PIDFController controller;
 
     private MotorGroup master;
-    private ArrayList<MotorGroup> followers;
+    private ArrayList<MotorGroup> followers = new ArrayList<>();
 
     private double conversionRatio = 1;
     private double encoderOffset; // added to encoder targetValue for manual encoder zeroing
