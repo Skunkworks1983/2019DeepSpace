@@ -80,9 +80,18 @@ public class Collector extends Subsystem
     /**
      * @param folded If the piston should be extended or not
      */
+
     public void setFolded(boolean folded)
     {
         piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+    /**
+     *
+     * @return state of the collector //todo fix naming convention
+     */
+    public boolean getfolded()
+    {
+        return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
