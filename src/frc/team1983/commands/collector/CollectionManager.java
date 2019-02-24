@@ -2,6 +2,7 @@ package frc.team1983.commands.collector;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
+import frc.team1983.constants.CollectorConstants;
 import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.services.OI;
 import frc.team1983.subsystems.Collector;
@@ -43,7 +44,7 @@ public class CollectionManager extends Command
     @Override
     public void execute()
     {
-        /*
+
         switch (currentState)
         {
             case START_STATE:
@@ -93,7 +94,7 @@ public class CollectionManager extends Command
                     System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
-                if(oi.isPressed(OI.oiConstants.LOW)||oi.isPressed(OI.oiConstants.FLOOR_COLLECT)||oi.isPressed(OI.oiConstants.STATION_COLLECT))
+                if(oi.isPressed(OI.LOW)||oi.isPressed(OI.FLOOR_COLLECT)||oi.isPressed(OI.STATION_COLLECT))
                 {
                     currentState = State.E_LOWERING__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -132,7 +133,7 @@ public class CollectionManager extends Command
             default:
                 //java code
                 break;
-        }   */
+        }
     }
 
     @Override
