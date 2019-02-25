@@ -99,6 +99,7 @@ public class OI
 
     public void initializeBindings()
     {
+        /*
         //Controls for pneumatics
         getButton(Joysticks.PANEL,14).whenPressed(new ToggleCollector());
         getButton(Joysticks.PANEL,20).whenPressed(new ToggleExtender());
@@ -135,5 +136,6 @@ public class OI
 
 //        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
 //        getButton(Joysticks.PANEL,6).whileHeld(new ManualClimber(-0.25));
+        */
     }
 }
