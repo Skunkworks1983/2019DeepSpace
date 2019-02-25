@@ -3,7 +3,7 @@ package frc.team1983.services;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
-import frc.team1983.commands.collector.SetCollectorAngle;
+import frc.team1983.commands.climber.ClimbLevelTwo;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
@@ -11,9 +11,7 @@ import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team1983.commands.climber.Climb;
-import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.commands.climber.ClimbLevelThree;
 
 import java.util.HashMap;
 public class OI
@@ -115,7 +113,6 @@ public class OI
         getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
         getButton(Joysticks.PANEL,6).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,0.8,true));
         getButton(Joysticks.PANEL,19).whileHeld(new SetCollectorRollerThrottle(1));
-        //getButton(Joysticks.PANEL,17).whileHeld(new SetCollectorRollerThrottle(1));
 
         //Manual collector wrist control
         getButton(Joysticks.PANEL,3).whileHeld(new SetCollectorWristThrottle(0.5));
@@ -130,44 +127,13 @@ public class OI
         getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(60));
         //getButton(Joysticks.PANEL,0).whenPressed(new SetElevatorPosition(0));
 
+        //Climb level 3
+        getButton(Joysticks.PANEL,21).whileHeld(new ClimbLevelThree());
+
+        //climb level 2
+        getButton(Joysticks.PANEL, 24).whileHeld(new ClimbLevelTwo());
+
 //        getButton(Joysticks.PANEL,7).whileHeld(new ManualClimber(0.65));
 //        getButton(Joysticks.PANEL,6).whileHeld(new ManualClimber(-0.25));
-
-
-
-        /*
-        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
-                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
-
-        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(1)));
-        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(-1)));
-        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(0)));
-
-
-        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
-                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
-        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
-                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
-
-        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(1)));
-        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(0)));
-        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(-1)));
-
-        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 70))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 20))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
-                new InstantCommand(() -> elevator.set(ControlMode.Position, 0))
-        );
-        */
     }
 }
