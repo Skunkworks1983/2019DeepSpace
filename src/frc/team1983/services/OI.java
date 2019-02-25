@@ -103,17 +103,15 @@ public class OI
 
     public void initializeBindings()
     {
-
+        //Button toswitch to manual mode is 24
+        //Button to switch between balls and hatches is 14
+        //Extra buttons are 17, 18, 19
+      
         //Controls for pneumatics
         getButton(Joysticks.PANEL,8).whenPressed(new ToggleCollector());
         getButton(Joysticks.PANEL,23).whenPressed(new SetManipulatorExtended(true));
         getButton(Joysticks.PANEL,20).whenPressed(new SetManipulatorExtended(false));
         getButton(Joysticks.PANEL,7).whenPressed(new ToggleHooks());
-
-        //TODO Find actual collector angle for collection
-        //Controls for collector angle
-//        getButton(Joysticks.PANEL,19).whenPressed(new SetCollectorAngle(150));
-//        getButton(Joysticks.PANEL,17).whenPressed(new SetCollectorAngle(70));
 
         //Expel
         getButton(Joysticks.PANEL,22).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
@@ -159,14 +157,11 @@ public class OI
         //manual elevator down
         getButton(Joysticks.PANEL,1).whenPressed(new ManualElevator(-0.5));
 
-        // switch to manual mode button 24
-        //ball hatch switch button 14
-        //extra buttons on 17, 18, 19
-
 //        //Climb level 3
 //        getButton(Joysticks.PANEL,0).whileHeld(new ClimbLevelThree());
 //
 //        //climb level 2
 //        getButton(Joysticks.PANEL, 0).whileHeld(new ClimbLevelTwo());
+
     }
 }
