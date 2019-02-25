@@ -10,19 +10,19 @@ import frc.team1983.utilities.motors.Talon;
 public class Climber extends Subsystem
 {
     private MotorGroup motorGroup;
-    private Talon climber;
 
-    public static final double INCHES_PER_TICK = 1 / 1383.7; // TODO: math
-    public static final double MAX_EXTENTION_DISTANCE = 20.0; // inches, TODO: math
+    public static final double INCHES_PER_TICK = 1.0 / 1383.7;
 
     public Climber()
     {
-        climber = new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED);
         motorGroup = new MotorGroup("Climber", FeedbackType.POSITION,
                 new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
+
         motorGroup.setUseMotionProfiles(false);
         motorGroup.setConversionRatio(INCHES_PER_TICK);
         motorGroup.setPID(0.2, 0, 0);
+
+        motorGroup.setBrake(true);
     }
 
     public void zero()
