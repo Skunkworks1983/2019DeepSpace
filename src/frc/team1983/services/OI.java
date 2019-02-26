@@ -16,6 +16,7 @@ import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
 import frc.team1983.commands.climber.ClimbLevelThree;
+import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
 public class OI
@@ -128,13 +129,13 @@ public class OI
         //Controls for elevator set points
 
         //Bottom
-        getButton(Joysticks.PANEL,16).whenPressed(new SetElevatorPosition(0));
+        getButton(Joysticks.PANEL,16).whenPressed(new SetElevatorPosition(Elevator.BOTTOM));
 
         //Loading station ball
         getButton(Joysticks.PANEL,15).whenPressed(new SetElevatorPosition(12.5));
 
         //Ball cargo ship
-        getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(25));
+        getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
 
         //Ball low rocket
         getButton(Joysticks.PANEL,11).whenPressed(new SetElevatorPosition(35));
@@ -162,6 +163,5 @@ public class OI
 //
 //        //climb level 2
 //        getButton(Joysticks.PANEL, 0).whileHeld(new ClimbLevelTwo());
-
     }
 }
