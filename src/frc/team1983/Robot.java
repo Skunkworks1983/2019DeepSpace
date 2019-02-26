@@ -1,17 +1,11 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.commands.elevator.SetElevatorPosition;
-import frc.team1983.commands.climber.Climb;
-import frc.team1983.commands.climber.SetLiftPosition;
-import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -20,7 +14,6 @@ import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
-import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -41,9 +34,13 @@ public class Robot extends TimedRobot
     private OI oi;
     private Logger logger;
 
+    private CollectionManager collectionManager;
+
     Robot()
     {
         instance = this;
+
+        collectionManager = new CollectionManager();
 
         logger = Logger.getInstance();
         logger.setGlobalLevel(Level.INFO);
@@ -70,6 +67,8 @@ public class Robot extends TimedRobot
 
         oi = new OI();
         oi.initializeBindings();
+
+        System.out.println("AT END OF ROBOT CONSTRUCTOR, COLLECTIONMANAGER IS : "+collectionManager);
     }
 
 
@@ -112,7 +111,7 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
-        Scheduler.getInstance().add(new CollectionManager());
+        Scheduler.getInstance().add(collectionManager);
     }
 
     @Override
@@ -132,6 +131,10 @@ public class Robot extends TimedRobot
             collector.setFolded(false);
         if(oi.getButton(OI.Joysticks.RIGHT, 3).get())
             collector.setFolded(true);
+
+
+        //System.out.println("COLLECTOR STATE :    " + collector.currentState);
+
     }
 
     public static Robot getInstance()
@@ -180,5 +183,9 @@ public class Robot extends TimedRobot
     {
         return collector;
     }
+
+    public CollectionManager getCollectionManager(){
+        System.out.println("instantiate collectionManager:  " +collectionManager);
+        return collectionManager;}
 
 }

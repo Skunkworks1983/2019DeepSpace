@@ -1,6 +1,9 @@
 package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
+import frc.team1983.commands.collector.CollectionManager;
+import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.FeedbackType;
@@ -18,8 +21,18 @@ public class Elevator extends Subsystem
 
     public MotorGroup motorGroup;
 
+    public CollectionManager collectionManager;
+
+
     public Elevator()
     {
+        Robot robot = Robot.getInstance();
+        if(robot == null)
+        {
+            System.out.println("ROBOT IS NULL IN ELEVATOR :(");
+        }
+        collectionManager = robot.getCollectionManager();
+
         motorGroup = new MotorGroup("Left Elevator", FeedbackType.POSITION,
                 new Spark(RobotMap.Elevator.LEFT, RobotMap.Elevator.LEFT_REVERSED),
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
@@ -27,12 +40,13 @@ public class Elevator extends Subsystem
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
 
-        motorGroup.setMovementAcceleration(140);
-        motorGroup.setCruiseVelocity(140);
+        motorGroup.setMovementAcceleration(12);
+        motorGroup.setCruiseVelocity(12);
         motorGroup.setPID(0.18, 0, 0); // TODO: add values
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
+
 
         zero();
     }
@@ -56,7 +70,18 @@ public class Elevator extends Subsystem
 
     public void set(ControlMode mode, double value)
     {
-        motorGroup.set(mode, value);
+        if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
+        {
+            System.out.println("beep beep THAT'S ILLEGAL u can't do that");
+        }
+        else if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
+        {
+            System.out.println("beep beep THAT'S ILLEGAL u can't do that");
+        }
+        else
+        {
+            motorGroup.set(mode, value);
+        }
     }
 
     public double getPosition()

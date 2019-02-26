@@ -2,6 +2,8 @@ package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
+import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.commands.collector.SetCollectorFolded;
 import frc.team1983.constants.CollectorConstants;
 import frc.team1983.constants.RobotMap;
@@ -17,12 +19,19 @@ public class Collector extends Subsystem
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
     public State currentState;
+    public CollectionManager collectionManager;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
 
     public Collector()
     {
         roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        Robot robot = Robot.getInstance();
+        if(robot == null)
+        {
+            System.out.println("ROBOT IS NULL IN COLLECTOR :(");
+        }
+        collectionManager = robot.getCollectionManager();
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -47,6 +56,7 @@ public class Collector extends Subsystem
         UNFOLDING,
         FOLDING
     }
+
     @Override
     public void initDefaultCommand()
     {
@@ -56,7 +66,44 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
-
+        switch (currentState)
+        {
+            case STOPPED:
+                if(getAngularVelocity() > 10)
+                {
+                    currentState = State.UNFOLDING;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                if(getAngularVelocity() < -10)
+                {
+                    currentState = State.FOLDING;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+            case UNFOLDING:
+                new SetCollectorFolded(false);
+                if(getAngularVelocity() <= 10 && getAngularVelocity() >= -10)
+                {
+                    currentState = State.STOPPED;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+            case FOLDING:
+                if(this.getAngle() <= CollectorConstants.WristSetpoints.DZ)
+                {
+                    new SetCollectorFolded(true);
+                }
+                if(getAngularVelocity() <= 10 && getAngularVelocity() >= -10)
+                {
+                    currentState = State.STOPPED;
+                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
+                    break;
+                }
+                break;
+        }
     }
 
     /**
@@ -83,45 +130,27 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        switch (currentState)
+        if(collectionManager.getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
-            case STOPPED:
-                if(angle >= CollectorConstants.WristSetpoints.DZ)
-                {
-                    currentState = State.UNFOLDING;
-                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
-                    break;
-                }
-                if(angle < CollectorConstants.WristSetpoints.DZ)
-                {
-                    currentState = State.FOLDING;
-                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
-                    break;
-                }
-                break;
-            case UNFOLDING:
-                new SetCollectorFolded(false);
-                if(wristLeft.getVelocityTicks() <= 10 || wristLeft.getVelocityTicks() >= -10)
-                {
-                    currentState = State.STOPPED;
-                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
-                    break;
-                }
-                break;
-            case FOLDING:
-                if(this.getAngle() <= CollectorConstants.WristSetpoints.DZ)
-                {
-                    new SetCollectorFolded(true);
-                }
-                if(wristLeft.getVelocityTicks() <= 10 || wristLeft.getVelocityTicks() >= -10)
-                {
-                    currentState = State.STOPPED;
-                    System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
-                    break;
-                }
-                break;
+            System.out.println("A beep beep THAT'S ILLEGAL not allowed");
         }
-        wristLeft.set(ControlMode.Position, angle);
+        else if(collectionManager.getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
+        {
+            System.out.println("B beep beep THAT'S ILLEGAL not allowed");
+        }
+        else if(collectionManager.getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
+        {
+            System.out.println("C beep beep THAT'S ILLEGAL not allowed");
+        }
+        else if(collectionManager.getCurrentState() == CollectionManager.State.START_STATE)
+        {
+            System.out.println("in START_SPACE, shouldn't be allowed :/");
+            wristLeft.set(ControlMode.Position, angle);
+        }
+        else
+        {
+            wristLeft.set(ControlMode.Position, angle);
+        }
     }
 
     /**
@@ -165,6 +194,11 @@ public class Collector extends Subsystem
         return wristLeft.getPosition();
     }
 
+    public double getAngularVelocity()
+    {
+        return wristLeft.getVelocity();
+    }
+
     /**
      * @return The current ticks of the arm
      */
@@ -181,4 +215,5 @@ public class Collector extends Subsystem
         wristLeft.zero();
         wristRight.zero();
     }
+
 }
