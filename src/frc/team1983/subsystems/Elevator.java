@@ -13,6 +13,20 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Elevator extends Subsystem
 {
+    //setpoint for bottom of the elevator
+    public static final int BOTTOM = 0;
+
+    //Setpoints for hatches
+    public static final int BOTTOM_HATCH = 0;
+    public static final int MIDDLE_HATCH = 0;
+    public static final int TOP_HATCH = 0;
+
+    //Setpoints for balls
+    public static final int LOW_BALL = 0;
+    public static final int MIDDLE_BALL = 0;
+    public static final int TOP_BALL = 0;
+    public static final int CARGOSHIP_BALL =0;
+
     public static final double kG = 0.05; //Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
 
