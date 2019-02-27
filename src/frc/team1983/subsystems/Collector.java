@@ -3,9 +3,11 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
+import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.commands.collector.SetCollectorFolded;
 import frc.team1983.constants.CollectorConstants;
+import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
 
@@ -20,6 +22,8 @@ public class Collector extends Subsystem
     public MotorGroup wristLeft, wristRight;
     public State currentState;
     public CollectionManager collectionManager;
+    public Elevator elevator;
+    public SafeAutomationManager safeAutomationManager;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
 
@@ -32,6 +36,7 @@ public class Collector extends Subsystem
             System.out.println("ROBOT IS NULL IN COLLECTOR :(");
         }
         collectionManager = robot.getCollectionManager();
+        elevator = robot.getElevator();
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -50,6 +55,7 @@ public class Collector extends Subsystem
         wristRight.follow(wristLeft);
 
         currentState = State.STOPPED;
+        safeAutomationManager = new SafeAutomationManager();
     }
     public enum State {
         STOPPED,
@@ -130,21 +136,26 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
+        System.out.println("ANGLE : " + angle);
+        System.out.println("CURRENT STATE: " + collectionManager.getCurrentState());
         if(collectionManager.getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
-            System.out.println("A beep beep THAT'S ILLEGAL not allowed");
+            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
-            System.out.println("B beep beep THAT'S ILLEGAL not allowed");
+            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
-            System.out.println("C beep beep THAT'S ILLEGAL not allowed");
+            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.START_STATE)
         {
-            System.out.println("in START_SPACE, shouldn't be allowed :/");
+            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
             wristLeft.set(ControlMode.Position, angle);
         }
         else

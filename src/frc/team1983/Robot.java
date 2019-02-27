@@ -68,7 +68,6 @@ public class Robot extends TimedRobot
         oi = new OI();
         oi.initializeBindings();
 
-        System.out.println("AT END OF ROBOT CONSTRUCTOR, COLLECTIONMANAGER IS : "+collectionManager);
     }
 
 
@@ -185,7 +184,6 @@ public class Robot extends TimedRobot
     }
 
     public CollectionManager getCollectionManager(){
-        System.out.println("instantiate collectionManager:  " +collectionManager);
         return collectionManager;}
 
 }

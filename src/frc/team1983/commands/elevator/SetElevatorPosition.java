@@ -21,5 +21,6 @@ public class SetElevatorPosition extends InstantCommand
     public SetElevatorPosition(double setpoint)
     {
         this(Robot.getInstance().getElevator(), setpoint);
+        System.out.println("INVOKED COMMAND");
     }
 }

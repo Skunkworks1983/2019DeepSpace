@@ -2,6 +2,7 @@ package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
+import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.constants.RobotMap;
@@ -22,6 +23,8 @@ public class Elevator extends Subsystem
     public MotorGroup motorGroup;
 
     public CollectionManager collectionManager;
+
+    public SafeAutomationManager safeAutomationManager;
 
 
     public Elevator()
@@ -47,6 +50,7 @@ public class Elevator extends Subsystem
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
 
+        safeAutomationManager = new SafeAutomationManager();
 
         zero();
     }
@@ -72,11 +76,13 @@ public class Elevator extends Subsystem
     {
         if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
         {
-            System.out.println("beep beep THAT'S ILLEGAL u can't do that");
+            safeAutomationManager.moveEleDZWhileCollectorFolding(value);
+            motorGroup.set(mode, value);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
         {
-            System.out.println("beep beep THAT'S ILLEGAL u can't do that");
+            safeAutomationManager.moveEleDZWhileCollectorUnfolding(value);
+            motorGroup.set(mode, value);
         }
         else
         {

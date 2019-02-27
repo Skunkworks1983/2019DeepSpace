@@ -164,7 +164,6 @@ public class CollectionManager extends Command
 
     public State getCurrentState()
     {
-        System.out.println("GETTING CURRENT STATE, CURRENT STATE IS : " + currentState);
         return currentState;
     }
 
