@@ -32,7 +32,7 @@ public class Robot extends TimedRobot
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
-    private Logger logger;
+    Logger logger;
 
     private CollectionManager collectionManager;
 

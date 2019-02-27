@@ -3,17 +3,20 @@ package frc.team1983.services;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
+import frc.team1983.commands.climber.ClimbLevelTwo;
+import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetManipulatorExtended;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team1983.commands.climber.Climb;
-import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.commands.climber.ClimbLevelThree;
+import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
 public class OI
@@ -46,10 +49,10 @@ public class OI
     public static final int MID = 10;
     public static final int LOW =11;
     public static final int CARGO_SHIP = 12;
-    public static final int RELEASE = 20; //expel & place
+    //public static final int RELEASE = 20; //expel & place
 
-    public static final int COL_FOLD = 17;
-    public static final int COL_UNFOLD = 19;
+    public static final int COL_FOLD = 20;
+    public static final int COL_UNFOLD = 21;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
     protected static final double JOYSTICK_EXPONENT = 3;
@@ -120,32 +123,30 @@ public class OI
     }
     public void initializeBindings()
     {
+        //Button toswitch to manual mode is 24
+        //Button to switch between balls and hatches is 14
+        //Extra buttons are 17, 18, 19
+      
         //Controls for pneumatics
-        getButton(Joysticks.PANEL,14).whenPressed(new ToggleCollector());
-        getButton(Joysticks.PANEL,20).whenPressed(new ToggleExtender());
-        getButton(Joysticks.PANEL,18).whenPressed(new ToggleHooks());
+        getButton(Joysticks.PANEL,8).whenPressed(new ToggleCollector());
+        getButton(Joysticks.PANEL,23).whenPressed(new SetManipulatorExtended(true));
+        getButton(Joysticks.PANEL,20).whenPressed(new SetManipulatorExtended(false));
+        getButton(Joysticks.PANEL,7).whenPressed(new ToggleHooks());
 
         //TODO Find actual collector angle for collection
         //Controls for collector angle
         getButton(Joysticks.PANEL,COL_UNFOLD).whenPressed(new SetCollectorAngle(0));
         getButton(Joysticks.PANEL,COL_FOLD).whenPressed(new SetCollectorAngle(130));
 
-        //controls for throttle on collector roller and side roller
-        getButton(Joysticks.PANEL,7).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
-        getButton(Joysticks.PANEL,6).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,0.8,true));
-        getButton(Joysticks.PANEL,19).whileHeld(new SetCollectorRollerThrottle(1));
-        //getButton(Joysticks.PANEL,17).whileHeld(new SetCollectorRollerThrottle(1));
-
-        //Manual collector wrist control
-        getButton(Joysticks.PANEL,3).whileHeld(new SetCollectorWristThrottle(0.5));
-        getButton(Joysticks.PANEL,4).whileHeld(new SetCollectorWristThrottle(-0.25));
-
         //TODO Add actual elevator set points
         //Controls for elevator set points
+
         getButton(Joysticks.PANEL,FLOOR_COLLECT).whenPressed(new SetElevatorPosition(0));
         getButton(Joysticks.PANEL,CARGO_SHIP).whenPressed(new SetElevatorPosition(12.5));
         getButton(Joysticks.PANEL,LOW).whenPressed(new SetElevatorPosition(25));
         getButton(Joysticks.PANEL,MID).whenPressed(new SetElevatorPosition(35));
         getButton(Joysticks.PANEL,HIGH).whenPressed(new SetElevatorPosition(60));
+
+
     }
 }

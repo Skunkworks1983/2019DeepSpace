@@ -163,9 +163,6 @@ public class MotorGroup implements PIDInput, PIDOutput
             if (controller != null)
                 controller.disable();
             setRawThrottle(value);
-
-            for(MotorGroup follower : followers)
-                follower.set(ControlMode.Throttle, value);
         }
         else
         {
@@ -178,10 +175,10 @@ public class MotorGroup implements PIDInput, PIDOutput
                 if(useMotionProfiles) controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
             }
             else controller.setSetpoint(value);
-
-            for(MotorGroup follower : followers)
-                follower.enableController();
         }
+
+        for(MotorGroup follower : followers)
+            follower.enableController();
     }
 
     public double getTargetValue()

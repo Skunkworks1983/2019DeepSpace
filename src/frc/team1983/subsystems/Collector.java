@@ -40,19 +40,19 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
-                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
-
-        wristLeft.setConversionRatio(DEGREES_PER_TICK);
-        wristLeft.setPID(0.06, 0, 0);
-        wristLeft.setCruiseVelocity(18);
-        wristLeft.setMovementAcceleration(18);
-
         wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wristRight.setPID(0.1, 0, 0);
-        wristRight.follow(wristLeft);
+        wristRight.setConversionRatio(DEGREES_PER_TICK);
+        wristRight.setPID(0.06, 0, 0);
+        wristRight.setUseMotionProfiles(false);
+
+        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+                                   new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
+
+        wristLeft.setPID(0.21, 0, 0);
+        wristLeft.follow(wristRight);
+
 
         currentState = State.STOPPED;
         safeAutomationManager = new SafeAutomationManager();
@@ -61,6 +61,7 @@ public class Collector extends Subsystem
         STOPPED,
         UNFOLDING,
         FOLDING
+
     }
 
     @Override
@@ -117,7 +118,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
-        wristLeft.set(ControlMode.Throttle, output);
+        wristRight.set(ControlMode.Throttle, output);
     }
 
     /**
@@ -170,23 +171,15 @@ public class Collector extends Subsystem
 
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        piston.set(folded ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
     /**
      *
-     * @return state of the collector //todo fix naming convention
-     */
-    public boolean getfolded()
-    {
-        return piston.get() == DoubleSolenoid.Value.kForward;
-    }
-
-    /**
-     * @return True if the piston is extended, false if not (or if the solenoid is off)
+     * @return state of the collector
      */
     public boolean isFolded()
     {
-        return piston.get() == DoubleSolenoid.Value.kForward;
+        return piston.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**
@@ -202,7 +195,8 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wristLeft.getPosition();
+
+        return wristRight.getPosition();
     }
 
     public double getAngularVelocity()
@@ -215,7 +209,7 @@ public class Collector extends Subsystem
      */
     public double getTicks()
     {
-        return wristLeft.getPositionTicks();
+        return wristRight.getPosition();
     }
 
     /**
