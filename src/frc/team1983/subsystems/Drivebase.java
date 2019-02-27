@@ -31,7 +31,7 @@ public class Drivebase extends Subsystem
 
         left.setCruiseVelocity(5.0);
         left.setMovementAcceleration(2.0);
-        left.setPID(0.03, 0, 0);
+        left.setKP(0.03);
 
         right = new MotorGroup("Right Drivebase", FeedbackType.VELOCITY,
                 new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
@@ -43,7 +43,7 @@ public class Drivebase extends Subsystem
 
         right.setCruiseVelocity(5.0);
         right.setMovementAcceleration(2.0);
-        right.setPID(0.03, 0, 0);
+        right.setKP(0.03);
 
         zero();
     }

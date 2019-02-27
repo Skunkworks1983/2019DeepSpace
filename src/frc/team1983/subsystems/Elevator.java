@@ -43,10 +43,10 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(6);
         motorGroup.setCruiseVelocity(6);
-        motorGroup.setPID(0.18, 0, 0); // TODO: add values
+        motorGroup.setKP(0.18); // TODO: add values
 
-        //motorGroup.setFFOperator(this);
-        //motorGroup.addFFTerm(Elevator -> kG);
+        motorGroup.setFFOperator(this);
+        motorGroup.addFFTerm(Elevator -> kG);
 
         zero();
     }

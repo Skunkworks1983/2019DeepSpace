@@ -1,5 +1,6 @@
 package frc.team1983.utilities.motors;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.team1983.utilities.sensors.Encoder;
@@ -12,10 +13,9 @@ public class Talon extends com.ctre.phoenix.motorcontrol.can.TalonSRX implements
         setInverted(reversed);
     }
 
-    @Override
-    public void set(ControlMode mode, double output)
+    public void set(double output)
     {
-        super.set(mode.TALON, output);
+        super.set(ControlMode.PercentOutput, output);
     }
 
     @Override
