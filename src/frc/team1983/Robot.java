@@ -3,10 +3,10 @@ package frc.team1983;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.DrivePath;
+import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -18,8 +18,6 @@ import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
-
-import static java.lang.Math.abs;
 
 public class Robot extends TimedRobot
 {
@@ -73,7 +71,7 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
-        navx.reset();
+        getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
     }
 
@@ -106,21 +104,13 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-
-        //        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
-        //        drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
 
         Scheduler.getInstance().add(new DrivePath(new Path(
                 Pose.DEFAULT.copy(),
                 new Pose(3, 10, 90),
                 new Pose(14, 13, 0),
-                new Pose(21, 21, 90)
-        ), 6));
+                new Pose(20, 21, 90)
+        ), 4));
     }
 
     @Override
@@ -128,39 +118,7 @@ public class Robot extends TimedRobot
     {
         compressor.start();
 
-        oi.getButton(OI.Joysticks.LEFT, 1).whenPressed(
-                new InstantCommand(() -> collector.setFolded(!collector.isFolded())));
-
-        oi.getButton(OI.Joysticks.LEFT, 4).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(1)));
-        oi.getButton(OI.Joysticks.LEFT, 5).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(-1)));
-        oi.getButton(OI.Joysticks.LEFT, 2).whenPressed(
-                new InstantCommand(() -> collector.setRollerThrottle(0)));
-
-
-        oi.getButton(OI.Joysticks.RIGHT, 2).whenPressed(
-                new InstantCommand(() -> manipulator.setHooks(!manipulator.isHooksOpen())));
-        oi.getButton(OI.Joysticks.RIGHT, 3).whenPressed(
-                new InstantCommand(() -> manipulator.setExtender(!manipulator.isExtenderExtended())));
-
-        oi.getButton(OI.Joysticks.PANEL, 11).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(1)));
-        oi.getButton(OI.Joysticks.PANEL, 12).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(0)));
-        oi.getButton(OI.Joysticks.PANEL, 13).whenPressed(
-                new InstantCommand(() -> manipulator.setGrippers(-1)));
-
-        oi.getButton(OI.Joysticks.PANEL, 14).whenPressed(
-                new InstantCommand(() -> elevator.setPosInches(49))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 20).whenPressed(
-                new InstantCommand(() -> elevator.setPosInches(10))
-        );
-        oi.getButton(OI.Joysticks.PANEL, 18).whenPressed(
-                new InstantCommand(() -> elevator.setPosInches(.01))
-        );
-
+        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     public static Robot getInstance()
@@ -180,6 +138,26 @@ public class Robot extends TimedRobot
         return elevator;
     }
 
+    public Climber getClimber()
+    {
+        return climber;
+    }
+
+    public Manipulator getManipulator()
+    {
+        return manipulator;
+    }
+
+    public Collector getCollector()
+    {
+        return collector;
+    }
+
+    public Compressor getCompressor()
+    {
+        return compressor;
+    }
+
     public Gyro getGyro()
     {
         return navx;
@@ -193,15 +171,5 @@ public class Robot extends TimedRobot
     public OI getOI()
     {
         return oi;
-    }
-
-    public Manipulator getManipulator()
-    {
-        return manipulator;
-    }
-
-    public Collector getCollector()
-    {
-        return collector;
     }
 }

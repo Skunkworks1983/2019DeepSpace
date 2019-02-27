@@ -8,9 +8,11 @@ import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.Pigeon;
 
-// This class estimates the position of the robot. Coordinate system conventions are
-// that the origin is in the bottom left corner from the perspective of standing at
-// the driver station, and theta = 0 towards the x-axis.
+/**
+ * This class estimates the position of the robot. Coordinate system conventions are
+ * that the origin is in the bottom left corner from the perspective of standing at
+ * the driver station, and theta = 0 towards the x-axis.
+ */
 public class StateEstimator implements Runnable
 {
     public static final int UPDATE_RATE = 20;

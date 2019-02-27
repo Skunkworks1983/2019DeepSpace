@@ -11,7 +11,7 @@ import frc.team1983.utilities.math.Vector2;
  * Zero degrees starts in the X coordinate direction and increases counter-clockwise,
  * 90 degrees facing the opposite alliance wall.
  */
-public class Pose
+public final class Pose
 {
     public static final Pose ORIGIN = new Pose(0, 0, 90);
     public static final Pose DEFAULT = new Pose(Constants.ROBOT_WIDTH / 2, Constants.ROBOT_LENGTH / 2, 90);
@@ -58,6 +58,7 @@ public class Pose
      * Create a pose with position and direction
      * Direction is always normalized
      * Heading is created given the direction
+     *
      * @param position
      * @param direction
      */
