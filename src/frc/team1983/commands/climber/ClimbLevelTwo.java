@@ -33,6 +33,7 @@ public class ClimbLevelTwo extends Command
     public void initialize()
     {
         climber.set(ControlMode.Position, -10);
+        gyro.setPitch(0);
     }
 
     @Override
@@ -46,8 +47,8 @@ public class ClimbLevelTwo extends Command
 
         if(climber.getPosition() < -8)
         {
-            drivebase.set(ControlMode.Throttle, 0.05);
-            collector.setRollerThrottle(0.3);
+            drivebase.set(ControlMode.Throttle, 0.1);
+            collector.setRollerThrottle(0.5);
         }
         else
             collector.setRollerThrottle(1);

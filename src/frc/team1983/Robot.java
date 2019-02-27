@@ -11,6 +11,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
@@ -108,7 +109,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-
+        System.out.println(elevator.getPosition());
     }
 
     public static Robot getInstance()

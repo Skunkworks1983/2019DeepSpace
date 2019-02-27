@@ -33,6 +33,7 @@ public class ClimbLevelThree extends Command
     public void initialize()
     {
         climber.set(ControlMode.Position, -23);
+        gyro.setPitch(0);
     }
 
     @Override
@@ -44,10 +45,10 @@ public class ClimbLevelThree extends Command
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
         collector.setWristThrottle(throttle);
 
-        if(climber.getPosition() < -20)
+        if(climber.getPosition() < -18)
         {
-            drivebase.set(ControlMode.Throttle, 0.05);
-            collector.setRollerThrottle(0.3);
+            drivebase.set(ControlMode.Throttle, 0.1);
+            collector.setRollerThrottle(0.5);
         }
         else
             collector.setRollerThrottle(1);
