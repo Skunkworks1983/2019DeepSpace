@@ -53,6 +53,7 @@ public class CollectionManager extends Command
     @Override
     public void execute()
     {
+        System.out.println("Elevator is at setpoint: " + elevator.isAtSetpoint());
         switch (currentState)
         {
             case START_STATE:

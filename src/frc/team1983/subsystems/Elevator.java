@@ -11,6 +11,8 @@ import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+import javax.naming.ldap.Control;
+
 /**
  * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
  * so the distance traveled by the first stage times three.
@@ -30,6 +32,7 @@ public class Elevator extends Subsystem
     public static final int MIDDLE_BALL = 0;
     public static final int TOP_BALL = 0;
     public static final int CARGOSHIP_BALL =0;
+    public static final double CLOSED_LOOP_TOLERANCE = 2.0; // inches
 
     public static final double kG = 0.05; //Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
@@ -91,17 +94,20 @@ public class Elevator extends Subsystem
         if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
         {
             safeAutomationManager.moveEleDZWhileCollectorFolding(value);
-            motorGroup.set(mode, value);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
         {
             safeAutomationManager.moveEleDZWhileCollectorUnfolding(value);
-            motorGroup.set(mode, value);
         }
         else
         {
             motorGroup.set(mode, value);
         }
+    }
+
+    public void setDirect(ControlMode mode, double value)
+    {
+        motorGroup.set(mode, value);
     }
 
     public double getPosition()
@@ -118,4 +124,10 @@ public class Elevator extends Subsystem
     {
         motorGroup.setBrake(brake);
     }
+
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(motorGroup.getPosition() - motorGroup.getTarget()) < CLOSED_LOOP_TOLERANCE;
+    }
+
 }

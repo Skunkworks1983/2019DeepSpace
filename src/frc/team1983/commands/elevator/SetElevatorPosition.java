@@ -6,21 +6,33 @@ import frc.team1983.Robot;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.utilities.motors.ControlMode;
 
-public class SetElevatorPosition extends InstantCommand
+import static java.lang.Math.abs;
+
+public class SetElevatorPosition extends Command
 {
+    private Elevator elevator;
+    private double setpoint;
+
     /**
      *
-     * @param elevator The elevator object
      * @param setpoint The height of the carriage in inches from the bottom stage
      */
-    public SetElevatorPosition(Elevator elevator, double setpoint)
-    {
-        super(elevator, () -> elevator.set(ControlMode.Position, setpoint));
-    }
-
     public SetElevatorPosition(double setpoint)
     {
-        this(Robot.getInstance().getElevator(), setpoint);
-        System.out.println("INVOKED COMMAND");
+        elevator = Robot.getInstance().getElevator();
+        this.setpoint = setpoint;
+    }
+
+    @Override
+    public void initialize()
+    {
+        elevator.set(ControlMode.Position, setpoint);
+    }
+
+    @Override
+    protected boolean isFinished()
+    {
+        System.out.println("ELEVATOR AT SETPOINT: " + elevator.isAtSetpoint());
+        return elevator.isAtSetpoint();
     }
 }

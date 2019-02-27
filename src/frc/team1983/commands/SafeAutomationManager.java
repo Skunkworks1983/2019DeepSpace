@@ -11,7 +11,6 @@ import frc.team1983.constants.CollectorConstants;
 import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Elevator;
-import frc.team1983.utilities.motors.ControlMode;
 
 public class SafeAutomationManager extends CommandGroup
 {
@@ -32,6 +31,7 @@ public class SafeAutomationManager extends CommandGroup
     {
         addSequential(new SetCollectorAngle(CollectorConstants.WristSetpoints.DOWN));
         addParallel(new SetCollectorFolded(true));
+      //  addSequential(new WaitForState(CollectionManager.State.E_RISING__COL_SAFE));
         addSequential(new SetElevatorPosition(value));
     }
     public void moveEleDZWhileCollectorUnfolding(double value)
@@ -40,12 +40,14 @@ public class SafeAutomationManager extends CommandGroup
         {
             addSequential(new SetCollectorAngle(CollectorConstants.WristSetpoints.DOWN));
             addParallel(new SetCollectorFolded(true));
+          //  addSequential(new WaitForState(CollectionManager.State.E_SAFE__COL_DZ));
             addSequential(new SetElevatorPosition(value));
         }
         else
         {
             addSequential(new SetCollectorAngle(CollectorConstants.WristSetpoints.BACK));
             addParallel(new SetCollectorFolded(false));
+           // addSequential(new WaitForState(CollectionManager.State.E_SAFE__COL_SAFE));
             addSequential(new SetElevatorPosition(value));
         }
     }

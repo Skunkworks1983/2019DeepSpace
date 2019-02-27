@@ -37,7 +37,6 @@ public class MotorGroup implements PIDInput, PIDOutput
     protected Encoder encoder;
     private final String name; //For logging purposes
     private FeedbackType feedbackType;
-    private double targetValue;
 
     private double cruiseVelocity = 0;
     private double movementAcceleration = 0;
@@ -66,7 +65,6 @@ public class MotorGroup implements PIDInput, PIDOutput
         this.motors.addAll(Arrays.asList(motors));
 
         motorGroups.add(this);
-        this.targetValue = 0;
     }
 
     /**
@@ -157,7 +155,6 @@ public class MotorGroup implements PIDInput, PIDOutput
      */
     public void set(ControlMode controlMode, double value)
     {
-        this.targetValue = value;
         if (controlMode == ControlMode.Throttle)
         {
             if (controller != null)
@@ -179,11 +176,6 @@ public class MotorGroup implements PIDInput, PIDOutput
 
         for(MotorGroup follower : followers)
             follower.enableController();
-    }
-
-    public double getTargetValue()
-    {
-        return targetValue;
     }
 
     /**
@@ -361,5 +353,10 @@ public class MotorGroup implements PIDInput, PIDOutput
     public void setUseMotionProfiles(boolean useMotionProfiles)
     {
         this.useMotionProfiles = useMotionProfiles;
+    }
+
+    public double getTarget()
+    {
+        return controller.getSetpoint();
     }
 }

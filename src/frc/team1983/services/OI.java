@@ -2,21 +2,11 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.team1983.Robot;
-import frc.team1983.commands.climber.ClimbLevelTwo;
-import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
-import frc.team1983.commands.collector.SetCollectorRollerThrottle;
-import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
-import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.manipulator.SetManipulatorExtended;
-import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
-import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
-import frc.team1983.commands.climber.ClimbLevelThree;
-import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
 public class OI
@@ -126,12 +116,6 @@ public class OI
         //Button toswitch to manual mode is 24
         //Button to switch between balls and hatches is 14
         //Extra buttons are 17, 18, 19
-      
-        //Controls for pneumatics
-        getButton(Joysticks.PANEL,8).whenPressed(new ToggleCollector());
-        getButton(Joysticks.PANEL,23).whenPressed(new SetManipulatorExtended(true));
-        getButton(Joysticks.PANEL,20).whenPressed(new SetManipulatorExtended(false));
-        getButton(Joysticks.PANEL,7).whenPressed(new ToggleHooks());
 
         //TODO Find actual collector angle for collection
         //Controls for collector angle

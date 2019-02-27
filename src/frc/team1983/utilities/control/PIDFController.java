@@ -102,15 +102,18 @@ public class PIDFController extends Thread
      */
     protected void execute()
     {
+        double target = setpoint;
         if(leader == null && motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
             if(time > motionProfile.getDuration()) motionProfile = null;
-            else setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
+            else target = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
         } else if(leader != null)
-            setpoint = leader.pidGet();
-        double out = calculate(setpoint);
+        {
+            target = leader.pidGet();
+        }
+        double out = calculate(target);
         output.pidWrite(out);
     }
 
@@ -186,6 +189,7 @@ public class PIDFController extends Thread
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
+        setpoint = motionProfile.getEndpoint();
         profileStartTime = System.currentTimeMillis() / 1000.0;
         enable();
     }
@@ -210,5 +214,10 @@ public class PIDFController extends Thread
     {
         enabled = false;
         motionProfile = null;
+    }
+
+    public double getSetpoint()
+    {
+        return setpoint;
     }
 }

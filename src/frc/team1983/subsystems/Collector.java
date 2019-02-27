@@ -7,7 +7,6 @@ import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.commands.collector.SetCollectorFolded;
 import frc.team1983.constants.CollectorConstants;
-import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
 
@@ -26,6 +25,8 @@ public class Collector extends Subsystem
     public SafeAutomationManager safeAutomationManager;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
+
+    public static final double CLOSED_LOOP_TOLERANCE = 4.0; // degrees
 
     public Collector()
     {
@@ -142,26 +143,22 @@ public class Collector extends Subsystem
         if(collectionManager.getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
             safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
-            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
             safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
-            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
         {
             safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
-            wristLeft.set(ControlMode.Position, angle);
         }
         else if(collectionManager.getCurrentState() == CollectionManager.State.START_STATE)
         {
             safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
-            wristLeft.set(ControlMode.Position, angle);
         }
         else
         {
-            wristLeft.set(ControlMode.Position, angle);
+            wristRight.set(ControlMode.Position, angle);
         }
     }
 
@@ -201,7 +198,7 @@ public class Collector extends Subsystem
 
     public double getAngularVelocity()
     {
-        return wristLeft.getVelocity();
+        return wristRight.getVelocity();
     }
 
     /**
@@ -221,4 +218,8 @@ public class Collector extends Subsystem
         wristRight.zero();
     }
 
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(wristRight.getPosition() - wristRight.getTarget()) < CLOSED_LOOP_TOLERANCE;
+    }
 }
