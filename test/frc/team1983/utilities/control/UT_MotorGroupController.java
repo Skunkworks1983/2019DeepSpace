@@ -16,12 +16,12 @@ import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class UT_PIDFController
+public class UT_MotorGroupController
 {
     @Mock
     MotorGroup motorGroup;
 
-    private PIDFController controller;
+    private MotorGroupController controller;
 
     @Before
     public void setup()
@@ -29,8 +29,8 @@ public class UT_PIDFController
         initMocks(this);
         when(motorGroup.pidGet()).thenReturn(0.0);
         when(motorGroup.getPositionTicks()).thenReturn(0.0);
-        controller = new PIDFController(motorGroup);
-        controller.setPID(1,1,1);
+        controller = new MotorGroupController(motorGroup);
+        controller.setKP(1);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class UT_PIDFController
     {
         // Profile just needs to run slowly
         MotionProfile profile = MotionProfile.generateProfile(0, 100,
-                1, 1, FeedbackType.POSITION);
+                1, 1);
 
         controller.runMotionProfile(profile);
         ArgumentCaptor<Double> argumentCaptor = ArgumentCaptor.forClass(Double.class);
@@ -73,7 +73,7 @@ public class UT_PIDFController
     public void disablesProfileOnSetpointChanged()
     {
         controller.setSetpoint(10.0);
-        controller.motionProfile = MotionProfile.generateProfile(0, 10, 1, 1, FeedbackType.POSITION);
+        controller.motionProfile = MotionProfile.generateProfile(0, 10, 1, 1);
         controller.setSetpoint(0);
         assertNull(controller.motionProfile);
     }
@@ -81,8 +81,10 @@ public class UT_PIDFController
     @Test
     public void setsProfileToNullAfterDurationExceeded()
     {
-        controller.setPID(0, 0, 0);
-        controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10, FeedbackType.POSITION));
+        controller.setKP(0.1);
+        controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10));
+
+        controller.motionProfile.getDuration();
 
         try {TimeUnit.MILLISECONDS.sleep(10);} catch(Exception e) {assertEquals(0,1);}
 

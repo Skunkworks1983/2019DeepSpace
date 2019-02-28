@@ -30,6 +30,7 @@ public class Line
 
     /**
      * Finds the intersection point of two lines
+     *
      * @param left first line
      * @param right second line
      * @return intersection
@@ -47,6 +48,7 @@ public class Line
 
     /**
      * Finds the intersection point of this line and another
+     *
      * @param other other line
      * @return intersection
      */
@@ -57,6 +59,7 @@ public class Line
 
     /**
      * Find the closest point on a line that another point is closest to
+     *
      * @param line
      * @param point other point
      * @return closest point
@@ -68,6 +71,7 @@ public class Line
 
     /**
      * Find the closest point on this line that another point is closest to
+     *
      * @param point other point
      * @return closest point
      */

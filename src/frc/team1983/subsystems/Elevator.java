@@ -36,7 +36,7 @@ public class Elevator extends Subsystem
 
     public Elevator()
     {
-        motorGroup = new MotorGroup("Left Elevator", FeedbackType.POSITION,
+        motorGroup = new MotorGroup("Left Elevator",
                 new Spark(RobotMap.Elevator.LEFT, RobotMap.Elevator.LEFT_REVERSED),
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
@@ -45,7 +45,7 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(105);
         motorGroup.setCruiseVelocity(105);
-        motorGroup.setPID(0.18, 0, 0); // TODO: add values
+        motorGroup.setKP(0.18);
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);

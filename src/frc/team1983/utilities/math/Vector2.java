@@ -65,6 +65,7 @@ public class Vector2
 
     /**
      * Returns a copied instance of a vector
+     *
      * @return a copied instance of the vector
      */
     public static Vector2 copy(Vector2 vector)
@@ -74,6 +75,7 @@ public class Vector2
 
     /**
      * Returns a copied instance of this vector
+     *
      * @return a copied instance of this vector
      */
     public Vector2 copy()
@@ -83,6 +85,7 @@ public class Vector2
 
     /**
      * Evaluates the magnitude (or length) of this vector
+     *
      * @return the magnitude
      */
     public double getMagnitude()
@@ -92,6 +95,7 @@ public class Vector2
 
     /**
      * Evaluates the normalized version of this vector
+     *
      * @return the normalized vector
      */
     public Vector2 getNormalized()
@@ -109,6 +113,7 @@ public class Vector2
 
     /**
      * Swaps the signs of each component of this vector
+     *
      * @return the negative vector
      */
     public Vector2 getNegative()
@@ -118,6 +123,7 @@ public class Vector2
 
     /**
      * Finds the 90 degree left of a vector
+     *
      * @return left
      */
     public Vector2 getLeft()
@@ -127,6 +133,7 @@ public class Vector2
 
     /**
      * Finds the 90 degree right of a vector
+     *
      * @return right
      */
     public Vector2 getRight()
@@ -136,6 +143,7 @@ public class Vector2
 
     /**
      * Evaluates the distance between two vectors
+     *
      * @param vector1
      * @param vector2
      * @return the distance
@@ -147,6 +155,7 @@ public class Vector2
 
     /**
      * Evaluates the distance between this vector and another
+     *
      * @param other
      * @return the distance
      */
@@ -156,7 +165,9 @@ public class Vector2
     }
 
     /**
-     * Checks equality between two vectors and another by checking if the difference between each component is less than Constants.EPSILON
+     * Checks equality between two vectors and another
+     * by checking if the difference between each component is less than Constants.EPSILON
+     *
      * @param vector1
      * @param vector2
      * @return whether or not the vectors are equal
@@ -167,7 +178,9 @@ public class Vector2
     }
 
     /**
-     * Checks equality between this vector and another by checking if the difference between each component is less than Constants.EPSILON
+     * Checks equality between this vector and another
+     * by checking if the difference between each component is less than Constants.EPSILON
+     *
      * @param other
      * @return whether or not the vectors are equal
      */
@@ -181,6 +194,7 @@ public class Vector2
 
     /**
      * Adds two vectors
+     *
      * @param left
      * @param right
      * @returns the sum of the two vectors
@@ -192,6 +206,7 @@ public class Vector2
 
     /**
      * Adds another vector to this vector
+     *
      * @param other
      */
     public void add(Vector2 other)
@@ -201,6 +216,7 @@ public class Vector2
 
     /**
      * Subtract two vectors
+     *
      * @param left
      * @param right
      * @return the difference between the two vectors
@@ -212,6 +228,7 @@ public class Vector2
 
     /**
      * Subtract this vector by another
+     *
      * @param other the vector to subtract by
      */
     public void sub(Vector2 other)
@@ -221,6 +238,7 @@ public class Vector2
 
     /**
      * Multiplies each component of a vector by a scalar
+     *
      * @param scalar
      */
     public static Vector2 scale(Vector2 vector, double scalar)
@@ -230,6 +248,7 @@ public class Vector2
 
     /**
      * Multiplies each component of this vector by a scalar
+     *
      * @param scalar
      */
     public void scale(double scalar)
@@ -238,6 +257,8 @@ public class Vector2
     }
 
     /**
+     * Dot product between two vectors
+     *
      * @param vector1
      * @param vector2
      * @return the dot product of the two vectors
@@ -249,6 +270,7 @@ public class Vector2
 
     /**
      * Rotates a point around a given center point by a number of degrees
+     *
      * @param point the point to rotate
      * @param center the point to rotate around
      * @param degrees the number of degrees to rotate. Positive values are counter-clockwise, and negative values are clockwise
@@ -264,6 +286,7 @@ public class Vector2
 
     /**
      * Rotates a point around the origin by a number of degrees
+     *
      * @param point the point to rotate
      * @param degrees the number of degrees to rotate. Positive values are counter-clockwise, and negative values are clockwise
      * @return the rotated point
@@ -275,6 +298,7 @@ public class Vector2
 
     /**
      * Rotates this point around a center point by a number of degrees
+     *
      * @param center the point to orbit around
      * @param degrees the difference in rotation. Positive values are counter-clockwise, and negative values are clockwise
      */
@@ -285,6 +309,7 @@ public class Vector2
 
     /**
      * Finds the average position of a list of Vectors
+     *
      * @param points a list of points
      * @return the average position
      */
