@@ -31,7 +31,8 @@ public class CollectionManager extends Command
         E_SAFE__COL_FOLDING,
         E_SAFE__COL_UNFOLDING,
         E_SAFE__COL_DZ,
-        E_RISING__COL_DZ
+        E_RISING__COL_DZ,
+        E_LOWERING__COL_DZ
     }
     @Override
     public void initialize()
@@ -51,7 +52,7 @@ public class CollectionManager extends Command
         switch (currentState)
         {
             case START_STATE:
-                if(elevator.getVelocity() < 0)
+                if(elevator.getVelocity() > 0)
                 {
                     currentState = State.E_RISING__COL_DZ;
                     System.out.println("SWITCH TO : "+currentState);
@@ -59,7 +60,7 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_RISING__COL_SAFE:
-                if(elevator.getPosition()>= Elevator.DEADZONE_HEIGHT  && collector.currentState == Collector.State.STOPPED)
+                if(elevator.getPosition()>= Elevator.DANGERZONE_HEIGHT && collector.currentState == Collector.State.STOPPED && Math.abs(elevator.getVelocity()) < 1.0)
                 {
                     currentState = State.E_SAFE__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -67,7 +68,7 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_RISING__COL_DZ:
-                if(elevator.getPosition()>=Elevator.DEADZONE_HEIGHT && collector.currentState == Collector.State.STOPPED)
+                if(elevator.getPosition()>=Elevator.DANGERZONE_HEIGHT && collector.currentState == Collector.State.STOPPED)
                 {
                     currentState = State.E_SAFE__COL_DZ;
                     System.out.println("SWITCH TO : "+currentState);
@@ -75,13 +76,13 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_DANGER__COL_SAFE:
-                if(elevator.getVelocity() < 0)
+                if(elevator.getVelocity() > 0)
                 {
                     currentState = State.E_RISING__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
-                if(elevator.getVelocity() > 0)
+                if(elevator.getVelocity() < 0)
                 {
                     currentState = State.E_LOWERING__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -89,7 +90,7 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_LOWERING__COL_SAFE:
-                if(elevator.getPosition() <= Elevator.DEADZONE_HEIGHT && collector.currentState == Collector.State.STOPPED)
+                if(elevator.getPosition() <= Elevator.DANGERZONE_HEIGHT && collector.currentState == Collector.State.STOPPED && Math.abs(elevator.getVelocity()) < 1.0)
                 {
                     currentState = State.E_DANGER__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -103,13 +104,13 @@ public class CollectionManager extends Command
                     System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
-                if(elevator.getVelocity() > 0)
+                if(elevator.getVelocity() < 0)
                 {
                     currentState = State.E_LOWERING__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
-                if(elevator.getVelocity() < 0)
+                if(elevator.getVelocity() > 0)
                 {
                     currentState = State.E_RISING__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -117,7 +118,7 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_SAFE__COL_FOLDING:
-                if(collector.getAngle() <= Collector.DEADZONE_ANGLE && collector.currentState == Collector.State.STOPPED)
+                if(collector.getAngle() <= Collector.DANGERZONE_ANGLE && collector.currentState == Collector.State.STOPPED)
                 {
                     currentState = State.E_SAFE__COL_DZ;
                     System.out.println("SWITCH TO : "+currentState);
@@ -125,7 +126,7 @@ public class CollectionManager extends Command
                 }
                 break;
             case E_SAFE__COL_UNFOLDING:
-                if(collector.getAngle() > Collector.DEADZONE_ANGLE && collector.currentState == Collector.State.STOPPED)
+                if(collector.getAngle() > Collector.DANGERZONE_ANGLE && collector.currentState == Collector.State.STOPPED)
                 {
                     currentState = State.E_SAFE__COL_SAFE;
                     System.out.println("SWITCH TO : "+currentState);
@@ -139,10 +140,24 @@ public class CollectionManager extends Command
                     System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
-                if(collector.currentState == Collector.State.STOPPED && elevator.getPosition() < Elevator.DEADZONE_HEIGHT)
+                if(collector.currentState == Collector.State.STOPPED && elevator.getPosition() < Elevator.DANGERZONE_HEIGHT)
                 {
                     currentState = State.START_STATE;
                     System.out.println("SWITCH TO : " + currentState);
+                    break;
+                }
+                if(elevator.getVelocity() < 0)
+                {
+                    currentState = State.E_LOWERING__COL_DZ;
+                    System.out.println("SWITCH TO : "+currentState);
+                    break;
+                }
+                break;
+            case E_LOWERING__COL_DZ:
+                if(elevator.getPosition() <= Elevator.DANGERZONE_HEIGHT && collector.currentState == Collector.State.STOPPED && Math.abs(elevator.getVelocity()) < 1.0)
+                {
+                    currentState = State.START_STATE;
+                    System.out.println("SWITCH TO : "+currentState);
                     break;
                 }
                 break;

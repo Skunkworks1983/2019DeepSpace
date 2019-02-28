@@ -3,7 +3,6 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
-import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
@@ -33,7 +32,7 @@ public class Elevator extends Subsystem
 
     public static final double kG = 0.05; //Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
-    public static final double DEADZONE_HEIGHT = 30.0;
+    public static final double DANGERZONE_HEIGHT = 30.0;
 
     public MotorGroup motorGroup;
 
@@ -80,18 +79,12 @@ public class Elevator extends Subsystem
 
     public void setHeight(double height)
     {
-        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && height <= DEADZONE_HEIGHT)
-        {
+        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && height <= DANGERZONE_HEIGHT)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveEleDZWhileCollectorFolding(height));
-        }
-        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && height <= DEADZONE_HEIGHT)
-        {
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && height <= DANGERZONE_HEIGHT)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveEleDZWhileCollectorUnfolding(height));
-        }
         else
-        {
             set(ControlMode.MotionMagic, height);
-        }
     }
 
     public void setDirect(ControlMode mode, double value)

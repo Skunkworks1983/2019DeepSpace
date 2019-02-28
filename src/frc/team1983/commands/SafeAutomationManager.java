@@ -35,7 +35,7 @@ public class SafeAutomationManager
     {
         CommandGroup group = new CommandGroup();
 
-        if(Robot.getInstance().getCollector().getAngle() > Collector.DEADZONE_ANGLE*0.75)
+        if(Robot.getInstance().getCollector().getAngle() > Collector.DANGERZONE_ANGLE *0.75)
         {
             group.addSequential(new SetCollectorAngle(Collector.DOWN_ANGLE));
             group.addParallel(new SetCollectorFolded(true));
@@ -55,7 +55,7 @@ public class SafeAutomationManager
     public CommandGroup moveCollectorDZWhileEleInIllegalState(double angle)
     {
         CommandGroup group = new CommandGroup();
-        group.addSequential(new SetElevatorPosition(Elevator.DEADZONE_HEIGHT));
+        group.addSequential(new SetElevatorPosition(Elevator.DANGERZONE_HEIGHT));
         group.addSequential(new SetCollectorAngle(angle));
 
         return group;

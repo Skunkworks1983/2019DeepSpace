@@ -32,7 +32,6 @@ public class SetElevatorPosition extends Command
     @Override
     protected boolean isFinished()
     {
-        System.out.println(elevator.getPosition() + ", " + elevator.motorGroup.getSetpoint());
         return elevator.isAtSetpoint();
     }
 }

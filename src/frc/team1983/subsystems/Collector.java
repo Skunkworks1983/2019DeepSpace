@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
-import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
@@ -22,7 +21,7 @@ public class Collector extends Subsystem
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
     public static final double CLOSED_LOOP_TOLERANCE = 4.0; // degrees
-    public static final double DEADZONE_ANGLE = 90.0;
+    public static final double DANGERZONE_ANGLE = 90.0;
     public static final double DOWN_ANGLE = 130;
     public static final double UNFOLD_ANGLE = 30.0;
 
@@ -131,26 +130,17 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
-        {
+        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  Collector.DANGERZONE_ANGLE)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
-        }
-        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
-        {
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  Collector.DANGERZONE_ANGLE)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
-        }
-        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
-        {
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  Collector.DANGERZONE_ANGLE)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
-        }
         else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.START_STATE)
-        {
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
-        }
-        else
-        {
+
+        if(Math.abs(Elevator.DANGERZONE_HEIGHT - Robot.getInstance().getElevator().getPosition()) <= Elevator.CLOSED_LOOP_TOLERANCE || Robot.getInstance().getElevator().getPosition() >= Elevator.DANGERZONE_HEIGHT)
             set(ControlMode.Position, angle);
-        }
     }
 
     /**

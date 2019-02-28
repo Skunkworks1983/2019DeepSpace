@@ -89,7 +89,6 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
-        System.out.println("COLLECTOR ANGULAR VELOCITY : " + collector.getAngularVelocity());
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
