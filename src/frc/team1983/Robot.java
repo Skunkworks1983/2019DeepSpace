@@ -128,11 +128,6 @@ public class Robot extends TimedRobot
         return climber;
     }
 
-    public Gyro getGyro()
-    {
-        return navx;
-    }
-
     public Manipulator getManipulator()
     {
         return manipulator;
