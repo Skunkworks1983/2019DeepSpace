@@ -13,13 +13,9 @@ public class Collector extends Subsystem
 {
     private Talon roller;
     private DoubleSolenoid piston;
-    private MotorGroup wrist;
+    public MotorGroup wristLeft, wristRight;
 
-    private static final double ticksPerDegree = 1; //TODO find more exact value
-    // The gravity gain (used when calculating feedforward, is multiplied by the cosine of the angle of the collector)
-    private static final double kG = 0; //TODO determine if needed
-    // The length gain (is multiplied by the gravity gain if the piston is extended)
-    private static final double kL = 1.01; //TODO determine if needed
+    public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
 
     public Collector()
     {
@@ -27,17 +23,18 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wrist = new MotorGroup("Collector Wrist", FeedbackType.POSITION,
-                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED),
+        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wrist.setPID(0.06, 0, 0);
-        wrist.setMovementVelocity(6);
-        wrist.setMovementAcceleration(6);
-        wrist.setFFOperator(this);
-        //        wrist.addFFTerm((collector) ->
-        //                (((Collector) collector).piston.get() == DoubleSolenoid.Value.kForward ? kL : 1) *
-        //                        kG * Math.cos(((Collector) collector).getAngle()));
+        wristRight.setConversionRatio(DEGREES_PER_TICK);
+        wristRight.setPID(0.06, 0, 0);
+        wristRight.setUseMotionProfiles(false);
+
+        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
+
+        wristLeft.setPID(0.21, 0, 0);
+        wristLeft.follow(wristRight);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
-        wrist.set(ControlMode.Throttle, output);
+        wristRight.set(ControlMode.Throttle, output);
     }
 
     /**
@@ -65,7 +62,8 @@ public class Collector extends Subsystem
      */
     public void setWristBrake(boolean brake)
     {
-        wrist.setBrake(brake);
+        wristLeft.setBrake(brake);
+        wristRight.setBrake(brake);
     }
 
     /**
@@ -75,31 +73,24 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wrist.set(ControlMode.Position, angle * ticksPerDegree);
-    }
-
-    /**
-     * @return The target angle of the motion profile (will be nonsense if not in position mode)
-     */
-    public double getTargetAngle()
-    {
-        return wrist.getTargetValue() / ticksPerDegree;
+        wristRight.set(ControlMode.Position, angle);
     }
 
     /**
      * @param folded If the piston should be extended or not
      */
+
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        piston.set(folded ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
-
     /**
-     * @return True if the piston is extended, false if not (or if the solenoid is off)
+     *
+     * @return state of the collector
      */
     public boolean isFolded()
     {
-        return piston.get() == DoubleSolenoid.Value.kForward;
+        return piston.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**
@@ -115,15 +106,7 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wrist.getPositionTicks() / ticksPerDegree;
-    }
-
-    /**
-     * @return The current ticks of the arm
-     */
-    public double getTicks()
-    {
-        return wrist.getPositionTicks();
+        return wristRight.getPosition();
     }
 
     /**
@@ -131,6 +114,7 @@ public class Collector extends Subsystem
      */
     public void zero()
     {
-        wrist.zero();
+        wristLeft.zero();
+        wristRight.zero();
     }
 }

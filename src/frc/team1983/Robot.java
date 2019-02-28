@@ -1,7 +1,6 @@
 package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,7 +13,6 @@ import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
-import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -33,9 +31,7 @@ public class Robot extends TimedRobot
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
-    private Logger logger;
-
-    private DigitalInput dio = new DigitalInput(7);
+    Logger logger;
 
     Robot()
     {
@@ -53,6 +49,7 @@ public class Robot extends TimedRobot
         elevator.zero();
 
         climber = new Climber();
+        climber.zero();
 
         collector = new Collector();
         collector.zero();
@@ -83,10 +80,6 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
-
-        //        System.out.println("DIO: " + dio.get());
-        //        System.out.println("Wrist: " + collector.getTicks());
-        //                System.out.println("Elevator: " + elevator.getPosition());
     }
 
     @Override
@@ -104,20 +97,12 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
-
-        Scheduler.getInstance().add(new DrivePath(new Path(
-                Pose.DEFAULT.copy(),
-                new Pose(3, 10, 90),
-                new Pose(14, 13, 0),
-                new Pose(20, 21, 90)
-        ), 4));
     }
 
     @Override
     public void teleopInit()
     {
         compressor.start();
-
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
@@ -141,6 +126,11 @@ public class Robot extends TimedRobot
     public Climber getClimber()
     {
         return climber;
+    }
+
+    public Gyro getGyro()
+    {
+        return navx;
     }
 
     public Manipulator getManipulator()
