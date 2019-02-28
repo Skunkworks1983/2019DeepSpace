@@ -130,58 +130,58 @@ public class OI
 
     public void initializeBindings()
     {
-        //Button to switch to manual mode is 24
-        //Button to switch between balls and hatches is 14
-        //Extra buttons are 17, 18, 19
+        // Button to switch to manual mode is 24
+        // Button to switch between balls and hatches is 14
+        // Extra buttons are 17, 18, 19
       
-        //Controls for pneumatics
+        // Controls for pneumatics
         getButton(Joysticks.PANEL,TOGGLE_COLLECTOR).whenPressed(new ToggleCollector());
         getButton(Joysticks.PANEL,MANIPULATOR_EXTENDED).whenPressed(new SetManipulatorExtended(true));
         getButton(Joysticks.PANEL,MANIPULATOR_RETRACTED).whenPressed(new SetManipulatorExtended(false));
         getButton(Joysticks.PANEL,TOGGLE_HOOKS).whenPressed(new ToggleHooks());
 
-        //Expel
+        // Expel
         getButton(Joysticks.PANEL,EXPEL).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,1,true));
 
-        //Intake
+        // Intake
         getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,-0.8,true));
-        //getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetCollectorRollerThrottle(1));
+        // getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetCollectorRollerThrottle(1));
 
-        //Manual collector wrist control
+        // Manual collector wrist control
         getButton(Joysticks.PANEL,COLLECTOR_WRIST_OUT).whileHeld(new SetCollectorWristThrottle(0.5));
         getButton(Joysticks.PANEL,COLLECTOR_WRIST_IN).whileHeld(new SetCollectorWristThrottle(-0.25));
 
-        //manual climb elevator up
+        // manual climb elevator up
         getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_UP).whileHeld(new ManualClimber(0.5));
 
-        //manual climb elevator DOWN
+        // manual climb elevator DOWN
         getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_DOWN).whileHeld(new ManualClimber(-0.5));
 
-        //manual elevator up
+        // manual elevator up
         getButton(Joysticks.PANEL,MANUAL_ELEVATOR_UP).whileHeld(new ManualElevator(0.5));
 
-        //manual elevator down
+        // manual elevator down
         getButton(Joysticks.PANEL,MANUAL_ELEVATOR_DOWN).whileHeld(new ManualElevator(-0.5));
 
-        //Bottom
+        // Bottom
         getButton(Joysticks.PANEL,ELEVATOR_BOTTOM).whenPressed(new SetElevatorPosition(Elevator.BOTTOM));
 
-        //Loading station ball
+        // Loading station ball
         getButton(Joysticks.PANEL,ELVATOR_LOADING_STATION_BALL).whenPressed(new SetElevatorPosition(Elevator.FEEDER_BALL));
 
-        //Ball cargo ship
+        // Ball cargo ship
         getButton(Joysticks.PANEL,ELEVATOR_CARGOSHIP_BALL).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
 
-        //low hatch/ball rocket
+        // low hatch/ball rocket
         getButton(Joysticks.PANEL,ELEVATOR_LOW_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.BOTTOM_HATCH));
 
-        //middle hatch/ball
+        // middle hatch/ball
         getButton(Joysticks.PANEL,ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.MIDDLE_HATCH));
 
-        //Top hatch/ball
+        // Top hatch/ball
         getButton(Joysticks.PANEL,ELEVATOR_TOP_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.TOP_HATCH));
 
-        //Climb
+        // Climb
         getButton(Joysticks.PANEL, CLIMB).whileHeld(new ConditionalCommand(
                 new ClimbLevelTwo(),
                 new ClimbLevelThree()
@@ -195,7 +195,7 @@ public class OI
         });
 
 
-        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
-        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
+//        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
+//        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
     }
 }
