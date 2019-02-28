@@ -2,10 +2,14 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.commands.SafeAutomationManager;
+import frc.team1983.commands.climber.ClimbLevelThree;
+import frc.team1983.commands.collector.SetCollectorWristThrottle;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.Robot;
@@ -13,6 +17,8 @@ import frc.team1983.commands.climber.ClimbLevelTwo;
 import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.elevator.IncrementElevatorPosition;
+import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.manipulator.SetManipulatorExtended;
 import frc.team1983.commands.manipulator.ToggleHooks;
@@ -43,18 +49,35 @@ public class OI
     public static final int FLOOR_COLLECT = 13;
     public static final int STATION_COLLECT = 20;
 
-    ///PLACEMENT BUTTONS///
-    public static final int HIGH = 9;
-    public static final int MID = 10;
-    public static final int LOW =11;
-    public static final int CARGO_SHIP = 12;
-    //public static final int RELEASE = 20; //expel & place
 
     public static final int COL_FOLD = 20;
     public static final int COL_UNFOLD = 21;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
     protected static final double JOYSTICK_EXPONENT = 3;
+
+    public static final int TOGGLE_COLLECTOR = 7;
+    public static final int MANIPULATOR_EXTENDED = 23;
+    public static final int MANIPULATOR_RETRACTED = 20;
+    public static final int TOGGLE_HOOKS = 8;
+    public static final int EXPEL = 22;
+    public static final int INTAKE = 21;
+    public static final int COLLECTOR_WRIST_OUT = 5;
+    public static final int COLLECTOR_WRIST_IN = 6;
+    public static final int MANUAL_CLIMB_ELEVATOR_UP = 4;
+    public static final int MANUAL_CLIMB_ELEVATOR_DOWN = 3;
+    public static final int MANUAL_ELEVATOR_UP = 2;
+    public static final int MANUAL_ELEVATOR_DOWN = 1;
+    public static final int ELEVATOR_BOTTOM = 16;
+    public static final int ELEVATOR_LOADING_STATION_BALL = 15;
+    public static final int ELEVATOR_CARGOSHIP_BALL = 12;
+    public static final int ELEVATOR_LOW_HATCH_BALL = 11;
+    public static final int ELEVATOR_MIDDLE_HATCH_BALL = 10;
+    public static final int ELEVATOR_TOP_HATCH_BALL = 9;
+    public static final int CLIMB = 13;
+    public static final int CLIMB_SELECTION = 25;
+    public static final int MAUAL_MODE = 24;
+    public static final int HATCH_BALL_TOGGLE = 14;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -122,22 +145,132 @@ public class OI
     }
     public void initializeBindings()
     {
-        //Button toswitch to manual mode is 24
-        //Button to switch between balls and hatches is 14
-        //Extra buttons are 17, 18, 19
+        // Button to switch to manual mode is 24
+        // Button to switch between balls and hatches is 14
+        // Extra buttons are 17, 18, 19
+      
+        // Controls for pneumatics
+        getButton(Joysticks.PANEL,TOGGLE_COLLECTOR).whenPressed(new ToggleCollector());
+        getButton(Joysticks.PANEL,MANIPULATOR_EXTENDED).whenPressed(new SetManipulatorExtended(true));
+        getButton(Joysticks.PANEL,MANIPULATOR_RETRACTED).whenPressed(new SetManipulatorExtended(false));
+        getButton(Joysticks.PANEL,TOGGLE_HOOKS).whenPressed(new ToggleHooks());
 
-        //TODO Find actual collector angle for collection
-        //Controls for collector angle
-        getButton(Joysticks.PANEL,COL_UNFOLD).whenPressed(new SetCollectorAngle(0));
-        getButton(Joysticks.PANEL,COL_FOLD).whenPressed(new SetCollectorAngle(130));
+        // Expel
+        getButton(Joysticks.PANEL,EXPEL).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(), 1, 1, true));
 
-        //TODO Add actual elevator set points
-        //Controls for elevator set points
+        // Intake
+        getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,-0.8,true));
+        // getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetCollectorRollerThrottle(1));
 
-        getButton(Joysticks.PANEL,16).whenPressed(new SetElevatorPosition(0));
-        getButton(Joysticks.PANEL,CARGO_SHIP).whenPressed(new SetElevatorPosition(12.5));
-        getButton(Joysticks.PANEL,LOW).whenPressed(new SetElevatorPosition(25));
-        getButton(Joysticks.PANEL,MID).whenPressed(new SetElevatorPosition(35));
-        getButton(Joysticks.PANEL,HIGH).whenPressed(new SetElevatorPosition(60));
+        // Manual collector wrist control
+        getButton(Joysticks.PANEL,COLLECTOR_WRIST_OUT).whileHeld(new SetCollectorWristThrottle(0.5));
+        getButton(Joysticks.PANEL,COLLECTOR_WRIST_IN).whileHeld(new SetCollectorWristThrottle(-0.25));
+
+        // manual climb elevator up
+        getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_UP).whileHeld(new ManualClimber(0.5));
+
+        // manual climb elevator DOWN
+        getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_DOWN).whileHeld(new ManualClimber(-0.5));
+
+        // manual elevator up
+        getButton(Joysticks.PANEL,MANUAL_ELEVATOR_UP).whileHeld(new ManualElevator(0.5));
+
+        // manual elevator down
+        getButton(Joysticks.PANEL,MANUAL_ELEVATOR_DOWN).whileHeld(new ManualElevator(-0.5));
+
+        // Bottom
+        getButton(Joysticks.PANEL,ELEVATOR_BOTTOM).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.BOTTOM),
+                new SetElevatorPosition(ELEVATOR_LOW_HATCH_BALL)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // Loading station ball
+        getButton(Joysticks.PANEL,ELEVATOR_LOADING_STATION_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.FEEDER_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // Ball cargo ship
+        getButton(Joysticks.PANEL, ELEVATOR_CARGOSHIP_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.CARGOSHIP_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // low hatch/ball rocket
+        getButton(Joysticks.PANEL, ELEVATOR_LOW_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_LOW_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // middle hatch/ball
+        getButton(Joysticks.PANEL, ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_MIDDLE_BALL),
+                new SetElevatorPosition(Elevator.MIDDLE_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // Top hatch/ball
+        getButton(Joysticks.PANEL, ELEVATOR_TOP_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_TOP_BALL),
+                new SetElevatorPosition(Elevator.TOP_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
+
+        // Climb
+        getButton(Joysticks.PANEL, CLIMB).whileHeld(new ConditionalCommand(
+                new ClimbLevelTwo(),
+                new ClimbLevelThree()
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,CLIMB_SELECTION).get();
+            }
+        });
+
+
+//        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
+//        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
     }
 }

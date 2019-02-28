@@ -9,30 +9,33 @@ import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+import static frc.team1983.subsystems.Collector.CLOSED_LOOP_TOLERANCE;
+
 /**
  * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
  * so the distance traveled by the first stage times three.
  */
 public class Elevator extends Subsystem
 {
-    //setpoint for bottom of the elevator
-    public static final int BOTTOM = 0;
+    // setpoint for bottom of the elevator
+    public static final double BOTTOM = 0;
 
-    //Setpoints for hatches
-    public static final int BOTTOM_HATCH = 0;
-    public static final int MIDDLE_HATCH = 0;
-    public static final int TOP_HATCH = 0;
+    // Setpoints for hatches
+    public static final double BOTTOM_HATCH = 7;
+    public static final double MIDDLE_HATCH = 34.5;
+    public static final double TOP_HATCH = 63.5;
 
-    //Setpoints for balls
-    public static final int LOW_BALL = 0;
-    public static final int MIDDLE_BALL = 0;
-    public static final int TOP_BALL = 0;
-    public static final int CARGOSHIP_BALL =0;
-    public static final double CLOSED_LOOP_TOLERANCE = 2.0; // inches
-
-    public static final double kG = 0.05; //Tested on practice bot with full battery
-    public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
     public static final double DANGERZONE_HEIGHT = 30.0;
+    // Setpoints for balls
+    public static final double ROCKET_LOW_BALL = 17;
+    public static final double ROCKET_MIDDLE_BALL = 44;
+    public static final double ROCKET_TOP_BALL = 72.3875;
+    public static final double CARGOSHIP_BALL = 30;
+    public static final double FEEDER_BALL = 0;
+
+
+    public static final double kG = 0.04; // Tested on practice bot with full battery
+    public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
 
     public MotorGroup motorGroup;
 
@@ -45,8 +48,8 @@ public class Elevator extends Subsystem
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
 
-        motorGroup.setMovementAcceleration(12);
-        motorGroup.setCruiseVelocity(12);
+        motorGroup.setMovementAcceleration(105);
+        motorGroup.setCruiseVelocity(105);
         motorGroup.setKP(0.18);
 
         motorGroup.setFFOperator(this);

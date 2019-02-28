@@ -1,5 +1,6 @@
 package frc.team1983;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -82,6 +83,7 @@ public class Robot extends TimedRobot
     {
         getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     @Override
@@ -116,6 +118,12 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(collectionManager);
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+
     }
 
     public static Robot getInstance()
