@@ -1,4 +1,4 @@
-package frc.team1983.autonomous;
+package frc.team1983.commands.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

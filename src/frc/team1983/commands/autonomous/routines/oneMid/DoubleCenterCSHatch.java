@@ -1,7 +1,7 @@
-package frc.team1983.autonomous.routines.oneMid;
+package frc.team1983.commands.autonomous.routines.oneMid;
 
 import frc.team1983.Robot;
-import frc.team1983.autonomous.Routine;
+import frc.team1983.commands.autonomous.Routine;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.manipulator.SetHooksOpen;

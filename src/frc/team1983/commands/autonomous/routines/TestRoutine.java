@@ -1,6 +1,6 @@
-package frc.team1983.autonomous.routines;
+package frc.team1983.commands.autonomous.routines;
 
-import frc.team1983.autonomous.Routine;
+import frc.team1983.commands.autonomous.Routine;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.utilities.pathing.Path;
