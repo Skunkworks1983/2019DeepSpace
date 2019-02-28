@@ -1,4 +1,4 @@
-package frc.team1983.commands.autonomous.routines.oneRight;
+package frc.team1983.commands.autonomous.routines.twoRight;
 
 import frc.team1983.Robot;
 import frc.team1983.commands.autonomous.Routine;
@@ -9,9 +9,9 @@ import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
-public class DoubleRightCSHatch extends Routine
+public class L2DoubleRightCS extends Routine
 {
-    public DoubleRightCSHatch()
+    public L2DoubleRightCS()
     {
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();

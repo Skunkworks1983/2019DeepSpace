@@ -23,7 +23,7 @@ public class DoubleRightRSHatch extends Routine
         addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                (Pose.LEVEL_1_RIGHT),
+                (Pose.LEVEL_2_RIGHT),
                 new Pose(22.62, 23.89, -90)
         ), -3));
 
