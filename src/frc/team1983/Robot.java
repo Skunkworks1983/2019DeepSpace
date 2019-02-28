@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
@@ -67,7 +68,7 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
-        navx.reset();
+        getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
     }
 
@@ -105,12 +106,6 @@ public class Robot extends TimedRobot
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
-    @Override
-    public void teleopPeriodic()
-    {
-
-    }
-
     public static Robot getInstance()
     {
         if (instance == null)
@@ -133,6 +128,21 @@ public class Robot extends TimedRobot
         return climber;
     }
 
+    public Manipulator getManipulator()
+    {
+        return manipulator;
+    }
+
+    public Collector getCollector()
+    {
+        return collector;
+    }
+
+    public Compressor getCompressor()
+    {
+        return compressor;
+    }
+
     public Gyro getGyro()
     {
         return navx;
@@ -146,15 +156,5 @@ public class Robot extends TimedRobot
     public OI getOI()
     {
         return oi;
-    }
-
-    public Manipulator getManipulator()
-    {
-        return manipulator;
-    }
-
-    public Collector getCollector()
-    {
-        return collector;
     }
 }

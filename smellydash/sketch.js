@@ -199,15 +199,23 @@ function draw() {
     // Rotate pose
     if(poseDragging && mouseIsInCanvas()) {
         if(mouseButton === LEFT) {
+            let poseSnapped = false;
             let mousePosition = new Vector2(mouseX, mouseY);
+            let heading;
             for (let key in LOCATION) {
               let location = getLocation(key);
               if(Vector2.distance(new Vector2(location.x, 27 - location.y), new Vector2(mousePosition.x / PIXELS_PER_FOOT, mousePosition.y / PIXELS_PER_FOOT)) < SNAP_DISTANCE) {
+                poseSnapped = true;
                 mousePosition = new Vector2(location.x * PIXELS_PER_FOOT, (27 - location.y) * PIXELS_PER_FOOT);
+                heading = location.heading;
               }
             }
 
             poseDragging.position = mousePosition;
+            if (poseSnapped)
+            {
+              poseDragging.heading = heading;
+            }
         }
         else if(mouseButton === RIGHT) {
             let heading = -atan2(mouseY - poseDragging.position.y, mouseX - poseDragging.position.x);

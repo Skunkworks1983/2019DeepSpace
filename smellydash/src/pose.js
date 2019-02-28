@@ -16,7 +16,7 @@ class Pose {
       rect(0, 0, ROBOT_WIDTH, ROBOT_HEIGHT)
 
       fill(0);
-      triangle(0, 5, 5, 0, -5, 0);
+      triangle(0, 5 + ROBOT_HEIGHT / 4, 5, ROBOT_HEIGHT / 4, -5, ROBOT_HEIGHT / 4);
 
       pop();
     }

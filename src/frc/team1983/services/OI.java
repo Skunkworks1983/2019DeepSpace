@@ -2,6 +2,10 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team1983.Robot;
+import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.Robot;
 import frc.team1983.commands.climber.ClimbLevelTwo;
 import frc.team1983.commands.climber.ManualClimber;
@@ -104,6 +108,7 @@ public class OI
 
     public void initializeBindings()
     {
+        Robot robot = Robot.getInstance();
         //Button toswitch to manual mode is 24
         //Button to switch between balls and hatches is 14
         //Extra buttons are 17, 18, 19

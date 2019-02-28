@@ -17,6 +17,7 @@ public class Bezier
 
     /**
      * Creates a bezier with at least two points
+     *
      * @param point0 the first point, must be defined
      * @param point1 the second point, must be defined
      * @param points all other points
@@ -33,6 +34,7 @@ public class Bezier
 
     /**
      * Evaluate a point on the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return point
      */
@@ -45,6 +47,7 @@ public class Bezier
 
     /**
      * Sums the length of all curves in this path
+     *
      * @return the length
      */
     public double getLength()
@@ -55,6 +58,7 @@ public class Bezier
 
     /**
      * Evaluates the derivative of the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return derivative vector
      */
@@ -67,6 +71,7 @@ public class Bezier
 
     /**
      * Evaluate a normalized tangent to the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -77,6 +82,7 @@ public class Bezier
 
     /**
      * Evaluate a normalized perpendicular to the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -87,6 +93,7 @@ public class Bezier
 
     /**
      * Evaluate a point that is offset a distance along the normal at B(t)
+     *
      * @param t the percentage along the curve [0, 1]
      * @param offset
      * @return point
@@ -98,6 +105,7 @@ public class Bezier
 
     /**
      * Evaluates the center of curvature of a point on the curve
+     *
      * @param t the percentage along the curve [0, 1]
      * @return center of curvature
      */
@@ -109,6 +117,7 @@ public class Bezier
 
     /**
      * Evaluates the distance of the center of curvature
+     *
      * @param t the percentage along the curve [0, 1]
      * @return radius of curvature
      */
@@ -119,6 +128,7 @@ public class Bezier
 
     /**
      * Evaluate the closest point and t of the closest point
+     *
      * @param point
      * @return closest point and t of closest point
      */
@@ -143,6 +153,7 @@ public class Bezier
 
     /**
      * Evaluate the closest point from another point
+     *
      * @param point
      * @return closest point
      */
@@ -153,6 +164,7 @@ public class Bezier
 
     /**
      * Evaluate the closest t from another point
+     *
      * @param point
      * @return closest t the percentage along the curve [0, 1]
      */
@@ -163,6 +175,7 @@ public class Bezier
 
     /**
      * Tests if another object (presumable another Bezier) are made up of the same points
+     *
      * @param o another object to compare to this object
      * @return if the two beziers share the same point values
      */
