@@ -16,7 +16,7 @@ public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 4.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
-    public static final double CURVATURE_SLOWDOWN = 0.0; // unitless
+    public static final double CURVATURE_SLOWDOWN = 0.1; // unitless
 
     public static final double ANGLE_CORRECTION = 3.5; // unitless
     public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
@@ -70,11 +70,14 @@ public class PurePursuitController
         Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
 //        if (curveIcc != null)
 //        {
-//            double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
-//            if(velocity >= 0)
-//                velocity = Math.min(velocity, slowdown);
+//            double slowdown = Math.min(CURVATURE_SLOWDOWN / path.evaluateRadiusOfCurvatuve(t), velocity);
+//
+//            System.out.println(slowdown);
+//
+//            if (velocity > 0)
+//                velocity -= slowdown;
 //            else
-//                velocity = Math.max(velocity, -slowdown);
+//                velocity += slowdown;
 //        }
 
         // If there is no center of curvature, go straight

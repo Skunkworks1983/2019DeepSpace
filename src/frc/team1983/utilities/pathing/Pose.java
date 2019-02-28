@@ -96,13 +96,13 @@ public final class Pose
 
     public Pose copy()
     {
-        return new Pose(position, direction);
+        return new Pose(getPosition(), getDirection());
     }
 
     @Override
     public String toString()
     {
-        return position + ", " + heading;
+        return getPosition() + ", " + getDirection();
     }
 
     public static boolean equals(Pose pose1, Pose pose2)
