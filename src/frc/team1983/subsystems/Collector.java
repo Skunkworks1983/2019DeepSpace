@@ -23,19 +23,17 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
-                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
-
-        wristLeft.setConversionRatio(DEGREES_PER_TICK);
-        wristLeft.setPID(0.06, 0, 0);
-        wristLeft.setCruiseVelocity(18);
-        wristLeft.setMovementAcceleration(18);
-
-        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
+        wristRight = new MotorGroup("Collector Wrist Right",
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
-        wristRight.setPID(0.1, 0, 0);
-        wristRight.follow(wristLeft);
+        wristRight.setConversionRatio(DEGREES_PER_TICK);
+        wristRight.setKP(0.06);
+
+        wristLeft = new MotorGroup("Collector Wrist Left",
+                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
+
+        wristLeft.setKP(0.21);
+        wristLeft.follow(wristRight);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
-        wristLeft.set(ControlMode.Throttle, output);
+        wristRight.set(ControlMode.Throttle, output);
     }
 
     /**
@@ -74,23 +72,24 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wristLeft.set(ControlMode.Position, angle);
+        wristRight.set(ControlMode.Position, angle);
     }
 
     /**
      * @param folded If the piston should be extended or not
      */
+
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        piston.set(folded ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
-
     /**
-     * @return True if the piston is extended, false if not (or if the solenoid is off)
+     *
+     * @return state of the collector
      */
     public boolean isFolded()
     {
-        return piston.get() == DoubleSolenoid.Value.kForward;
+        return piston.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**
@@ -98,7 +97,7 @@ public class Collector extends Subsystem
      */
     public void setRollerThrottle(double throttle)
     {
-        roller.set(ControlMode.Throttle, throttle);
+        roller.set(throttle);
     }
 
     /**
@@ -106,15 +105,7 @@ public class Collector extends Subsystem
      */
     public double getAngle()
     {
-        return wristLeft.getPosition();
-    }
-
-    /**
-     * @return The current ticks of the arm
-     */
-    public double getTicks()
-    {
-        return wristLeft.getPositionTicks();
+        return wristRight.getPosition();
     }
 
     /**

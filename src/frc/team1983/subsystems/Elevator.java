@@ -13,26 +13,42 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Elevator extends Subsystem
 {
-    public static final double kG = 0.05; //Tested on practice bot with full battery
-    public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
+    // setpoint for bottom of the elevator
+    public static final double BOTTOM = 0;
+
+    // Setpoints for hatches
+    public static final double BOTTOM_HATCH = 7;
+    public static final double MIDDLE_HATCH = 34.5;
+    public static final double TOP_HATCH = 63.5;
+
+    // Setpoints for balls
+    public static final double ROCKET_LOW_BALL = 17;
+    public static final double ROCKET_MIDDLE_BALL = 44;
+    public static final double ROCKET_TOP_BALL = 72.3875;
+    public static final double CARGOSHIP_BALL = 30;
+    public static final double FEEDER_BALL = 0;
+
+
+    public static final double kG = 0.04; // Tested on practice bot with full battery
+    public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
 
     public MotorGroup motorGroup;
 
     public Elevator()
     {
-        motorGroup = new MotorGroup("Left Elevator", FeedbackType.POSITION,
+        motorGroup = new MotorGroup("Left Elevator",
                 new Spark(RobotMap.Elevator.LEFT, RobotMap.Elevator.LEFT_REVERSED),
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
 
-        motorGroup.setMovementAcceleration(6);
-        motorGroup.setCruiseVelocity(6);
-        motorGroup.setPID(0.18, 0, 0); // TODO: add values
+        motorGroup.setMovementAcceleration(105);
+        motorGroup.setCruiseVelocity(105);
+        motorGroup.setKP(0.18);
 
-        //motorGroup.setFFOperator(this);
-        //motorGroup.addFFTerm(Elevator -> kG);
+        motorGroup.setFFOperator(this);
+        motorGroup.addFFTerm(Elevator -> kG);
 
         zero();
     }

@@ -29,6 +29,7 @@ public class Path
      * a control point in the direction of the first pose and TANGENT_LENGTH distance away,
      * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
      * and ending at the next pose.
+     *
      * @param morePoses More poses that the path should have
      */
     public Path(Pose pose1, Pose pose2, Pose... morePoses)
@@ -68,6 +69,7 @@ public class Path
 
     /**
      * Sums the length of all curves in this path
+     *
      * @return the length
      */
     public double getLength()
@@ -80,6 +82,7 @@ public class Path
 
     /**
      * Get the index of the curve that a value of t is on
+     *
      * @param t the percentage along the curve [0, 1]
      * @return index
      */
@@ -90,6 +93,7 @@ public class Path
 
     /**
      * Get which curve a certain value of t is on
+     *
      * @param t the percentage along the curve [0, 1]
      * @return curve
      */
@@ -107,6 +111,7 @@ public class Path
 
     /**
      * Get the length up until the start of a curve
+     *
      * @param curve
      * @return length
      */
@@ -124,6 +129,7 @@ public class Path
 
     /**
      * Get the length up to a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return length
      */
@@ -144,6 +150,7 @@ public class Path
 
     /**
      * Evaluate a point on the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return point
      */
@@ -155,6 +162,7 @@ public class Path
 
     /**
      * Evaluate a normalized tangent to the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -166,6 +174,7 @@ public class Path
 
     /**
      * Evaluate a normalized perpendicular to the curve at a value of t
+     *
      * @param t the percentage along the curve [0, 1]
      * @return normalized vector
      */
@@ -177,6 +186,7 @@ public class Path
 
     /**
      * Evaluates the center of curvature of a point on the path
+     *
      * @param t the percentage along the curve [0, 1]
      * @return center of curvature
      */
@@ -188,6 +198,7 @@ public class Path
 
     /**
      * Evaluates the distance of the center of curvature
+     *
      * @param t the percentage along the curve [0, 1]
      * @return radius of curvature
      */
@@ -199,6 +210,7 @@ public class Path
 
     /**
      * Evaluate the closest point and t from another point
+     *
      * @param point
      * @return closest point and t of closest point
      */
@@ -226,6 +238,7 @@ public class Path
 
     /**
      * Evaluate the closest point from another point
+     *
      * @param point
      * @return closest point
      */
@@ -236,6 +249,7 @@ public class Path
 
     /**
      * Evaluate the closest t from another point
+     *
      * @param point
      * @return closest t the percentage along the curve [0, 1]
      */
@@ -246,6 +260,7 @@ public class Path
 
     /**
      * Test if another object (presumably another Path) is made up of the same Beziers
+     *
      * @param o another object to compare to this one
      * @return if the passed object is made up of the same bezier curves as this one
      */

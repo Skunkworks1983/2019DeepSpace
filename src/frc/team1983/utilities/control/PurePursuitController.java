@@ -16,13 +16,13 @@ public class PurePursuitController
 {
     public static final double LOOKAHEAD_DISTANCE = 4.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
-    public static final double CURVATURE_SLOWDOWN = 0.0; // unitless
+    public static final double CURVATURE_SLOWDOWN = 0.1; // unitless
 
     public static final double ANGLE_CORRECTION = 3.5; // unitless
     public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
-    public static final double VELOCITY_DEADZONE = 0.15; // feet
+    public static final double VELOCITY_DEADZONE = 0.2; // feet
     public static final double HEADING_DEADZONE = 3.0; // degrees
 
     /**
@@ -68,16 +68,17 @@ public class PurePursuitController
         // Slow down around curves
         double t = path.evaluateClosestT(pose.getPosition());
         Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
-        if (curveIcc != null)
-        {
-            /*
-            double slowdown = CURVATURE_SLOWDOWN * Math.abs(path.evaluateRadiusOfCurvatuve(t));
-            if(velocity >= 0)
-                velocity = Math.min(velocity, slowdown);
-            else
-                velocity = Math.max(velocity, -slowdown);
-            */
-        }
+//        if (curveIcc != null)
+//        {
+//            double slowdown = Math.min(CURVATURE_SLOWDOWN / path.evaluateRadiusOfCurvatuve(t), velocity);
+//
+//            System.out.println(slowdown);
+//
+//            if (velocity > 0)
+//                velocity -= slowdown;
+//            else
+//                velocity += slowdown;
+//        }
 
         // If there is no center of curvature, go straight
         if(icc == null)
@@ -87,10 +88,8 @@ public class PurePursuitController
 
         // Correct for angle error
         double angleCorrection = 0;
-        /*
         if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
             angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
-        */
 
         // Set velocities
         output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
