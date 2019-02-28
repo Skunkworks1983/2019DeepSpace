@@ -2,6 +2,7 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.*;
@@ -13,6 +14,7 @@ import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.elevator.IncrementElevatorPosition;
 import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.commands.manipulator.SetManipulatorExtended;
@@ -20,6 +22,7 @@ import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleExtender;
 import frc.team1983.commands.manipulator.ToggleHooks;
 import frc.team1983.commands.climber.ClimbLevelThree;
+import frc.team1983.subsystems.Climber;
 import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
@@ -45,6 +48,29 @@ public class OI
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
     protected static final double JOYSTICK_EXPONENT = 3;
+
+    public static final int TOGGLE_COLLECTOR = 7;
+    public static final int MANIPULATOR_EXTENDED = 23;
+    public static final int MANIPULATOR_RETRACTED = 20;
+    public static final int TOGGLE_HOOKS = 8;
+    public static final int EXPEL = 22;
+    public static final int INTAKE = 21;
+    public static final int COLLECTOR_WRIST_OUT = 5;
+    public static final int COLLECTOR_WRIST_IN = 6;
+    public static final int MANUAL_CLIMB_ELEVATOR_UP = 4;
+    public static final int MANUAL_CLIMB_ELEVATOR_DOWN = 3;
+    public static final int MANUAL_ELEVATOR_UP = 2;
+    public static final int MANUAL_ELEVATOR_DOWN = 1;
+    public static final int ELEVATOR_BOTTOM = 16;
+    public static final int ELVATOR_LOADING_STATION_BALL = 15;
+    public static final int ELEVATOR_CARGOSHIP_BALL = 12;
+    public static final int ELEVATOR_LOW_HATCH_BALL = 11;
+    public static final int ELEVATOR_MIDDLE_HATCH_BALL = 10;
+    public static final int ELEVATOR_TOP_HATCH_BALL = 9;
+    public static final int CLIMB = 13;
+    public static final int CLIMB_SELECTION = 25;
+    public static final int MAUAL_MODE = 24;
+    public static final int HATCH_BALL_TOGGLE = 14;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -108,65 +134,72 @@ public class OI
 
     public void initializeBindings()
     {
-        Robot robot = Robot.getInstance();
-        //Button toswitch to manual mode is 24
-        //Button to switch between balls and hatches is 14
-        //Extra buttons are 17, 18, 19
+        // Button to switch to manual mode is 24
+        // Button to switch between balls and hatches is 14
+        // Extra buttons are 17, 18, 19
       
-        //Controls for pneumatics
-        getButton(Joysticks.PANEL,8).whenPressed(new ToggleCollector());
-        getButton(Joysticks.PANEL,23).whenPressed(new SetManipulatorExtended(true));
-        getButton(Joysticks.PANEL,20).whenPressed(new SetManipulatorExtended(false));
-        getButton(Joysticks.PANEL,7).whenPressed(new ToggleHooks());
+        // Controls for pneumatics
+        getButton(Joysticks.PANEL,TOGGLE_COLLECTOR).whenPressed(new ToggleCollector());
+        getButton(Joysticks.PANEL,MANIPULATOR_EXTENDED).whenPressed(new SetManipulatorExtended(true));
+        getButton(Joysticks.PANEL,MANIPULATOR_RETRACTED).whenPressed(new SetManipulatorExtended(false));
+        getButton(Joysticks.PANEL,TOGGLE_HOOKS).whenPressed(new ToggleHooks());
 
-        //Expel
-        getButton(Joysticks.PANEL,22).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,-1,true));
+        // Expel
+        getButton(Joysticks.PANEL,EXPEL).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,1,true));
 
-        //Intake
-        getButton(Joysticks.PANEL,21).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,0.8,true));
-        getButton(Joysticks.PANEL,21).whileHeld(new SetCollectorRollerThrottle(1));
+        // Intake
+        getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-0.8,-0.8,true));
+        // getButton(Joysticks.PANEL,INTAKE).whileHeld(new SetCollectorRollerThrottle(1));
 
-        //Manual collector wrist control
-        getButton(Joysticks.PANEL,5).whileHeld(new SetCollectorWristThrottle(0.5));
-        getButton(Joysticks.PANEL,6).whileHeld(new SetCollectorWristThrottle(-0.25));
+        // Manual collector wrist control
+        getButton(Joysticks.PANEL,COLLECTOR_WRIST_OUT).whileHeld(new SetCollectorWristThrottle(0.5));
+        getButton(Joysticks.PANEL,COLLECTOR_WRIST_IN).whileHeld(new SetCollectorWristThrottle(-0.25));
 
-        //TODO Add actual elevator set points
-        //Controls for elevator set points
+        // manual climb elevator up
+        getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_UP).whileHeld(new ManualClimber(0.5));
 
-        //Bottom
-        getButton(Joysticks.PANEL,16).whenPressed(new SetElevatorPosition(Elevator.BOTTOM));
+        // manual climb elevator DOWN
+        getButton(Joysticks.PANEL,MANUAL_CLIMB_ELEVATOR_DOWN).whileHeld(new ManualClimber(-0.5));
 
-        //Loading station ball
-        getButton(Joysticks.PANEL,15).whenPressed(new SetElevatorPosition(12.5));
+        // manual elevator up
+        getButton(Joysticks.PANEL,MANUAL_ELEVATOR_UP).whileHeld(new ManualElevator(0.5));
 
-        //Ball cargo ship
-        getButton(Joysticks.PANEL,12).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
+        // manual elevator down
+        getButton(Joysticks.PANEL,MANUAL_ELEVATOR_DOWN).whileHeld(new ManualElevator(-0.5));
 
-        //Ball low rocket
-        getButton(Joysticks.PANEL,11).whenPressed(new SetElevatorPosition(35));
+        // Bottom
+        getButton(Joysticks.PANEL,ELEVATOR_BOTTOM).whenPressed(new SetElevatorPosition(Elevator.BOTTOM));
 
-        //middle hatch/ball
-        getButton(Joysticks.PANEL,10).whenPressed(new SetElevatorPosition(40));
+        // Loading station ball
+        getButton(Joysticks.PANEL,ELVATOR_LOADING_STATION_BALL).whenPressed(new SetElevatorPosition(Elevator.FEEDER_BALL));
 
-        //Top hatch/ball
-        getButton(Joysticks.PANEL,9).whenPressed(new SetElevatorPosition(60));
+        // Ball cargo ship
+        getButton(Joysticks.PANEL,ELEVATOR_CARGOSHIP_BALL).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
 
-        //manual climb elevator up
-        getButton(Joysticks.PANEL,4).whenPressed(new ManualClimber(0.5));
+        // low hatch/ball rocket
+        getButton(Joysticks.PANEL,ELEVATOR_LOW_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.BOTTOM_HATCH));
 
-        //manual climb elevator up
-        getButton(Joysticks.PANEL,3).whenPressed(new ManualClimber(-0.5));
+        // middle hatch/ball
+        getButton(Joysticks.PANEL,ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.MIDDLE_HATCH));
 
-        //manual elevator up
-        getButton(Joysticks.PANEL,2).whenPressed(new ManualElevator(0.5));
+        // Top hatch/ball
+        getButton(Joysticks.PANEL,ELEVATOR_TOP_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.TOP_HATCH));
 
-        //manual elevator down
-        getButton(Joysticks.PANEL,1).whenPressed(new ManualElevator(-0.5));
+        // Climb
+        getButton(Joysticks.PANEL, CLIMB).whileHeld(new ConditionalCommand(
+                new ClimbLevelTwo(),
+                new ClimbLevelThree()
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,CLIMB_SELECTION).get();
+            }
+        });
 
-//        //Climb level 3
-//        getButton(Joysticks.PANEL,0).whileHeld(new ClimbLevelThree());
-//
-//        //climb level 2
-//        getButton(Joysticks.PANEL, 0).whileHeld(new ClimbLevelTwo());
+
+//        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
+//        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
     }
 }

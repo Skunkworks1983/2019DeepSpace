@@ -1,5 +1,6 @@
 package frc.team1983;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -12,6 +13,7 @@ import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
@@ -70,6 +72,7 @@ public class Robot extends TimedRobot
     {
         getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     @Override
@@ -104,6 +107,12 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
+
     }
 
     public static Robot getInstance()
