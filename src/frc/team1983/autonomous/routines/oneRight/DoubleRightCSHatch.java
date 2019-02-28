@@ -4,39 +4,49 @@ import frc.team1983.Robot;
 import frc.team1983.autonomous.Routine;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.manipulator.SetHooksOpen;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
-public class DoubleHatchCS extends Routine
+public class DoubleRightCSHatch extends Routine
 {
-    public DoubleHatchCS()
+    public DoubleRightCSHatch()
     {
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
-        addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                new Pose(17.33, 5.54, 90),
-                new Pose(17.36, 21.94, -180)
+                (Pose.LEVEL_1_RIGHT),
+                (Pose.CARGO_SHIP_RIGHT_CLOSE)
         ), 3));
 
-        addSequential(new SetHooksOpen(manipulator, false));
+        addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
 
         addSequential(new DrivePath(new Path(
-                new Pose(17.36, 21.94, -90),
-                new Pose(25.1, 1.54, -90)
-        ), 3));
-
-        addSequential(new SetHooksOpen(manipulator, true));
+                (Pose.CARGO_SHIP_RIGHT_CLOSE),
+                new Pose(18, 21.94, -90)
+        ), -3));
 
         addSequential(new DrivePath(new Path(
-                new Pose(25.1, 1.54, 100),
-                new Pose(17.36, 23.61, -180)
+                new Pose(18, 21.94, -90),
+                (Pose.RIGHT_LOADING_STATION)
         ), 3));
 
-        addSequential(new SetHooksOpen(manipulator, false));
+        addSequential(new SetManipulatorRollerSpeed(manipulator, -0.3, true));
+
+        addSequential(new DrivePath(new Path(
+                (Pose.RIGHT_LOADING_STATION),
+                new Pose(19.95, 23.5, -90)
+        ), -3));
+
+        addSequential(new DrivePath(new Path(
+                new Pose(19.95, 23.5, -180),
+                (Pose.CARGO_SHIP_RIGHT_MIDDLE)
+        ), 3));
+
+        addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
     }
 }
