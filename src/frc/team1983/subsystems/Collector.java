@@ -23,17 +23,16 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
+        wristRight = new MotorGroup("Collector Wrist Right",
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
-        wristRight.setPID(0.06, 0, 0);
-        wristRight.setUseMotionProfiles(false);
+        wristRight.setKP(0.06);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+        wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
-        wristLeft.setPID(0.21, 0, 0);
+        wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
     }
 
@@ -98,7 +97,7 @@ public class Collector extends Subsystem
      */
     public void setRollerThrottle(double throttle)
     {
-        roller.set(ControlMode.Throttle, throttle);
+        roller.set(throttle);
     }
 
     /**
