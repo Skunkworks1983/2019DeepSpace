@@ -173,13 +173,13 @@ public class OI
         getButton(Joysticks.PANEL,ELEVATOR_CARGOSHIP_BALL).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
 
         //low hatch/ball rocket
-        getButton(Joysticks.PANEL,ELEVATOR_LOW_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.ROCKET_LOW_BALL));
+        getButton(Joysticks.PANEL,ELEVATOR_LOW_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.BOTTOM_HATCH));
 
         //middle hatch/ball
-        getButton(Joysticks.PANEL,ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.ROCKET_MIDDLE_BALL));
+        getButton(Joysticks.PANEL,ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.MIDDLE_HATCH));
 
         //Top hatch/ball
-        getButton(Joysticks.PANEL,ELEVATOR_TOP_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.ROCKET_TOP_BALL));
+        getButton(Joysticks.PANEL,ELEVATOR_TOP_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.TOP_HATCH));
 
         //Climb
         getButton(Joysticks.PANEL, CLIMB).whileHeld(new ConditionalCommand(
@@ -195,7 +195,7 @@ public class OI
         });
 
 
-//        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
-//        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
+        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
+        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
     }
 }

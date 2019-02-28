@@ -1,5 +1,6 @@
 package frc.team1983;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot
     {
         navx.reset();
         estimator.setPose(Pose.DEFAULT);
+        CameraServer.getInstance().startAutomaticCapture();
     }
 
     @Override

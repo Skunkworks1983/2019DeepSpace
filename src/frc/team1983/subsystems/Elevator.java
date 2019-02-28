@@ -18,8 +18,8 @@ public class Elevator extends Subsystem
 
     //Setpoints for hatches
     public static final double BOTTOM_HATCH = 7;
-    public static final double MIDDLE_HATCH = 0;
-    public static final double TOP_HATCH = 0;
+    public static final double MIDDLE_HATCH = 34.5;
+    public static final double TOP_HATCH = 63.5;
 
     //Setpoints for balls
     public static final double ROCKET_LOW_BALL = 17;
