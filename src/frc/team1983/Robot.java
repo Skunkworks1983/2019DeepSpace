@@ -2,9 +2,13 @@ package frc.team1983;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
+import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.constants.RobotMap;
@@ -36,12 +40,11 @@ public class Robot extends TimedRobot
     Logger logger;
 
     private CollectionManager collectionManager;
+    private SafeAutomationManager safeAutomationManager;
 
     Robot()
     {
         instance = this;
-
-        collectionManager = new CollectionManager();
 
         logger = Logger.getInstance();
         logger.setGlobalLevel(Level.INFO);
@@ -69,13 +72,15 @@ public class Robot extends TimedRobot
         oi = new OI();
         oi.initializeBindings();
 
+        collectionManager = new CollectionManager();
+        safeAutomationManager = new SafeAutomationManager();
     }
 
 
     @Override
     public void robotInit()
     {
-        navx.reset();
+        getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
     }
 
@@ -84,6 +89,7 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
+        System.out.println("COLLECTOR ANGULAR VELOCITY : " + collector.getAngularVelocity());
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
@@ -110,15 +116,7 @@ public class Robot extends TimedRobot
     public void teleopInit()
     {
         compressor.start();
-//        Scheduler.getInstance().add(new RunTankDrive());
         Scheduler.getInstance().add(collectionManager);
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-        //System.out.println("COLLECTOR STATE :    " + collector.currentState);
-
     }
 
     public static Robot getInstance()
@@ -143,6 +141,21 @@ public class Robot extends TimedRobot
         return climber;
     }
 
+    public Manipulator getManipulator()
+    {
+        return manipulator;
+    }
+
+    public Collector getCollector()
+    {
+        return collector;
+    }
+
+    public Compressor getCompressor()
+    {
+        return compressor;
+    }
+
     public Gyro getGyro()
     {
         return navx;
@@ -158,17 +171,13 @@ public class Robot extends TimedRobot
         return oi;
     }
 
-    public Manipulator getManipulator()
+    public CollectionManager getCollectionManager()
     {
-        return manipulator;
+        return collectionManager;
     }
 
-    public Collector getCollector()
+    public SafeAutomationManager getSafeAutomationManager()
     {
-        return collector;
+        return safeAutomationManager;
     }
-
-    public CollectionManager getCollectionManager(){
-        return collectionManager;}
-
 }

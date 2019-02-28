@@ -25,10 +25,9 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
         this(port, MotorType.kBrushless, reversed);
     }
 
-    @Override
-    public void set(ControlMode mode, double output)
+    public void set(double output)
     {
-        if(mode == ControlMode.Throttle) super.set(output);
+        super.set(output);
     }
 
     @Override
@@ -58,6 +57,6 @@ public class Spark extends com.revrobotics.CANSparkMax implements Motor, Encoder
     @Override
     public double getVelocity()
     {
-        return (getInverted() ? -1 : 1) * encoder.getVelocity();
+        return encoder.getVelocity() / 60.0;
     }
 }

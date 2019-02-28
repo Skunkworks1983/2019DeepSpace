@@ -11,10 +11,16 @@ public class SetCollectorAngle extends Command
 {
     private Collector collector;
     private double angle;
+
+    public SetCollectorAngle(Collector collector, double angle)
+    {
+        this.collector = collector;
+        this.angle = angle;
+    }
+
     public SetCollectorAngle(double angle)
     {
-        this.collector = Robot.getInstance().getCollector();
-        this.angle = angle;
+        this(Robot.getInstance().getCollector(), angle);
     }
 
     @Override

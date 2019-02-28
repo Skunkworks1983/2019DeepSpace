@@ -1,17 +1,14 @@
 package frc.team1983.subsystems;
 
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
-import frc.team1983.constants.ElevatorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
-
-import javax.naming.ldap.Control;
 
 /**
  * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
@@ -36,24 +33,13 @@ public class Elevator extends Subsystem
 
     public static final double kG = 0.05; //Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (22.0 * 3.0) / 95.0; // TODO: add math
+    public static final double DEADZONE_HEIGHT = 30.0;
 
     public MotorGroup motorGroup;
 
-    public CollectionManager collectionManager;
-
-    public SafeAutomationManager safeAutomationManager;
-
-
     public Elevator()
     {
-        Robot robot = Robot.getInstance();
-        if(robot == null)
-        {
-            System.out.println("ROBOT IS NULL IN ELEVATOR :(");
-        }
-        collectionManager = robot.getCollectionManager();
-
-        motorGroup = new MotorGroup("Left Elevator", FeedbackType.POSITION,
+        motorGroup = new MotorGroup("Left Elevator",
                 new Spark(RobotMap.Elevator.LEFT, RobotMap.Elevator.LEFT_REVERSED),
                 new Spark(RobotMap.Elevator.RIGHT, RobotMap.Elevator.RIGHT_REVERSED)
         );
@@ -62,12 +48,10 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(12);
         motorGroup.setCruiseVelocity(12);
-        motorGroup.setPID(0.18, 0, 0); // TODO: add values
+        motorGroup.setKP(0.18);
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
-
-        safeAutomationManager = new SafeAutomationManager();
 
         zero();
     }
@@ -91,17 +75,22 @@ public class Elevator extends Subsystem
 
     public void set(ControlMode mode, double value)
     {
-        if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
+        motorGroup.set(mode, value);
+    }
+
+    public void setHeight(double height)
+    {
+        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_FOLDING && height <= DEADZONE_HEIGHT)
         {
-            safeAutomationManager.moveEleDZWhileCollectorFolding(value);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveEleDZWhileCollectorFolding(height));
         }
-        else if(collectionManager.getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && value <= ElevatorConstants.SetPoints.ELE_DZ)
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_SAFE__COL_UNFOLDING && height <= DEADZONE_HEIGHT)
         {
-            safeAutomationManager.moveEleDZWhileCollectorUnfolding(value);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveEleDZWhileCollectorUnfolding(height));
         }
         else
         {
-            motorGroup.set(mode, value);
+            set(ControlMode.MotionMagic, height);
         }
     }
 
@@ -112,7 +101,7 @@ public class Elevator extends Subsystem
 
     public double getPosition()
     {
-        return motorGroup.getPositionTicks() * INCHES_PER_TICK;
+        return motorGroup.getPosition();
     }
 
     public double getVelocity()
@@ -127,7 +116,7 @@ public class Elevator extends Subsystem
 
     public boolean isAtSetpoint()
     {
-        return Math.abs(motorGroup.getPosition() - motorGroup.getTarget()) < CLOSED_LOOP_TOLERANCE;
+        return Math.abs(motorGroup.getPosition() - motorGroup.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
     }
 
 }

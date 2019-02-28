@@ -2,6 +2,15 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team1983.Robot;
+import frc.team1983.commands.SafeAutomationManager;
+import frc.team1983.subsystems.*;
+import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.Robot;
+import frc.team1983.commands.climber.ClimbLevelTwo;
+import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.ToggleCollector;
 import frc.team1983.commands.elevator.SetElevatorPosition;
@@ -125,12 +134,10 @@ public class OI
         //TODO Add actual elevator set points
         //Controls for elevator set points
 
-        getButton(Joysticks.PANEL,FLOOR_COLLECT).whenPressed(new SetElevatorPosition(0));
+        getButton(Joysticks.PANEL,16).whenPressed(new SetElevatorPosition(0));
         getButton(Joysticks.PANEL,CARGO_SHIP).whenPressed(new SetElevatorPosition(12.5));
         getButton(Joysticks.PANEL,LOW).whenPressed(new SetElevatorPosition(25));
         getButton(Joysticks.PANEL,MID).whenPressed(new SetElevatorPosition(35));
         getButton(Joysticks.PANEL,HIGH).whenPressed(new SetElevatorPosition(60));
-
-
     }
 }

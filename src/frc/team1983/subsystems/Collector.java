@@ -1,12 +1,11 @@
 package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.commands.SafeAutomationManager;
 import frc.team1983.commands.collector.CollectionManager;
-import frc.team1983.commands.collector.SetCollectorFolded;
-import frc.team1983.constants.CollectorConstants;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
 
@@ -20,49 +19,38 @@ public class Collector extends Subsystem
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
     public State currentState;
-    public CollectionManager collectionManager;
-    public Elevator elevator;
-    public SafeAutomationManager safeAutomationManager;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
-
     public static final double CLOSED_LOOP_TOLERANCE = 4.0; // degrees
+    public static final double DEADZONE_ANGLE = 90.0;
+    public static final double DOWN_ANGLE = 130;
+    public static final double UNFOLD_ANGLE = 30.0;
 
     public Collector()
     {
         roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
-        Robot robot = Robot.getInstance();
-        if(robot == null)
-        {
-            System.out.println("ROBOT IS NULL IN COLLECTOR :(");
-        }
-        collectionManager = robot.getCollectionManager();
-        elevator = robot.getElevator();
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
+        wristRight = new MotorGroup("Collector Wrist Right",
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
-        wristRight.setPID(0.06, 0, 0);
-        wristRight.setUseMotionProfiles(false);
+        wristRight.setKP(0.06);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
-                                   new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
+        wristLeft = new MotorGroup("Collector Wrist Left",
+                new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
-        wristLeft.setPID(0.21, 0, 0);
+        wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
 
-
         currentState = State.STOPPED;
-        safeAutomationManager = new SafeAutomationManager();
     }
+
     public enum State {
         STOPPED,
         UNFOLDING,
         FOLDING
-
     }
 
     @Override
@@ -74,16 +62,21 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
+        if(getAngle() > UNFOLD_ANGLE && isFolded())
+            setFolded(false);
+        if(getAngle() < UNFOLD_ANGLE && !isFolded())
+            setFolded(true);
+
         switch (currentState)
         {
             case STOPPED:
-                if(getAngularVelocity() > 10)
+                if(getAngularVelocity() > 1.0)
                 {
                     currentState = State.UNFOLDING;
                     System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
                     break;
                 }
-                if(getAngularVelocity() < -10)
+                if(getAngularVelocity() < -1.0)
                 {
                     currentState = State.FOLDING;
                     System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
@@ -91,8 +84,7 @@ public class Collector extends Subsystem
                 }
                 break;
             case UNFOLDING:
-                new SetCollectorFolded(false);
-                if(getAngularVelocity() <= 10 && getAngularVelocity() >= -10)
+                if(Math.abs(getAngularVelocity()) < 1.0)
                 {
                     currentState = State.STOPPED;
                     System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
@@ -100,11 +92,7 @@ public class Collector extends Subsystem
                 }
                 break;
             case FOLDING:
-                if(this.getAngle() <= CollectorConstants.WristSetpoints.DZ)
-                {
-                    new SetCollectorFolded(true);
-                }
-                if(getAngularVelocity() <= 10 && getAngularVelocity() >= -10)
+                if(Math.abs(getAngularVelocity()) < 1.0)
                 {
                     currentState = State.STOPPED;
                     System.out.println("SWITCHING TO COLLECTOR STATE: " + currentState);
@@ -131,6 +119,11 @@ public class Collector extends Subsystem
         wristRight.setBrake(brake);
     }
 
+    public void set(ControlMode mode, double value)
+    {
+        wristRight.set(mode, value);
+    }
+
     /**
      * Sets the angle of the arm using motion profiling
      *
@@ -138,27 +131,25 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        System.out.println("ANGLE : " + angle);
-        System.out.println("CURRENT STATE: " + collectionManager.getCurrentState());
-        if(collectionManager.getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
+        if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_DANGER__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
         {
-            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
         }
-        else if(collectionManager.getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_LOWERING__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
         {
-            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
         }
-        else if(collectionManager.getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  CollectorConstants.WristSetpoints.DZ)
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.E_RISING__COL_SAFE && angle <  Collector.DEADZONE_ANGLE)
         {
-            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
         }
-        else if(collectionManager.getCurrentState() == CollectionManager.State.START_STATE)
+        else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.START_STATE)
         {
-            safeAutomationManager.moveCollectorDZWhileEleInIllegalState(angle);
+            Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
         }
         else
         {
-            wristRight.set(ControlMode.Position, angle);
+            set(ControlMode.Position, angle);
         }
     }
 
@@ -184,7 +175,7 @@ public class Collector extends Subsystem
      */
     public void setRollerThrottle(double throttle)
     {
-        roller.set(ControlMode.Throttle, throttle);
+        roller.set(throttle);
     }
 
     /**
@@ -202,14 +193,6 @@ public class Collector extends Subsystem
     }
 
     /**
-     * @return The current ticks of the arm
-     */
-    public double getTicks()
-    {
-        return wristRight.getPosition();
-    }
-
-    /**
      * Zeros the wrist
      */
     public void zero()
@@ -220,6 +203,6 @@ public class Collector extends Subsystem
 
     public boolean isAtSetpoint()
     {
-        return Math.abs(wristRight.getPosition() - wristRight.getTarget()) < CLOSED_LOOP_TOLERANCE;
+        return Math.abs(wristRight.getPosition() - wristRight.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
     }
 }
