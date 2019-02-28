@@ -44,7 +44,7 @@ public class UT_MotorGroupController
     {
         // Profile just needs to run slowly
         MotionProfile profile = MotionProfile.generateProfile(0, 100,
-                1, 1, FeedbackType.POSITION);
+                1, 1);
 
         controller.runMotionProfile(profile);
         ArgumentCaptor<Double> argumentCaptor = ArgumentCaptor.forClass(Double.class);
@@ -73,7 +73,7 @@ public class UT_MotorGroupController
     public void disablesProfileOnSetpointChanged()
     {
         controller.setSetpoint(10.0);
-        controller.motionProfile = MotionProfile.generateProfile(0, 10, 1, 1, FeedbackType.POSITION);
+        controller.motionProfile = MotionProfile.generateProfile(0, 10, 1, 1);
         controller.setSetpoint(0);
         assertNull(controller.motionProfile);
     }
@@ -81,8 +81,10 @@ public class UT_MotorGroupController
     @Test
     public void setsProfileToNullAfterDurationExceeded()
     {
-        controller.setKP(0);
-        controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10, FeedbackType.POSITION));
+        controller.setKP(0.1);
+        controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10));
+
+        controller.motionProfile.getDuration();
 
         try {TimeUnit.MILLISECONDS.sleep(10);} catch(Exception e) {assertEquals(0,1);}
 

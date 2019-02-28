@@ -38,7 +38,7 @@ public class UT_MotorGroup
     {
         initMocks(this);
 
-        motorGroup = new MotorGroup("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
+        motorGroup = new MotorGroup("Test Drivebase", (Motor) motor1, motor2);
     }
 
     @Test
@@ -132,12 +132,5 @@ public class UT_MotorGroup
     {
         motorGroup.setKP(1);
         assertThat(motorGroup.getP(), is(1.0));
-    }
-
-    @Test
-    public void pidGetRespectsFeedbackType()
-    {
-        motorGroup.pidGet();
-        verify(motor1).getVelocity();
     }
 }

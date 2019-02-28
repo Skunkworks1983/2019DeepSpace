@@ -15,7 +15,7 @@ public class SetElevatorPosition extends InstantCommand
      */
     public SetElevatorPosition(Elevator elevator, double setpoint)
     {
-        super(elevator, () -> elevator.set(ControlMode.Position, setpoint));
+        super(elevator, () -> elevator.set(ControlMode.MotionMagic, setpoint));
     }
 
     public SetElevatorPosition(double setpoint)

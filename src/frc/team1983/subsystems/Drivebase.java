@@ -21,7 +21,7 @@ public class Drivebase extends Subsystem
 
     public Drivebase()
     {
-        left = new MotorGroup("Left Drivebase", FeedbackType.VELOCITY,
+        left = new MotorGroup("Left Drivebase",
                 new Spark(RobotMap.Drivebase.LEFT_1, RobotMap.Drivebase.LEFT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_2, RobotMap.Drivebase.LEFT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.LEFT_3, RobotMap.Drivebase.LEFT_3_REVERSED)
@@ -33,7 +33,7 @@ public class Drivebase extends Subsystem
         left.setMovementAcceleration(2.0);
         left.setKP(0.03);
 
-        right = new MotorGroup("Right Drivebase", FeedbackType.VELOCITY,
+        right = new MotorGroup("Right Drivebase",
                 new Spark(RobotMap.Drivebase.RIGHT_1, RobotMap.Drivebase.RIGHT_1_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_2, RobotMap.Drivebase.RIGHT_2_REVERSED),
                 new Spark(RobotMap.Drivebase.RIGHT_3, RobotMap.Drivebase.RIGHT_3_REVERSED)

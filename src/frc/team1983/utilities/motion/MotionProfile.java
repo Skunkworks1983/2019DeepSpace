@@ -1,5 +1,6 @@
 package frc.team1983.utilities.motion;
 
+import frc.team1983.services.logging.Logger;
 import frc.team1983.utilities.motors.FeedbackType;
 
 public interface MotionProfile
@@ -7,7 +8,6 @@ public interface MotionProfile
     double evaluate(double time);
     double getDuration();
     double getEndpoint();
-    FeedbackType getFeedbackType();
 
     /**
      * Generates a motion profile for motion magic
@@ -17,8 +17,12 @@ public interface MotionProfile
      * @param cruiseVelocity The maximum velocity this profile should achieve
      * @param acceleration   The maximum acceleration this profile should achieve
      */
-    static MotionProfile generateProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration, FeedbackType feedbackType)
+    static MotionProfile generateProfile(double startpoint, double endpoint, double cruiseVelocity, double acceleration)
     {
+        if(cruiseVelocity == 0 || acceleration == 0)
+            Logger.getInstance().warn("movement acceleration or velocity not configured", MotionProfile.class);
+
+
         // Distance the system will travel (difference between current and desired position)
         double distance = Math.abs(endpoint - startpoint); int velocitySign = endpoint > startpoint ? 1 : -1;
 
@@ -44,8 +48,7 @@ public interface MotionProfile
             // finally, put these together for profileLength = 2 * sqrt(distance * acceleration) / acceleration
             double profileLength = 2 * Math.sqrt(distance * acceleration) / acceleration;
 
-            return feedbackType == FeedbackType.POSITION ?
-                new MotionProfile()
+            return new MotionProfile()
                 {
                     @Override
                     public double evaluate(double time)
@@ -69,42 +72,36 @@ public interface MotionProfile
                     {
                         return endpoint;
                     }
-
-                    @Override
-                    public FeedbackType getFeedbackType()
-                    {
-                        return FeedbackType.POSITION;
-                    }
-                } :
-                new MotionProfile()
-                {
-                    @Override
-                    public double evaluate(double time)
-                    {
-                        // Calculating velocity is easy, we check which part of the profile we are on and then
-                        // multiply the distance from the beginning or end by the acceleration
-                        return velocitySign * (time < .5 * profileLength ? time * acceleration :
-                                (profileLength - time) * acceleration);
-                    }
-
-                    @Override
-                    public double getDuration()
-                    {
-                        return profileLength;
-                    }
-
-                    @Override
-                    public double getEndpoint()
-                    {
-                        return endpoint;
-                    }
-
-                    @Override
-                    public FeedbackType getFeedbackType()
-                    {
-                        return FeedbackType.VELOCITY;
-                    }
                 };
+//                new MotionProfile()
+//                {
+//                    @Override
+//                    public double evaluate(double time)
+//                    {
+//                        // Calculating velocity is easy, we check which part of the profile we are on and then
+//                        // multiply the distance from the beginning or end by the acceleration
+//                        return velocitySign * (time < .5 * profileLength ? time * acceleration :
+//                                (profileLength - time) * acceleration);
+//                    }
+//
+//                    @Override
+//                    public double getDuration()
+//                    {
+//                        return profileLength;
+//                    }
+//
+//                    @Override
+//                    public double getEndpoint()
+//                    {
+//                        return endpoint;
+//                    }
+//
+//                    @Override
+//                    public FeedbackType getFeedbackType()
+//                    {
+//                        return FeedbackType.VELOCITY;
+//                    }
+//                };
         }
         else
         {
@@ -116,8 +113,7 @@ public interface MotionProfile
             // The length of the profile is length of the two triangles and the rectangle
             double profileLength = 2 * maxTriangleLength + rectangleLength;
 
-            return feedbackType == FeedbackType.POSITION ?
-                new MotionProfile()
+            return new MotionProfile()
                 {
                     @Override
                     public double evaluate(double time)
@@ -144,44 +140,38 @@ public interface MotionProfile
                     {
                         return endpoint;
                     }
-
-                    @Override
-                    public FeedbackType getFeedbackType()
-                    {
-                        return FeedbackType.POSITION;
-                    }
-                } :
-                new MotionProfile()
-                {
-                    @Override
-                    public double evaluate(double time)
-                    {
-                        // Velocity is easy. We simply multiply the time by the acceleration.
-                        if(time < maxTriangleLength) return velocitySign * time * acceleration;
-                        // Or just return the cruise velocity if we are in the square
-                        if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
-                        // Or multiply distance from the end by acceleration
-                        return velocitySign * (profileLength - time) * acceleration;
-                    }
-
-                    @Override
-                    public double getDuration()
-                    {
-                        return profileLength;
-                    }
-
-                    @Override
-                    public double getEndpoint()
-                    {
-                        return endpoint;
-                    }
-
-                    @Override
-                    public FeedbackType getFeedbackType()
-                    {
-                        return FeedbackType.VELOCITY;
-                    }
                 };
+//                new MotionProfile()
+//                {
+//                    @Override
+//                    public double evaluate(double time)
+//                    {
+//                        // Velocity is easy. We simply multiply the time by the acceleration.
+//                        if(time < maxTriangleLength) return velocitySign * time * acceleration;
+//                        // Or just return the cruise velocity if we are in the square
+//                        if(time < maxTriangleLength + rectangleLength) return velocitySign * cruiseVelocity;
+//                        // Or multiply distance from the end by acceleration
+//                        return velocitySign * (profileLength - time) * acceleration;
+//                    }
+//
+//                    @Override
+//                    public double getDuration()
+//                    {
+//                        return profileLength;
+//                    }
+//
+//                    @Override
+//                    public double getEndpoint()
+//                    {
+//                        return endpoint;
+//                    }
+//
+//                    @Override
+//                    public FeedbackType getFeedbackType()
+//                    {
+//                        return FeedbackType.VELOCITY;
+//                    }
+//                };
     }
     }
 }

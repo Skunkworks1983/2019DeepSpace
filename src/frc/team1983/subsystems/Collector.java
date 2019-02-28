@@ -23,13 +23,13 @@ public class Collector extends Subsystem
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
+        wristRight = new MotorGroup("Collector Wrist Right",
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
         wristRight.setKP(0.06);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+        wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
         wristLeft.setKP(0.21);

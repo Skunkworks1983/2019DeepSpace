@@ -19,7 +19,6 @@ public class MotorGroup implements PIDInput, PIDOutput
 {
     public static ArrayList<MotorGroup> motorGroups = new ArrayList<>();
 
-    private Function<Object, double[]> ffFunction;
     private Object ffOperator;
 
     protected ArrayList<Motor> motors;
@@ -30,27 +29,23 @@ public class MotorGroup implements PIDInput, PIDOutput
 
     protected Encoder encoder;
     private final String name; //For logging purposes
-    private FeedbackType feedbackType;
-    private double setpoint;
 
     private double cruiseVelocity = 0;
     private double movementAcceleration = 0;
+    private double setpoint = 0;
 
     /**
      * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
      * of whether or not the motor controllers are Talons or Sparks.
      *
      * @param name         The name of this motorGroup. Is used for logging.
-     * @param feedbackType The feedback type that this motor should use in closed loop control
      * @param encoder      The encoder of this system. Usually attached to one of the motors.
      * @param master       The master motor. This doesn't mean much but it does ensure we always have at least one motor.
      * @param motors       An array of the other motors in this system. Can be left out if there is only one motor.
      */
-    protected MotorGroup(String name, FeedbackType feedbackType, Encoder encoder, Motor master, Motor... motors)
+    protected MotorGroup(String name, Encoder encoder, Motor master, Motor... motors)
     {
         this.name = name;
-
-        this.feedbackType = feedbackType;
 
         this.encoder = encoder;
         this.encoder.configure();
@@ -60,7 +55,6 @@ public class MotorGroup implements PIDInput, PIDOutput
         this.motors.addAll(Arrays.asList(motors));
 
         motorGroups.add(this);
-        this.setpoint = 0;
     }
 
     /**
@@ -69,9 +63,9 @@ public class MotorGroup implements PIDInput, PIDOutput
      *
      * @param master A motor with an attached encoder
      */
-    public MotorGroup(String name, FeedbackType feedbackType, Motor master, Motor... motors)
+    public MotorGroup(String name, Motor master, Motor... motors)
     {
-        this(name, feedbackType, (Encoder) master, master, motors);
+        this(name, (Encoder) master, master, motors);
     }
 
     /**
@@ -79,9 +73,9 @@ public class MotorGroup implements PIDInput, PIDOutput
      *
      * @param encoderPort The port that a new DigitalInputEncoder will be attached to.
      */
-    public MotorGroup(String name, FeedbackType feedbackType, int encoderPort, Motor master, Motor... motors)
+    public MotorGroup(String name, int encoderPort, Motor master, Motor... motors)
     {
-        this(name, feedbackType, new DigitalInputEncoder(encoderPort), master, motors);
+        this(name, new DigitalInputEncoder(encoderPort), master, motors);
     }
 
     /**
@@ -151,30 +145,19 @@ public class MotorGroup implements PIDInput, PIDOutput
      */
     public void set(ControlMode controlMode, double value)
     {
-        this.setpoint = value;
+        setpoint = value;
         if (controlMode == ControlMode.Throttle)
         {
-            if (controller != null)
-                controller.disable();
+            disableController();
             setRawThrottle(value);
         }
         else
         {
             createController();
-
-            if(controlMode == ControlMode.Position)
-            {
-                if(cruiseVelocity == 0 || movementAcceleration == 0) Logger.getInstance().warn("movement acceleration or velocity not configured", this.getClass());
-                feedbackType = FeedbackType.POSITION;
-                controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration, feedbackType));
-            }
+            if(controlMode == ControlMode.MotionMagic)
+                controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration));
             else controller.setSetpoint(value);
         }
-    }
-
-    public double getSetpoint()
-    {
-        return setpoint;
     }
 
     /**
@@ -202,6 +185,11 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         createController();
         controller.setKP(kP);
+    }
+
+    public double getSetpoint()
+    {
+        return setpoint;
     }
 
     /**
@@ -292,7 +280,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return (feedbackType == FeedbackType.POSITION ? getPositionTicks() : getVelocityTicks()) * conversionRatio;
+        return getPositionTicks();
     }
 
     /**

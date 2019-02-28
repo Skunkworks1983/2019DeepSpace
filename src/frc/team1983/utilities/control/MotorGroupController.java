@@ -87,16 +87,41 @@ public class MotorGroupController extends Thread
      */
     protected void execute()
     {
-        if (leader == null && motionProfile != null)
+        try
+        {
+            Thread.sleep((long) 1000.0 / UPDATE_RATE);
+        } catch (InterruptedException exception)
+        {
+            exception.printStackTrace();
+        }
+
+        if (!enabled) return;
+
+        if (kP == 0)
+        {
+            Logger.getInstance().warn("P gain not configured", this.getClass());
+            return;
+        }
+
+        double target = setpoint;
+
+        if(leader != null)
+        {
+            target = leader.pidGet();
+        }
+        else if (motionProfile != null)
         {
             double time = Math.max((System.currentTimeMillis() / 1000.0) - profileStartTime, 0);
 
-            if (time > motionProfile.getDuration()) motionProfile = null;
-            else setpoint = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
-        } else if (leader != null)
-            setpoint = leader.pidGet();
-        double out = calculate(setpoint);
-        output.pidWrite(out);
+            if (time > motionProfile.getDuration())
+            {
+                setpoint = motionProfile.getEndpoint();
+                target = setpoint;
+                motionProfile = null;
+            }
+            else target = motionProfile.evaluate(Math.min(time, motionProfile.getDuration()));
+        }
+        output.pidWrite(calculate(target));
     }
 
     /**
@@ -107,23 +132,7 @@ public class MotorGroupController extends Thread
     {
         while (true)
         {
-            if (!enabled) continue;
-
-            if (kP == 0)
-            {
-                Logger.getInstance().warn("P gain not configured", this.getClass());
-                continue;
-            }
-
             execute();
-
-            try
-            {
-                Thread.sleep((long) 1000.0 / UPDATE_RATE);
-            } catch (InterruptedException exception)
-            {
-                exception.printStackTrace();
-            }
         }
     }
 
@@ -154,6 +163,7 @@ public class MotorGroupController extends Thread
     {
         setpoint = value;
         motionProfile = null;
+        leader = null;
         enable();
     }
 
@@ -165,6 +175,7 @@ public class MotorGroupController extends Thread
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
+        leader = null;
         profileStartTime = System.currentTimeMillis() / 1000.0;
         enable();
     }
@@ -172,6 +183,7 @@ public class MotorGroupController extends Thread
     public synchronized void follow(PIDInput leader)
     {
         this.leader = leader;
+        motionProfile = null;
         enable();
     }
 
