@@ -139,7 +139,7 @@ public class Collector extends Subsystem
         else if(Robot.getInstance().getCollectionManager().getCurrentState() == CollectionManager.State.START_STATE)
             Scheduler.getInstance().add(Robot.getInstance().getSafeAutomationManager().moveCollectorDZWhileEleInIllegalState(angle));
 
-        if(Math.abs(Elevator.DANGERZONE_HEIGHT - Robot.getInstance().getElevator().getPosition()) <= Elevator.CLOSED_LOOP_TOLERANCE || Robot.getInstance().getElevator().getPosition() >= Elevator.DANGERZONE_HEIGHT)
+        if(Math.abs(Elevator.DANGERZONE_HEIGHT - Robot.getInstance().getElevator().getPosition()) <= CLOSED_LOOP_TOLERANCE || Robot.getInstance().getElevator().getPosition() >= Elevator.DANGERZONE_HEIGHT)
             set(ControlMode.Position, angle);
     }
 
