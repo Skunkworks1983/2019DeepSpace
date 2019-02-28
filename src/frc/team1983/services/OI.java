@@ -62,7 +62,7 @@ public class OI
     public static final int MANUAL_ELEVATOR_UP = 2;
     public static final int MANUAL_ELEVATOR_DOWN = 1;
     public static final int ELEVATOR_BOTTOM = 16;
-    public static final int ELVATOR_LOADING_STATION_BALL = 15;
+    public static final int ELEVATOR_LOADING_STATION_BALL = 15;
     public static final int ELEVATOR_CARGOSHIP_BALL = 12;
     public static final int ELEVATOR_LOW_HATCH_BALL = 11;
     public static final int ELEVATOR_MIDDLE_HATCH_BALL = 10;
@@ -168,22 +168,82 @@ public class OI
         getButton(Joysticks.PANEL,MANUAL_ELEVATOR_DOWN).whileHeld(new ManualElevator(-0.5));
 
         // Bottom
-        getButton(Joysticks.PANEL,ELEVATOR_BOTTOM).whenPressed(new SetElevatorPosition(Elevator.BOTTOM));
+        getButton(Joysticks.PANEL,ELEVATOR_BOTTOM).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.BOTTOM),
+                new SetElevatorPosition(ELEVATOR_LOW_HATCH_BALL)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // Loading station ball
-        getButton(Joysticks.PANEL,ELVATOR_LOADING_STATION_BALL).whenPressed(new SetElevatorPosition(Elevator.FEEDER_BALL));
+        getButton(Joysticks.PANEL,ELEVATOR_LOADING_STATION_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.FEEDER_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // Ball cargo ship
-        getButton(Joysticks.PANEL,ELEVATOR_CARGOSHIP_BALL).whenPressed(new SetElevatorPosition(Elevator.CARGOSHIP_BALL));
+        getButton(Joysticks.PANEL, ELEVATOR_CARGOSHIP_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.CARGOSHIP_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // low hatch/ball rocket
-        getButton(Joysticks.PANEL,ELEVATOR_LOW_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.BOTTOM_HATCH));
+        getButton(Joysticks.PANEL, ELEVATOR_LOW_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_LOW_BALL),
+                new SetElevatorPosition(Elevator.BOTTOM_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // middle hatch/ball
-        getButton(Joysticks.PANEL,ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.MIDDLE_HATCH));
+        getButton(Joysticks.PANEL, ELEVATOR_MIDDLE_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_MIDDLE_BALL),
+                new SetElevatorPosition(Elevator.MIDDLE_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // Top hatch/ball
-        getButton(Joysticks.PANEL,ELEVATOR_TOP_HATCH_BALL).whenPressed(new SetElevatorPosition(Elevator.TOP_HATCH));
+        getButton(Joysticks.PANEL, ELEVATOR_TOP_HATCH_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.ROCKET_TOP_BALL),
+                new SetElevatorPosition(Elevator.TOP_HATCH)
+        )
+        {
+            @Override
+            protected boolean condition()
+            {
+                return getButton(Joysticks.PANEL,HATCH_BALL_TOGGLE).get();
+            }
+        });
 
         // Climb
         getButton(Joysticks.PANEL, CLIMB).whileHeld(new ConditionalCommand(
