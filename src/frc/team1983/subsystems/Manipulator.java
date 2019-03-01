@@ -1,6 +1,7 @@
 package frc.team1983.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
@@ -14,13 +15,14 @@ import frc.team1983.utilities.motors.Talon;
  */
 public class Manipulator extends Subsystem
 {
-    private Logger logger;
-
     private DoubleSolenoid extender;
     private DoubleSolenoid hooks;
 
     private Talon leftGripper;
     private Talon rightGripper;
+
+    private DigitalInput ballSensor;
+    private DigitalInput hatchSensor;
 
     public Manipulator()
     {
@@ -29,8 +31,12 @@ public class Manipulator extends Subsystem
 
         extender = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE);
         hooks = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
+
         leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
         rightGripper = new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
+
+        ballSensor = new DigitalInput(RobotMap.Manipulator.BALL_SENSOR);
+        hatchSensor = new DigitalInput(RobotMap.Manipulator.HATCH_SENSOR);
     }
 
     @Override
@@ -112,5 +118,15 @@ public class Manipulator extends Subsystem
     {
         setLeftGripper(output);
         setRightGripper(output);
+    }
+
+    public boolean getBallSensorValue()
+    {
+        return ballSensor.get();
+    }
+
+    public boolean getHatchSensorValue()
+    {
+        return hatchSensor.get();
     }
 }
