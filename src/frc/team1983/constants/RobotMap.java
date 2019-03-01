@@ -50,7 +50,9 @@ public class RobotMap
         public static final boolean RIGHT_GRIPPER_REVERSED = false;
 
         public static final int BALL_SENSOR = 6;
-        public static final int HATCH_SENSOR = 7;
+        public static final int HATCH_SENSOR = 2;
+
+        public static final int GRIPPER_ENCODER = 4;
     }
 
     public static class Elevator
