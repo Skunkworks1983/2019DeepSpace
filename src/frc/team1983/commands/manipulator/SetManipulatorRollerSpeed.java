@@ -44,8 +44,7 @@ public class SetManipulatorRollerSpeed extends Command
     @Override
     public void initialize()
     {
-        manipulator.setLeftGripper(leftSpeed);
-        manipulator.setRightGripper(rightSpeed);
+        manipulator.setGrippers(leftSpeed);
     }
 
     @Override

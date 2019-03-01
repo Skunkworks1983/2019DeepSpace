@@ -145,7 +145,6 @@ public class MotorGroup implements PIDInput, PIDOutput
      */
     public void set(ControlMode controlMode, double value)
     {
-        setpoint = value;
         if (controlMode == ControlMode.Throttle)
         {
             disableController();
@@ -153,6 +152,9 @@ public class MotorGroup implements PIDInput, PIDOutput
         }
         else
         {
+            if(value == setpoint) return;
+            setpoint = value;
+
             createController();
             if(controlMode == ControlMode.MotionMagic)
                 controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration));
