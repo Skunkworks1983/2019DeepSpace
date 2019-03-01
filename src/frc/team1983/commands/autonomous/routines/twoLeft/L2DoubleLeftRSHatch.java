@@ -16,26 +16,29 @@ public class L2DoubleLeftRSHatch extends Routine {
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
-        addSequential(new SetElevatorPosition(elevator, /*setpoint*/));
 
         addSequential(new DrivePath(new Path(
                 new Pose(9.67, 5.54, -90),
-                new Pose(4.33, 33.23, -90)
-        ), -3));
+                new Pose(4.33, 23.23, -90)
+        ), -0.6));
 
         addSequential(new DrivePath(new Path(
-                new Pose(4.33, 33.23, -90),
+                new Pose(4.33, 23.23, -90),
                 (Pose.LEFT_ROCKET_FAR)
-        ), 3));
+        ), 0.4));
+
+        addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
 
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
 
+        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
+
         addSequential(new DrivePath(new Path(
                 (Pose.LEFT_ROCKET_FAR),
                 new Pose(4.82, 23.59, -90)
-        ), 3));
+        ), -0.4));
 
         addSequential(new DrivePath(new Path(
                 new Pose(4.82, 23.59, -90),

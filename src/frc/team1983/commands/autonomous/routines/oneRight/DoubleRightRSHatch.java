@@ -19,19 +19,21 @@ public class DoubleRightRSHatch extends Routine
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
-        addSequential(new SetElevatorPosition(elevator, /*setpoint*/));
         addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                (Pose.LEVEL_2_RIGHT),
+                new Pose(24.72, 21.64, -61.25),
                 new Pose(22.62, 23.89, -90)
-        ), -3));
+        ), -0.8));
+
+        addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
 
         addSequential(new DrivePath(new Path(
                 new Pose(22.62, 23.89, -90),
                 (Pose.RIGHT_ROCKET_FAR)
-        ), 3));
+        ), 0.3));
 
+        addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
@@ -48,6 +50,7 @@ public class DoubleRightRSHatch extends Routine
                 (Pose.RIGHT_ROCKET_CLOSE)
         ), -3));
 
+        addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));

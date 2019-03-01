@@ -19,19 +19,19 @@ public class DoubleCenterCSHatch extends Routine
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
         addSequential(new SetHooksOpen(manipulator, true));
-        addSequential(new SetElevatorPosition(elevator, /*placeholder*/));
+        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
 
         addSequential(new DrivePath(new Path(
                 (Pose.LEVEL_1_MIDDLE),
                 (Pose.CARGO_SHIP_MIDDLE_RIGHT)
-        ),3));
+        ),0.6));
 
-        addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
+        addSequential(new SetManipulatorRollerSpeed(manipulator, 0.5, true));
 
         addSequential(new DrivePath(new Path(
                 new Pose(14.42, 16.0, -90),
                 (Pose.RIGHT_LOADING_STATION)
-        ), 3));
+        ), 0.6));
 
         addSequential(new SetManipulatorRollerSpeed(manipulator, -0.3, true));
 
@@ -39,7 +39,7 @@ public class DoubleCenterCSHatch extends Routine
                 new Pose(25.1, 1.54, 90),
                 new Pose(16.69, 10.65, -180),
                 (Pose.CARGO_SHIP_MIDDLE_LEFT)
-        ), 3));
+        ), 0.5));
 
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
     }

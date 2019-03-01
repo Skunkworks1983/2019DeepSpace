@@ -17,7 +17,7 @@ public class L2DoubleLeftCSHatch extends Routine
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
         addSequential(new DrivePath(new Path(
-                (Pose.LEVEL_1_LEFT),
+                (Pose.LEVEL_2_LEFT),
                 (Pose.CARGO_SHIP_LEFT_CLOSE)
         ), 0.8));
 
