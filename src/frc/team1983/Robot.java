@@ -2,6 +2,7 @@ package frc.team1983;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -107,12 +108,6 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-
     }
 
     public static Robot getInstance()

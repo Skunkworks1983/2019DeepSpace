@@ -10,7 +10,7 @@ public class IncrementElevatorPosition extends InstantCommand
 
     public IncrementElevatorPosition(Elevator elevator, double offset)
     {
-        super(elevator, () -> elevator.set(ControlMode.Position, offset + elevator.getPosition()));
+        super(elevator, () -> elevator.setPosition(offset + elevator.getPosition()));
     }
 
     public IncrementElevatorPosition(double offset)

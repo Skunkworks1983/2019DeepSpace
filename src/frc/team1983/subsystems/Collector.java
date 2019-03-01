@@ -2,6 +2,7 @@ package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.*;
 
@@ -16,6 +17,14 @@ public class Collector extends Subsystem
     public MotorGroup wristLeft, wristRight;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
+    public static final double DANGER_ZONE = 110.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 50.0; //TODO find exact value
+
+    public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
+    public static final double STOW_ZONE = 6.0; //TODO change value
+
+    public double desiredAngle = 0.0;
+    public double lastDesiredAngle = 0.0;
 
     public Collector()
     {
@@ -45,7 +54,13 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
+        if(getAngle() > FOLD_ANGLE && isFolded())
+            setFolded(false);
+        else if(getAngle() < FOLD_ANGLE && !isFolded())
+            setFolded(true);
 
+        if(!elevatorIsInCollectorPath())
+            wristRight.set(ControlMode.Position, desiredAngle);
     }
 
     /**
@@ -72,7 +87,8 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wristRight.set(ControlMode.Position, angle);
+        //wristRight.set(ControlMode.Position, angle);
+        desiredAngle = angle;
     }
 
     /**
@@ -111,6 +127,19 @@ public class Collector extends Subsystem
     /**
      * Zeros the wrist
      */
+
+    public boolean isInDangerZone()
+    {
+        return getAngle() < DANGER_ZONE;
+    }
+
+    public boolean elevatorIsInCollectorPath()
+    {
+        Elevator elevator = Robot.getInstance().getElevator();
+        return elevator.isInDangerZone() && ((desiredAngle < ELEVATOR_BOUNDARY && getAngle() >= ELEVATOR_BOUNDARY)
+                || (desiredAngle > ELEVATOR_BOUNDARY && getAngle() <= ELEVATOR_BOUNDARY));
+    }
+
     public void zero()
     {
         wristLeft.zero();

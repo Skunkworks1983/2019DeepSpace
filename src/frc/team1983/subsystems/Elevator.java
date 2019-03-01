@@ -1,9 +1,9 @@
 package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
@@ -28,9 +28,13 @@ public class Elevator extends Subsystem
     public static final double CARGOSHIP_BALL = 30;
     public static final double FEEDER_BALL = 0;
 
+    //danger zone setpoint
+    public static final double DANGER_ZONE = 48.0; //TODO add actual values
 
     public static final double kG = 0.04; // Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
+
+    public double desiredPosition;
 
     public MotorGroup motorGroup;
 
@@ -62,7 +66,8 @@ public class Elevator extends Subsystem
     @Override
     public void periodic()
     {
-
+        if(!collectorIsInElevatorPath())
+            motorGroup.set(ControlMode.MotionMagic, desiredPosition);
     }
 
     public void zero()
@@ -73,6 +78,11 @@ public class Elevator extends Subsystem
     public void set(ControlMode mode, double value)
     {
         motorGroup.set(mode, value);
+    }
+
+    public void setPosition(double position)
+    {
+        desiredPosition = position;
     }
 
     public double getPosition()
@@ -88,5 +98,18 @@ public class Elevator extends Subsystem
     public void setBrake(boolean brake)
     {
         motorGroup.setBrake(brake);
+    }
+
+    public boolean isInDangerZone()
+    {
+        return getPosition() < DANGER_ZONE;
+    }
+
+    public boolean collectorIsInElevatorPath()
+    {
+        Collector collector = Robot.getInstance().getCollector();
+        return (collector.isInDangerZone() && collector.getAngle() > Collector.STOW_ZONE) && (desiredPosition < DANGER_ZONE
+                || getPosition() < DANGER_ZONE);
+
     }
 }
