@@ -24,6 +24,7 @@ public class Manipulator extends Subsystem
     private DigitalInput ballSensor;
     private DigitalInput hatchSensor;
 
+
     public Manipulator()
     {
         leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);

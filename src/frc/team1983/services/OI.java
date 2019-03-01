@@ -134,6 +134,7 @@ public class OI
 
     public void initializeBindings()
     {
+        /*
         // Button to switch to manual mode is 24
         // Button to switch between balls and hatches is 14
         // Extra buttons are 17, 18, 19
@@ -261,5 +262,6 @@ public class OI
 
 //        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
 //        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
+        */
     }
 }

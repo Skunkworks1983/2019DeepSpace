@@ -17,14 +17,15 @@ public class Collector extends Subsystem
     public MotorGroup wristLeft, wristRight;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
+    public static final double CLOSED_LOOP_TOLERANCE = 3.0;
+
     public static final double DANGER_ZONE = 110.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 50.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 80.0; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
 
     public double desiredAngle = 0.0;
-    public double lastDesiredAngle = 0.0;
 
     public Collector()
     {
@@ -54,13 +55,20 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
+        // fold/unfold logic
         if(getAngle() > FOLD_ANGLE && isFolded())
             setFolded(false);
         else if(getAngle() < FOLD_ANGLE && !isFolded())
             setFolded(true);
 
+        // if the elevator is not between where we are and where we want to go,
+        // proceed to the desired setpoint
         if(!elevatorIsInCollectorPath())
             wristRight.set(ControlMode.Position, desiredAngle);
+
+        // if we are in the way of the elevator, move to the danger zone to let the elevator go by
+        if(Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
+            wristRight.set(ControlMode.Position, DANGER_ZONE);
     }
 
     /**
@@ -124,13 +132,14 @@ public class Collector extends Subsystem
         return wristRight.getPosition();
     }
 
-    /**
-     * Zeros the wrist
-     */
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(wristRight.getPosition() - wristRight.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
+    }
 
     public boolean isInDangerZone()
     {
-        return getAngle() < DANGER_ZONE;
+        return getAngle() <= DANGER_ZONE - CLOSED_LOOP_TOLERANCE;
     }
 
     public boolean elevatorIsInCollectorPath()

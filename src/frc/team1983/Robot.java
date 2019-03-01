@@ -110,6 +110,22 @@ public class Robot extends TimedRobot
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
+    @Override
+    public void teleopPeriodic()
+    {
+        System.out.println("eD: " + elevator.isInDangerZone() + " cD: " + collector.isInDangerZone());
+        System.out.println("eC: " + elevator.collectorIsInElevatorPath() + " cC: " + collector.elevatorIsInCollectorPath());
+        if(oi.getButton(OI.Joysticks.LEFT, 1).get())
+            collector.setAngle(130);
+        if(oi.getButton(OI.Joysticks.LEFT, 2).get())
+            collector.setAngle(0);
+
+        if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
+            elevator.setPosition(12 * 4);
+        if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
+            elevator.setPosition(0);
+    }
+
     public static Robot getInstance()
     {
         if (instance == null)

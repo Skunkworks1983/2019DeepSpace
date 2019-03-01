@@ -28,13 +28,15 @@ public class Elevator extends Subsystem
     public static final double CARGOSHIP_BALL = 30;
     public static final double FEEDER_BALL = 0;
 
-    //danger zone setpoint
-    public static final double DANGER_ZONE = 48.0; //TODO add actual values
+    public static final double CLOSED_LOOP_TOLERANCE = 2.0;
 
-    public static final double kG = 0.04; // Tested on practice bot with full battery
+    //danger zone setpoint
+    public static final double DANGER_ZONE = 22.0; //TODO add actual values
+
+    public static final double kG = 0.07; // Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
 
-    public double desiredPosition;
+    public double desiredPosition = BOTTOM;
 
     public MotorGroup motorGroup;
 
@@ -47,9 +49,9 @@ public class Elevator extends Subsystem
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
 
-        motorGroup.setMovementAcceleration(105);
-        motorGroup.setCruiseVelocity(105);
-        motorGroup.setKP(0.18);
+        motorGroup.setMovementAcceleration(90);
+        motorGroup.setCruiseVelocity(90);
+        motorGroup.setKP(0.05);
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
@@ -66,7 +68,10 @@ public class Elevator extends Subsystem
     @Override
     public void periodic()
     {
-        if(!collectorIsInElevatorPath())
+        // if we are in the way of the collector, move out of the way
+        if(Robot.getInstance().getCollector().elevatorIsInCollectorPath())
+            motorGroup.set(ControlMode.MotionMagic, DANGER_ZONE);
+        else// otherwise, proceed to our desired position
             motorGroup.set(ControlMode.MotionMagic, desiredPosition);
     }
 
@@ -100,9 +105,14 @@ public class Elevator extends Subsystem
         motorGroup.setBrake(brake);
     }
 
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(motorGroup.getPosition() - motorGroup.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
+    }
+
     public boolean isInDangerZone()
     {
-        return getPosition() < DANGER_ZONE;
+        return getPosition() <= DANGER_ZONE - CLOSED_LOOP_TOLERANCE;
     }
 
     public boolean collectorIsInElevatorPath()
