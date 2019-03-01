@@ -2,6 +2,7 @@ package frc.team1983.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
+import frc.team1983.services.OI;
 import frc.team1983.subsystems.Climber;
 import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Drivebase;
@@ -32,7 +33,7 @@ public class ClimbLevelTwo extends Command
     @Override
     public void initialize()
     {
-        climber.set(ControlMode.Position, -10);
+        climber.set(ControlMode.Position, -12);
         gyro.setPitch(0);
     }
 
@@ -48,7 +49,7 @@ public class ClimbLevelTwo extends Command
         if(climber.getPosition() < -8)
         {
             drivebase.set(ControlMode.Throttle, 0.1);
-            collector.setRollerThrottle(0.5);
+            collector.setRollerThrottle(0.75);
         }
         else
             collector.setRollerThrottle(1);
@@ -57,7 +58,7 @@ public class ClimbLevelTwo extends Command
     @Override
     protected boolean isFinished()
     {
-        return false;
+        return !Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.CLIMB).get();
     }
 
     @Override

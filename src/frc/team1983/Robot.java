@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -108,22 +110,6 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-        System.out.println("eD: " + elevator.isInDangerZone() + " cD: " + collector.isInDangerZone());
-        System.out.println("eC: " + elevator.collectorIsInElevatorPath() + " cC: " + collector.elevatorIsInCollectorPath());
-        if(oi.getButton(OI.Joysticks.LEFT, 1).get())
-            collector.setAngle(130);
-        if(oi.getButton(OI.Joysticks.LEFT, 2).get())
-            collector.setAngle(0);
-
-        if(oi.getButton(OI.Joysticks.RIGHT, 1).get())
-            elevator.setPosition(12 * 4);
-        if(oi.getButton(OI.Joysticks.RIGHT, 2).get())
-            elevator.setPosition(0);
     }
 
     public static Robot getInstance()

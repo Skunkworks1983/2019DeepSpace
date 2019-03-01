@@ -9,7 +9,7 @@ import frc.team1983.utilities.motors.Talon;
 
 public class Climber extends Subsystem
 {
-    private MotorGroup motorGroup;
+    public MotorGroup motorGroup;
 
     public static final double INCHES_PER_TICK = 1.0 / 1383.7;
 
@@ -18,7 +18,7 @@ public class Climber extends Subsystem
         motorGroup = new MotorGroup("Climber", new Talon(RobotMap.Climber.RIGHT, RobotMap.Climber.RIGHT_REVERSED));
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
-        motorGroup.setKP(0.2);
+        motorGroup.setKP(0.1);
 
         motorGroup.setBrake(true);
     }

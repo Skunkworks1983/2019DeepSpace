@@ -145,9 +145,7 @@ public class MotorGroupController extends Thread
     protected double calculate(double setpoint)
     {
         double currentValue = input.pidGet();
-
         double error = setpoint - currentValue; // Current error
-
         double output; // Percent output to be applied to the motor
 
         output = error * kP;
@@ -205,5 +203,10 @@ public class MotorGroupController extends Thread
             enabled = false;
             motionProfile = null;
         }
+    }
+
+    public synchronized boolean isEnabled()
+    {
+        return enabled;
     }
 }

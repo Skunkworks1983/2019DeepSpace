@@ -14,7 +14,7 @@ import frc.team1983.utilities.motors.Spark;
 public class Elevator extends Subsystem
 {
     // setpoint for bottom of the elevator
-    public static final double BOTTOM = 0;
+    public static final double BOTTOM = 4;
 
     // Setpoints for hatches
     public static final double BOTTOM_HATCH = 7;
@@ -26,7 +26,7 @@ public class Elevator extends Subsystem
     public static final double ROCKET_MIDDLE_BALL = 44;
     public static final double ROCKET_TOP_BALL = 72.3875;
     public static final double CARGOSHIP_BALL = 30;
-    public static final double FEEDER_BALL = 0;
+    public static final double FEEDER_BALL = 33;
 
     public static final double CLOSED_LOOP_TOLERANCE = 2.0;
 
@@ -51,7 +51,7 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(90);
         motorGroup.setCruiseVelocity(90);
-        motorGroup.setKP(0.05);
+        motorGroup.setKP(0.14);
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
