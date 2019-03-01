@@ -109,12 +109,6 @@ public class Robot extends TimedRobot
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
-    @Override
-    public void teleopPeriodic()
-    {
-
-    }
-
     public static Robot getInstance()
     {
         if (instance == null)

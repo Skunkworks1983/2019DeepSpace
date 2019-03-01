@@ -280,7 +280,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return getPositionTicks();
+        return getPositionTicks() * conversionRatio;
     }
 
     /**
