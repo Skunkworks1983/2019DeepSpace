@@ -33,14 +33,14 @@ public class ClimbLevelTwo extends Command
     @Override
     public void initialize()
     {
-        climber.set(ControlMode.Position, -12);
+        climber.set(ControlMode.Position, -14);
         gyro.setPitch(0);
     }
 
     @Override
     protected void execute()
     {
-        throttle = gyro.getPitch() / 3;
+        throttle = gyro.getPitch() * 3;
 
         if (collector.getAngle() < 120 && throttle < 0) throttle = 0;
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;

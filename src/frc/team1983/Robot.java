@@ -101,8 +101,10 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        drivebase.setBrake(true);
         compressor.start();
+        Scheduler.getInstance().add(new RunTankDrive());
+        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
+        manipulator.setHooks(false);
     }
 
     @Override
