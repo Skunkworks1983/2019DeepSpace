@@ -12,6 +12,12 @@ import frc.team1983.utilities.motors.*;
  */
 public class Collector extends Subsystem
 {
+    public static class Setpoints
+    {
+        public static final double STOW = 0.0;
+        public static final double COLLECT = 140.0;
+    }
+
     private Talon roller;
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
@@ -20,7 +26,7 @@ public class Collector extends Subsystem
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
     public static final double DANGER_ZONE = 110.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 80.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 55.0; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
@@ -95,7 +101,6 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        //wristRight.set(ControlMode.Position, angle);
         desiredAngle = angle;
     }
 
@@ -105,7 +110,7 @@ public class Collector extends Subsystem
 
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     /**
      *
@@ -113,7 +118,7 @@ public class Collector extends Subsystem
      */
     public boolean isFolded()
     {
-        return piston.get() == DoubleSolenoid.Value.kReverse;
+        return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**

@@ -13,30 +13,41 @@ import frc.team1983.utilities.motors.Spark;
  */
 public class Elevator extends Subsystem
 {
-    // setpoint for bottom of the elevator
-    public static final double BOTTOM = 4;
+    public static class Setpoints
+    {
+        public static final double BOTTOM = 0.0;
+        public static final double TRAVEL = Panel.GROUND_COLLECT;
 
-    // Setpoints for hatches
-    public static final double BOTTOM_HATCH = 7;
-    public static final double MIDDLE_HATCH = 34.5;
-    public static final double TOP_HATCH = 63.5;
+        public static class Panel
+        {
+            public static final double GROUND_COLLECT = 7.0;
+            public static final double ROCKET_BOTTOM = GROUND_COLLECT;
+            public static final double ROCKET_MIDDLE = 34.5;
+            public static final double ROCKET_TOP = 63.5;
+            public static final double CARGOSHIP = ROCKET_BOTTOM;
+            public static final double LOADING_STATION = GROUND_COLLECT;
+            public static final double LOADING_STATION_POP_UP = LOADING_STATION + 7.0;
+        }
 
-    // Setpoints for balls
-    public static final double ROCKET_LOW_BALL = 17;
-    public static final double ROCKET_MIDDLE_BALL = 44;
-    public static final double ROCKET_TOP_BALL = 72.3875;
-    public static final double CARGOSHIP_BALL = 30;
-    public static final double FEEDER_BALL = 33;
-
-    public static final double CLOSED_LOOP_TOLERANCE = 2.0;
+        public static class Ball
+        {
+            public static final double GROUND_COLLECT = BOTTOM;
+            public static final double ROCKET_BOTTOM = 17.0;
+            public static final double ROCKET_MIDDLE = 44.0;
+            public static final double ROCKET_TOP = 72.5;
+            public static final double CARGOSHIP = 30.0;
+            public static final double LOADING_STATION = 33.0;
+        }
+    }
 
     //danger zone setpoint
-    public static final double DANGER_ZONE = 22.0; //TODO add actual values
-
-    public static final double kG = 0.07; // Tested on practice bot with full battery
     public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
+    public static final double CLOSED_LOOP_TOLERANCE = 2.0;
 
-    public double desiredPosition = BOTTOM;
+    public static final double DANGER_ZONE = 26.0; //TODO add actual values
+    public static final double kG = 0.07; // Tested on practice bot with full battery
+
+    public double desiredPosition = Setpoints.BOTTOM;
 
     public MotorGroup motorGroup;
 
@@ -51,7 +62,7 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(90);
         motorGroup.setCruiseVelocity(90);
-        motorGroup.setKP(0.14);
+        motorGroup.setKP(0.05);
 
         motorGroup.setFFOperator(this);
         motorGroup.addFFTerm(Elevator -> kG);
