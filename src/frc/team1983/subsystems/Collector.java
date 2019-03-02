@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
+import frc.team1983.services.OI;
 import frc.team1983.utilities.motors.*;
 
 /**
@@ -15,6 +16,7 @@ public class Collector extends Subsystem
     public static class Setpoints
     {
         public static final double STOW = 0.0;
+        public static final double STOW_UPPER = 115.0;
         public static final double COLLECT = 140.0;
     }
 
@@ -25,8 +27,8 @@ public class Collector extends Subsystem
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
-    public static final double DANGER_ZONE = 110.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 55.0; //TODO find exact value
+    public static final double DANGER_ZONE = 125.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 110.0; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
@@ -66,6 +68,12 @@ public class Collector extends Subsystem
             setFolded(false);
         else if(getAngle() < FOLD_ANGLE && !isFolded())
             setFolded(true);
+
+        // collect
+        if(!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE).get() && getAngle() > 90.0)
+            setRollerThrottle(1);
+        else
+            setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint

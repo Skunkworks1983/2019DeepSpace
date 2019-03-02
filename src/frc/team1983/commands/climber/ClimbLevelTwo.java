@@ -42,9 +42,9 @@ public class ClimbLevelTwo extends Command
     {
         throttle = gyro.getPitch() / 3;
 
-        if (collector.getAngle() < 90 && throttle < 0) throttle = 0;
+        if (collector.getAngle() < 120 && throttle < 0) throttle = 0;
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
-        collector.setWristThrottle(throttle);
+        collector.setAngle(collector.getAngle() + throttle);
 
         if(climber.getPosition() < -8)
         {

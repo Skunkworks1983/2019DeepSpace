@@ -44,7 +44,7 @@ public class ClimbLevelThree extends Command
 
         if (collector.getAngle() < 90 && throttle < 0) throttle = 0;
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
-        collector.setWristThrottle(throttle);
+        collector.setAngle(collector.getAngle() + throttle);
 
         if(climber.getPosition() < -18)
         {
