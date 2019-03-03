@@ -48,6 +48,7 @@ public class Elevator extends Subsystem
     public static final double kG = 0.07; // Tested on practice bot with full battery
 
     public double desiredPosition = Setpoints.BOTTOM;
+    public boolean automationEnabled = true;
 
     public MotorGroup motorGroup;
 
@@ -79,8 +80,10 @@ public class Elevator extends Subsystem
     @Override
     public void periodic()
     {
+        //if(!automationEnabled) return;
+
         // if we are in the way of the collector, move out of the way
-        if(Robot.getInstance().getCollector().elevatorIsInCollectorPath())
+        if (Robot.getInstance().getCollector().elevatorIsInCollectorPath())
             motorGroup.set(ControlMode.MotionMagic, DANGER_ZONE);
         else// otherwise, proceed to our desired position
             motorGroup.set(ControlMode.MotionMagic, desiredPosition);
@@ -93,11 +96,13 @@ public class Elevator extends Subsystem
 
     public void set(ControlMode mode, double value)
     {
+        if(mode == ControlMode.Throttle) automationEnabled = false;
         motorGroup.set(mode, value);
     }
 
     public void setPosition(double position)
     {
+        automationEnabled = true;
         desiredPosition = position;
     }
 

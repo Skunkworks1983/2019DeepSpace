@@ -28,12 +28,14 @@ public class Collector extends Subsystem
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
     public static final double DANGER_ZONE = 125.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 110.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 110; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
 
     public double desiredAngle = 0.0;
+    public boolean automationEnabled = true;
+    public boolean climbing = false;
 
     public Collector()
     {
@@ -63,25 +65,32 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
+        //if(!automationEnabled) return;
+
         // fold/unfold logic
-        if(getAngle() > FOLD_ANGLE && isFolded())
+        if(!climbing)
+        {
+            if (getAngle() > FOLD_ANGLE && isFolded())
+                setFolded(false);
+            else if (getAngle() < FOLD_ANGLE && !isFolded())
+                setFolded(true);
+        }
+        else
             setFolded(false);
-        else if(getAngle() < FOLD_ANGLE && !isFolded())
-            setFolded(true);
 
         // collect
-        if(!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE).get() && getAngle() > 90.0)
+        if (!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE).get() && getAngle() > 90.0)
             setRollerThrottle(1);
-        else
+        else if(Robot.getInstance().getClimber().getPosition() > -5)
             setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint
-        if(!elevatorIsInCollectorPath())
+        if (!elevatorIsInCollectorPath())
             wristRight.set(ControlMode.Position, desiredAngle);
 
         // if we are in the way of the elevator, move to the danger zone to let the elevator go by
-        if(Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
+        if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
             wristRight.set(ControlMode.Position, DANGER_ZONE);
     }
 
@@ -90,6 +99,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
+        automationEnabled = false;
         wristRight.set(ControlMode.Throttle, output);
     }
 
@@ -109,6 +119,7 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
+        automationEnabled = true;
         desiredAngle = angle;
     }
 

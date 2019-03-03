@@ -1,7 +1,9 @@
 package frc.team1983.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team1983.Robot;
+import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.services.OI;
 import frc.team1983.subsystems.Climber;
 import frc.team1983.subsystems.Collector;
@@ -33,6 +35,7 @@ public class ClimbLevelTwo extends Command
     @Override
     public void initialize()
     {
+        Robot.getInstance().getCollector().climbing = true;
         climber.set(ControlMode.Position, -14);
         gyro.setPitch(0);
     }
@@ -40,19 +43,15 @@ public class ClimbLevelTwo extends Command
     @Override
     protected void execute()
     {
-        throttle = gyro.getPitch() * 3;
+        throttle = gyro.getPitch() / 3;
 
         if (collector.getAngle() < 120 && throttle < 0) throttle = 0;
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
-        collector.setAngle(collector.getAngle() + throttle);
+        collector.setWristThrottle(throttle);
 
-        if(climber.getPosition() < -8)
-        {
-            drivebase.set(ControlMode.Throttle, 0.1);
-            collector.setRollerThrottle(0.75);
-        }
-        else
-            collector.setRollerThrottle(1);
+        collector.setRollerThrottle(1);
+
+        if(climber.getPosition() < -8) drivebase.set(ControlMode.Throttle, 0.2);
     }
 
     @Override
@@ -64,6 +63,7 @@ public class ClimbLevelTwo extends Command
     @Override
     protected void end()
     {
+        Robot.getInstance().getCollector().climbing = false;
         collector.setWristThrottle(0);
         collector.setRollerThrottle(0);
         climber.set(ControlMode.Position, 0);

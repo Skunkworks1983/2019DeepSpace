@@ -156,7 +156,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new ConditionalCommand(
-                new SetElevatorPosition(Elevator.Setpoints.Panel.LOADING_STATION_POP_UP),
+                new SetElevatorPosition(Elevator.Setpoints.Ball.LOADING_STATION),
                 new SetElevatorPosition(Elevator.Setpoints.Ball.LOADING_STATION),
                 (args) -> isInHatchMode()
         ));
@@ -167,7 +167,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_3).whenPressed(new ConditionalCommand(
-                new SetElevatorPosition(Elevator.Setpoints.Ball.LOADING_STATION),
+                new SetElevatorPosition(Elevator.Setpoints.Ball.CARGOSHIP),
                 new SetElevatorPosition(Elevator.Setpoints.Ball.CARGOSHIP),
                 (args) -> isInHatchMode()
         ));
@@ -178,7 +178,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_4).whenPressed(new ConditionalCommand(
-                new SetElevatorPosition(Elevator.Setpoints.Panel.LOADING_STATION_POP_UP),
+                new SetElevatorPosition(Elevator.Setpoints.Ball.CARGOSHIP),
                 new SetElevatorPosition(Elevator.Setpoints.Ball.ROCKET_BOTTOM),
                 (args) -> isInHatchMode()
         ));
@@ -241,8 +241,9 @@ public class OI
                 (args) -> isInHatchMode()
         ));
 
-        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(115));
+        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(112));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
+        getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
                 new ClimbLevelTwo(),

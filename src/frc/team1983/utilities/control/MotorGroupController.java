@@ -190,6 +190,7 @@ public class MotorGroupController extends Thread
      */
     public synchronized void enable()
     {
+        //setpoint = input.pidGet();
         enabled = true;
     }
 
