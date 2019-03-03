@@ -3,6 +3,7 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
@@ -21,6 +22,8 @@ public class Manipulator extends Subsystem
 
     private DigitalInput ballSensor;
     private DigitalInput hatchSensor;
+
+    private boolean lastBallSensorValue = false;
 
 
     public Manipulator()
@@ -45,9 +48,16 @@ public class Manipulator extends Subsystem
     @Override
     public void periodic()
     {
+        boolean value = ballSensor.get();
+        System.out.println(value);
+
+        if(value && !lastBallSensorValue)
+            Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 5.0, 12.0));
 //        System.out.println("ballSensor: " + ballSensor.get());
 //        System.out.println("hatchSensor: " + hatchSensor.get());
 //        System.out.println("gripperEncoder: " + grippers.getPositionTicks());
+
+        lastBallSensorValue = value;
     }
 
     /**

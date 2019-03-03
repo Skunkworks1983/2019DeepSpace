@@ -234,6 +234,10 @@ public class OI
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
+                new SetElevatorPosition(Elevator.Setpoints.BOTTOM),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.COLLECT),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
@@ -241,6 +245,15 @@ public class OI
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
+                new SetManipulatorExtended(false),
+                (args) -> Robot.getInstance().getElevator().isInDangerZone()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
+                new SetManipulatorExtended(true),
+                (args) -> Robot.getInstance().getElevator().isInDangerZone()
+        ));
+
 
         getButton(Joysticks.PANEL, EXPEL_PANEL).whileHeld(new ConditionalCommand(
                 new SetManipulatorRollerSpeed(-1),
@@ -257,8 +270,8 @@ public class OI
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
 
-        getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
-        getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
+        getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
+        getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
 
         getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(112));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
