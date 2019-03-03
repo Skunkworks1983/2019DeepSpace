@@ -49,7 +49,6 @@ public class Manipulator extends Subsystem
     public void periodic()
     {
         boolean value = ballSensor.get();
-        System.out.println(value);
 
         if(value && !lastBallSensorValue)
             Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 5.0, 12.0));
