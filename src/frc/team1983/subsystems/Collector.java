@@ -79,7 +79,7 @@ public class Collector extends Subsystem
             setFolded(false);
 
         // collect
-        if (!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE).get() && getAngle() > 90.0)
+        if (!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE_PANEL).get() && getAngle() > 90.0)
             setRollerThrottle(1);
         else if(Robot.getInstance().getClimber().getPosition() > -5)
             setRollerThrottle(0);

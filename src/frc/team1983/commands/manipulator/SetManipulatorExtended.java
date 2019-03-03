@@ -8,7 +8,7 @@ public class SetManipulatorExtended extends InstantCommand
 {
     public SetManipulatorExtended(Manipulator manipulator, boolean extended)
     {
-        super(manipulator, () -> manipulator.setExtender(extended));
+        super(manipulator, () -> manipulator.setExtended(extended));
     }
 
     public SetManipulatorExtended(boolean extended)

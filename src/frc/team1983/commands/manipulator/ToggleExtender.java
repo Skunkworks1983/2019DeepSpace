@@ -8,7 +8,7 @@ public class ToggleExtender extends InstantCommand
 {
     public ToggleExtender(Manipulator manipulator)
     {
-        super(manipulator, () -> manipulator.setExtender(!manipulator.getExtender()));
+        super(manipulator, () -> manipulator.setExtended(!manipulator.getExtended()));
     }
 
     public ToggleExtender()

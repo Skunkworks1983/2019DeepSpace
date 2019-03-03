@@ -2,6 +2,7 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.ClimbLevelThree;
 import frc.team1983.commands.climber.ClimbLevelTwo;
@@ -51,8 +52,11 @@ public class OI
     public static final int EXTEND_MANIPULATOR = 23;
     public static final int RETRACT_MANIPULATOR = 20;
 
-    public static final int EXPEL = 22;
-    public static final int INTAKE = 21;
+    public static final int EXPEL_PANEL = 22;
+    public static final int INTAKE_PANEL = 21;
+
+    public static final int EXPEL_BALL = INTAKE_PANEL;
+    public static final int INTAKE_BALL = EXPEL_PANEL;
 
     public static final int MANUAL_ENABLED = 24;
     public static final int MANUAL_ELEVATOR_UP = 2;
@@ -162,7 +166,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
 
@@ -173,7 +177,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_3).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
 
@@ -184,7 +188,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_4).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
 
@@ -195,7 +199,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_5).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
 
@@ -206,40 +210,50 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_6).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
-                (args) -> !isInHatchMode()
-        ));
-
-        getButton(Joysticks.PANEL, INTAKE).whileHeld(new ConditionalCommand(
-                new SetManipulatorRollerSpeed(-1),
-                new SetManipulatorRollerSpeed(1),
-                (args) -> isInHatchMode()
-        ));
-
-        getButton(Joysticks.PANEL, EXPEL).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.COLLECT),
-                (args) -> !isInHatchMode()
-        ));
-
-        getButton(Joysticks.PANEL, EXPEL).whenPressed(new ConditionalCommand(
-                new SetHooksOpen(false),
-                (args) -> !isInHatchMode()
-        ));
-
-
-        getButton(Joysticks.PANEL, EXPEL).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode()
         ));
 
-        getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
-        getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
-
-        getButton(Joysticks.PANEL, EXPEL).whileHeld(new ConditionalCommand(
-                new SetManipulatorRollerSpeed(1),
+        // -1 intakes panel, 1 expels panel
+        // 1 intakes ball, -1 expels ball
+        getButton(Joysticks.PANEL, INTAKE_PANEL).whileHeld(new ConditionalCommand(
                 new SetManipulatorRollerSpeed(-1),
                 (args) -> isInHatchMode()
         ));
+        getButton(Joysticks.PANEL, INTAKE_PANEL).whenPressed(new ConditionalCommand(
+                new SetManipulatorOpen(false),
+                (args) -> isInHatchMode()
+        ));
+
+        getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
+                new SetManipulatorRollerSpeed(1),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
+                new SetManipulatorOpen(true),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
+                new SetCollectorAngle(Collector.Setpoints.COLLECT),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+
+        getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
+                new SetManipulatorRollerSpeed(-1),
+                (args) -> !isInHatchMode()
+        ));
+
+        getButton(Joysticks.PANEL, EXPEL_PANEL).whileHeld(new ConditionalCommand(
+                new SetManipulatorRollerSpeed(1),
+                (args) -> isInHatchMode()
+        ));
+
+        getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
+        getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
 
         getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(112));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
@@ -265,14 +279,14 @@ public class OI
         getButton(Joysticks.PANEL, HATCH_BALL_TOGGLE).whenPressed(new SetCollectorAngle(140));
 
         // Expel
-        getButton(Joysticks.PANEL, EXPEL).whileHeld(new ConditionalCommand(
+        getButton(Joysticks.PANEL, EXPEL_PANEL).whileHeld(new ConditionalCommand(
                 new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),1,1,true),
                 new SetManipulatorRollerSpeed(Robot.getInstance().getManipulator(),-1,-1,true),
                 (args) -> isInHatchMode()
         ));
 
         // Intake
-        getButton(Joysticks.PANEL, INTAKE).whileHeld(new SetManipulatorRollerSpeed(1));
+        getButton(Joysticks.PANEL, INTAKE_PANEL).whileHeld(new SetManipulatorRollerSpeed(1));
 
 
         // Bottom

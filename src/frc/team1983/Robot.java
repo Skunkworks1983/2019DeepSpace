@@ -2,21 +2,16 @@ package frc.team1983;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.collector.SetCollectorAngle;
-import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.commands.elevator.SetElevatorPosition;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
-import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
@@ -104,7 +99,7 @@ public class Robot extends TimedRobot
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
-        manipulator.setHooks(false);
+        manipulator.setOpen(false);
     }
 
     @Override
