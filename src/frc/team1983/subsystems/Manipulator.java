@@ -51,7 +51,10 @@ public class Manipulator extends Subsystem
         boolean value = ballSensor.get();
 
         if(value && !lastBallSensorValue)
+        {
             Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 5.0, 12.0));
+            setExtended(false);
+        }
 //        System.out.println("ballSensor: " + ballSensor.get());
 //        System.out.println("hatchSensor: " + hatchSensor.get());
 //        System.out.println("gripperEncoder: " + grippers.getPositionTicks());
