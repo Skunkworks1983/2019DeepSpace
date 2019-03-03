@@ -78,11 +78,7 @@ public class Collector extends Subsystem
         else
             setFolded(false);
 
-        // collect
-        if (!Robot.getInstance().getOI().isInHatchMode() && Robot.getInstance().getOI().getButton(OI.Joysticks.PANEL, OI.INTAKE_PANEL).get() && getAngle() > 90.0)
-            setRollerThrottle(1);
-        else if(Robot.getInstance().getClimber().getPosition() > -5)
-            setRollerThrottle(0);
+        if(getAngle() < 15.0) setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint

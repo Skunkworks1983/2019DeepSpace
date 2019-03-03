@@ -55,7 +55,7 @@ public class Manipulator extends Subsystem
      */
     public void setExtended(boolean shouldExtend)
     {
-        extender.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        extender.set(shouldExtend ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
 
     /**
@@ -64,7 +64,7 @@ public class Manipulator extends Subsystem
      */
     public boolean getExtended()
     {
-        return extender.get() == DoubleSolenoid.Value.kForward;
+        return extender.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**

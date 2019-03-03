@@ -99,6 +99,8 @@ public class Robot extends TimedRobot
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
+
+        manipulator.setExtended(false);
         manipulator.setOpen(false);
     }
 
