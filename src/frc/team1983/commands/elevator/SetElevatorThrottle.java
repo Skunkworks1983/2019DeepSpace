@@ -5,18 +5,18 @@ import frc.team1983.Robot;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.utilities.motors.ControlMode;
 
-public class ManualElevator extends Command
+public class SetElevatorThrottle extends Command
 {
     private Elevator elevator;
     private double throttle;
 
-    public ManualElevator(Elevator elevator, double throttle)
+    public SetElevatorThrottle(Elevator elevator, double throttle)
     {
         this.elevator = elevator;
         this.throttle = throttle;
     }
 
-    public ManualElevator(double throttle)
+    public SetElevatorThrottle(double throttle)
     {
         this(Robot.getInstance().getElevator(), throttle);
     }

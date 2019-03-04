@@ -4,16 +4,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Manipulator;
 
-public class ToggleExtender extends InstantCommand
+public class ToggleManipulatorOpen extends InstantCommand
 {
-    public ToggleExtender(Manipulator manipulator)
+    public ToggleManipulatorOpen(Manipulator manipulator)
     {
-        super(manipulator, () -> manipulator.setExtended(!manipulator.getExtended()));
+        super(manipulator, () -> manipulator.setOpen(!manipulator.getOpen()));
     }
 
-    public ToggleExtender()
+    public ToggleManipulatorOpen()
     {
         this(Robot.getInstance().getManipulator());
     }
 }
-

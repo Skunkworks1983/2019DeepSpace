@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Manipulator;
 
-public class ToggleHooks extends InstantCommand
+public class ToggleManipulatorExtended extends InstantCommand
 {
-    public ToggleHooks(Manipulator manipulator)
+    public ToggleManipulatorExtended(Manipulator manipulator)
     {
-        super(manipulator, () -> manipulator.setOpen(!manipulator.getOpen()));
+        super(manipulator, () -> manipulator.setExtended(!manipulator.getExtended()));
     }
 
-    public ToggleHooks()
+    public ToggleManipulatorExtended()
     {
         this(Robot.getInstance().getManipulator());
     }

@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Collector;
 
-public class ToggleCollector extends InstantCommand
+public class ToggleCollectorFolded extends InstantCommand
 {
-    public ToggleCollector(Collector collector)
+    public ToggleCollectorFolded(Collector collector)
     {
         super(collector, () -> collector.setFolded(!collector.isFolded()));
     }
 
-    public ToggleCollector()
+    public ToggleCollectorFolded()
     {
         this(Robot.getInstance().getCollector());
     }
