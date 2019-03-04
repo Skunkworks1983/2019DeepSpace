@@ -36,7 +36,7 @@ public class ClimbLevelThree extends Command
     public void initialize()
     {
         Robot.getInstance().getCollector().climbing = true;
-        climber.set(ControlMode.Position, -24);
+        climber.set(ControlMode.Position, -25.5);
         gyro.setPitch(0);
     }
 

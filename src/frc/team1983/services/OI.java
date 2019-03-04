@@ -164,7 +164,7 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new ConditionalCommand(
-                new SetElevatorPosition(Elevator.Setpoints.Ball.LOADING_STATION),
+                new SetElevatorPosition(15.0),
                 new SetElevatorPosition(Elevator.Setpoints.Ball.LOADING_STATION),
                 (args) -> isInHatchMode()
         ));
@@ -243,7 +243,7 @@ public class OI
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
-                (args) -> !isInHatchMode()
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
                 new SetManipulatorExtended(false),
