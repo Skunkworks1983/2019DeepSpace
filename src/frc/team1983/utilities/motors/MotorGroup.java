@@ -127,7 +127,7 @@ public class MotorGroup implements PIDInput, PIDOutput
         else
         {
             feedbackType = controlMode == ControlMode.Position || controlMode == ControlMode.PositionProfiled ? FeedbackType.POSITION : FeedbackType.VELOCITY;
-            if(value == controller.getSetpoint()) return;
+            if(value == controller.getSetpoint()) return; // Todo: if the setpoint is the same but the mode is different, don't pass
 
             createController();
             if(controlMode == ControlMode.PositionProfiled)
