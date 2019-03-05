@@ -320,4 +320,9 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         this.conversionRatio = conversionRatio;
     }
+
+    public boolean controllerIsEnabled()
+    {
+        return controller.isEnabled();
+    }
 }

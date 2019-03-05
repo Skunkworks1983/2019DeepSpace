@@ -190,6 +190,7 @@ public class MotorGroupController extends Thread
      */
     public synchronized void enable()
     {
+        //setpoint = input.pidGet();
         enabled = true;
     }
 
@@ -203,5 +204,10 @@ public class MotorGroupController extends Thread
             enabled = false;
             motionProfile = null;
         }
+    }
+
+    public synchronized boolean isEnabled()
+    {
+        return enabled;
     }
 }
