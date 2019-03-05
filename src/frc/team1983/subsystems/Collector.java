@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
-import frc.team1983.services.OI;
 import frc.team1983.utilities.motors.*;
 
 /**
@@ -20,22 +19,24 @@ public class Collector extends Subsystem
         public static final double COLLECT = 140.0;
     }
 
+    public static final double DEGREES_PER_TICK = 90.0 / 93.0;
+    public static final double CLOSED_LOOP_TOLERANCE = 3.0; // degrees
+
+    public static final double DANGER_ZONE = 125.0; // degrees
+    public static final double FOLD_ANGLE = 110; // degrees
+
+    public static final double ELEVATOR_BOUNDARY = 35.0; // degrees
+    public static final double STOW_ZONE = 6.0; // degrees
+
+
     private Talon roller;
     private DoubleSolenoid piston;
-    public MotorGroup wristLeft, wristRight;
+    private MotorGroup wristLeft, wristRight;
 
-    public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
-    public static final double CLOSED_LOOP_TOLERANCE = 3.0;
+    private double desiredAngle = 0.0;
+    private boolean automationEnabled = true;
 
-    public static final double DANGER_ZONE = 125.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 110; //TODO find exact value
-
-    public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
-    public static final double STOW_ZONE = 6.0; //TODO change value
-
-    public double desiredAngle = 0.0;
-    public boolean automationEnabled = true;
-    public boolean climbing = false;
+    public boolean climbing = false; // todo delete
 
     public Collector()
     {
@@ -65,7 +66,7 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
-        //if(!automationEnabled) return;
+        if(!automationEnabled) return;
 
         // fold/unfold logic
         if(!climbing)

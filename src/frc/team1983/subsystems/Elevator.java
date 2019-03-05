@@ -7,50 +7,56 @@ import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * The elevator uses inches. Anywhere where 'height' is mentioned used the height of the carriage,
  * so the distance traveled by the first stage times three.
  */
 public class Elevator extends Subsystem
 {
+    public enum FunctionalSetpoint
+    {
+        GROUND_COLLECT, LOADING_STATION, CARGO_SHIP,
+        ROCKET_BOTTOM, ROCKET_MIDDLE, ROCKET_TOP, CUSTOM
+    }
+
     public static class Setpoints
     {
         public static final double BOTTOM = 0.0;
-        public static final double TRAVEL = Panel.GROUND_COLLECT;
 
-        public static class Panel
-        {
-            public static final double GROUND_COLLECT = 7.0;
-            public static final double ROCKET_BOTTOM = GROUND_COLLECT;
-            public static final double ROCKET_MIDDLE = 34.5;
-            public static final double ROCKET_TOP = 63.5;
-            public static final double CARGOSHIP = ROCKET_BOTTOM;
-            public static final double LOADING_STATION = GROUND_COLLECT;
-            public static final double LOADING_STATION_POP_UP = LOADING_STATION + 7.0;
-        }
+        public static final Map<FunctionalSetpoint, Double> Panel = Map.ofEntries(
+                Map.entry(FunctionalSetpoint.GROUND_COLLECT, 7.0),
+                Map.entry(FunctionalSetpoint.LOADING_STATION, 7.0),
+                Map.entry(FunctionalSetpoint.CARGO_SHIP, 7.0),
+                Map.entry(FunctionalSetpoint.ROCKET_BOTTOM, 7.0),
+                Map.entry(FunctionalSetpoint.ROCKET_MIDDLE, 34.5),
+                Map.entry(FunctionalSetpoint.ROCKET_TOP, 63.5)
+        );
 
-        public static class Ball
-        {
-            public static final double GROUND_COLLECT = BOTTOM;
-            public static final double ROCKET_BOTTOM = 17.0;
-            public static final double ROCKET_MIDDLE = 44.0;
-            public static final double ROCKET_TOP = 72.5;
-            public static final double CARGOSHIP = 30.0;
-            public static final double LOADING_STATION = 34.5;
-        }
+        public static final Map<FunctionalSetpoint, Double> Ball = Map.ofEntries(
+                Map.entry(FunctionalSetpoint.GROUND_COLLECT, 0.0),
+                Map.entry(FunctionalSetpoint.LOADING_STATION, 34.5),
+                Map.entry(FunctionalSetpoint.CARGO_SHIP, 30.0),
+                Map.entry(FunctionalSetpoint.ROCKET_BOTTOM, 17.0),
+                Map.entry(FunctionalSetpoint.ROCKET_MIDDLE, 44.0),
+                Map.entry(FunctionalSetpoint.ROCKET_TOP, 72.5)
+        );
     }
 
-    //danger zone setpoint
-    public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5; // Tested on practice bot
-    public static final double CLOSED_LOOP_TOLERANCE = 2.0;
+    public static final double INCHES_PER_TICK = (19.5 * 3.0) / 59.5;
+    public static final double CLOSED_LOOP_TOLERANCE = 2.0; // inches
 
-    public static final double DANGER_ZONE = 26.0; //TODO add actual values
-    public static final double kG = 0.07; // Tested on practice bot with full battery
+    public static final double DANGER_ZONE = 26.0; // inches
+    public static final double kG = 0.07; // %
 
-    public double desiredPosition = Setpoints.BOTTOM;
-    public boolean automationEnabled = true;
+    private double desiredPosition = Setpoints.BOTTOM;
+    private FunctionalSetpoint functionalSetpoint = null;
 
-    public MotorGroup motorGroup;
+    private boolean automationEnabled = true;
+
+    private MotorGroup motorGroup;
 
     public Elevator()
     {
@@ -77,7 +83,10 @@ public class Elevator extends Subsystem
     @Override
     public void periodic()
     {
-        //if(!automationEnabled) return;
+        if(!automationEnabled) return;
+
+        if(functionalSetpoint != FunctionalSetpoint.CUSTOM)
+            desiredPosition = (Robot.getInstance().isInPanelMode() ? Setpoints.Panel : Setpoints.Ball).get(functionalSetpoint);
 
         // if we are in the way of the collector, move out of the way
         if (Robot.getInstance().getCollector().elevatorIsInCollectorPath())
@@ -93,12 +102,18 @@ public class Elevator extends Subsystem
 
     public void set(ControlMode mode, double value)
     {
-        if(mode == ControlMode.Throttle) automationEnabled = false;
+        automationEnabled = false;
         motorGroup.set(mode, value);
     }
 
     public void setPosition(double position)
     {
+        Map<FunctionalSetpoint, Double> setpoints = Robot.getInstance().isInPanelMode() ? Setpoints.Panel : Setpoints.Ball;
+
+        for(Map.Entry<FunctionalSetpoint, Double> entry : setpoints.entrySet())
+            if(entry.getValue() == position)
+                functionalSetpoint = entry.getKey();
+
         automationEnabled = true;
         desiredPosition = position;
     }

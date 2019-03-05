@@ -99,7 +99,6 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
-        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
 
         manipulator.setExtended(false);
         manipulator.setOpen(false);
@@ -117,6 +116,11 @@ public class Robot extends TimedRobot
         if (instance == null)
             instance = new Robot();
         return instance;
+    }
+
+    public boolean isInPanelMode()
+    {
+        return oi.getButton(OI.Joysticks.PANEL, OI.HATCH_MODE_ENABLED).get();
     }
 
     public Drivebase getDrivebase()

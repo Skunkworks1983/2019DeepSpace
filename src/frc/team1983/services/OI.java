@@ -151,6 +151,7 @@ public class OI
 
     public void initializeBindings()
     {
+        /*
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
@@ -324,5 +325,6 @@ public class OI
 
 //        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
 //        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
+        */
     }
 }
