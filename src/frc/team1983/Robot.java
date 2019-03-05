@@ -13,6 +13,7 @@ import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
+import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.NavX;
@@ -69,7 +70,7 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         getGyro().reset();
-        estimator.setPose(Pose.DEFAULT);
+        estimator.setPose(Pose.LEVEL_1_MIDDLE);
     }
 
     @Override
@@ -97,6 +98,11 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
+
+        Scheduler.getInstance().add(new DrivePath(new Path(
+                Pose.LEVEL_1_MIDDLE,
+                Pose.CARGO_SHIP_MIDDLE_RIGHT
+        ), 4));
     }
 
     @Override

@@ -14,12 +14,13 @@ import frc.team1983.utilities.pathing.Pose;
  */
 public class PurePursuitController
 {
+    public static final double STEERING_FACTOR = 1.5; // unitless
     public static final double LOOKAHEAD_DISTANCE = 4.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
     public static final double CURVATURE_SLOWDOWN = 0.1; // unitless
 
-    public static final double ANGLE_CORRECTION = 3.5; // unitless
-    public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
+    public static final double ANGLE_CORRECTION = 4.0; // unitless
+    public static final double ANGLE_CORRECTION_DISTANCE = 3.5; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
     public static final double VELOCITY_DEADZONE = 0.2; // feet
@@ -84,7 +85,7 @@ public class PurePursuitController
         if(icc == null)
             return new Pair<>(velocity, velocity);
 
-        double radius = evaluateRadiusOfCurvature(pose, icc);
+        double radius = evaluateRadiusOfCurvature(pose, icc) * STEERING_FACTOR;
 
         // Correct for angle error
         double angleCorrection = 0;
@@ -201,7 +202,7 @@ public class PurePursuitController
      * @param path path to follow
      * @return in deadzone
      */
-    protected static boolean inDeadzone(Pose pose, Path path)
+    public static boolean inDeadzone(Pose pose, Path path)
     {
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);

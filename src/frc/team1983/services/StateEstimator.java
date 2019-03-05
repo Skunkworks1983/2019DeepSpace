@@ -21,9 +21,6 @@ public class StateEstimator implements Runnable
     private Gyro gyro;
 
     private double lastLeftPosition, lastRightPosition;
-    // TODO: find real
-//    private Vector2 position = new Vector2(0, 0);
-//    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
     private Vector2 position = Vector2.ZERO;
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)

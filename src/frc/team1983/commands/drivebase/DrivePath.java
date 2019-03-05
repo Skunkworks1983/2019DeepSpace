@@ -43,7 +43,7 @@ public class DrivePath extends Command
     @Override
     protected boolean isFinished()
     {
-        return false;
+        return PurePursuitController.inDeadzone(estimator.getCurrentPose(), path);
     }
 
     @Override
