@@ -110,6 +110,7 @@ public class Elevator extends Subsystem
     {
         Map<FunctionalSetpoint, Double> setpoints = Robot.getInstance().isInPanelMode() ? Setpoints.Panel : Setpoints.Ball;
 
+        functionalSetpoint = FunctionalSetpoint.CUSTOM;
         for(Map.Entry<FunctionalSetpoint, Double> entry : setpoints.entrySet())
             if(entry.getValue() == position)
                 functionalSetpoint = entry.getKey();
