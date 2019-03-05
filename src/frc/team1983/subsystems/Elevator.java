@@ -63,7 +63,7 @@ public class Elevator extends Subsystem
 
         motorGroup.setMovementAcceleration(90);
         motorGroup.setCruiseVelocity(90);
-        motorGroup.setKP(0.05);
+        motorGroup.setPIDF(0.05, 0, 0, 0);
 
         zero();
     }

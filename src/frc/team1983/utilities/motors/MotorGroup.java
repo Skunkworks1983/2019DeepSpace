@@ -120,11 +120,13 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         if (controlMode == ControlMode.Throttle)
         {
+            feedbackType = FeedbackType.NONE;
             disableController();
             setRawThrottle(value);
         }
         else
         {
+            feedbackType = controlMode == ControlMode.Position || controlMode == ControlMode.PositionProfiled ? FeedbackType.POSITION : FeedbackType.VELOCITY;
             if(value == controller.getSetpoint()) return;
 
             createController();
@@ -221,10 +223,13 @@ public class MotorGroup implements PIDInput, PIDOutput
     /**
      * Sets the PID gains of the controller
      */
-    public void setKP(double kP)
+    public void setPIDF(double p, double i, double d, double f)
     {
         createController();
-        controller.setKP(kP);
+        controller.setkP(p);
+        controller.setkI(i);
+        controller.setkD(d);
+        controller.setkF(f);
     }
 
     /**

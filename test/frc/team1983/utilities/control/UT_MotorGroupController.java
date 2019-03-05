@@ -29,7 +29,7 @@ public class UT_MotorGroupController
         when(motorGroup.pidGet()).thenReturn(0.0);
         when(motorGroup.getPositionTicks()).thenReturn(0.0);
         controller = new PIDFController(motorGroup);
-        controller.setKP(1);
+        controller.setkP(1);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class UT_MotorGroupController
     @Test
     public void setsProfileToNullAfterDurationExceeded()
     {
-        controller.setKP(0.1);
+        controller.setkP(0.1);
         controller.runMotionProfile(MotionProfile.generateProfile(0, 1e-5, 10, 10));
 
         controller.motionProfile.getDuration();

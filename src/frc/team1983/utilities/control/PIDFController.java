@@ -185,12 +185,12 @@ public class PIDFController extends Thread
         return setpoint;
     }
 
-    public void setKP(double kP)
+    public void setkP(double kP)
     {
         this.kP = kP;
     }
 
-    public double getKP()
+    public double getkP()
     {
         return kP;
     }

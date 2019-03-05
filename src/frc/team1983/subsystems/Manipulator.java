@@ -55,9 +55,6 @@ public class Manipulator extends Subsystem
             Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 6.0, 24.0));
             setExtended(true);
         }
-//        System.out.println("ballSensor: " + ballSensor.get());
-//        System.out.println("hatchSensor: " + hatchSensor.get());
-//        System.out.println("gripperEncoder: " + grippers.getPositionTicks());
 
         lastBallSensorValue = value;
     }

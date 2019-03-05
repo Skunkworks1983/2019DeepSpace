@@ -47,12 +47,12 @@ public class Collector extends Subsystem
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
-        wristRight.setKP(0.06);
+        wristRight.setPIDF(0.06, 0, 0, 0);
 
         wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
-        wristLeft.setKP(0.21);
+        wristLeft.setPIDF(0.21, 0, 0, 0);
         wristLeft.follow(wristRight);
     }
 
