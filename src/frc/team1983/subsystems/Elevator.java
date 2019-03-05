@@ -65,9 +65,6 @@ public class Elevator extends Subsystem
         motorGroup.setCruiseVelocity(90);
         motorGroup.setKP(0.05);
 
-        motorGroup.setFFOperator(this);
-        motorGroup.addFFTerm(Elevator -> kG);
-
         zero();
     }
 
@@ -84,9 +81,9 @@ public class Elevator extends Subsystem
 
         // if we are in the way of the collector, move out of the way
         if (Robot.getInstance().getCollector().elevatorIsInCollectorPath())
-            motorGroup.set(ControlMode.MotionMagic, DANGER_ZONE);
+            motorGroup.set(ControlMode.PositionProfiled, DANGER_ZONE);
         else// otherwise, proceed to our desired position
-            motorGroup.set(ControlMode.MotionMagic, desiredPosition);
+            motorGroup.set(ControlMode.PositionProfiled, desiredPosition);
     }
 
     public void zero()
@@ -119,11 +116,6 @@ public class Elevator extends Subsystem
     public void setBrake(boolean brake)
     {
         motorGroup.setBrake(brake);
-    }
-
-    public boolean isAtSetpoint()
-    {
-        return Math.abs(motorGroup.getPosition() - motorGroup.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
     }
 
     public boolean isInDangerZone()

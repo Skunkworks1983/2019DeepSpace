@@ -152,11 +152,6 @@ public class Collector extends Subsystem
         return wristRight.getPosition();
     }
 
-    public boolean isAtSetpoint()
-    {
-        return Math.abs(wristRight.getPosition() - wristRight.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
-    }
-
     public boolean isInDangerZone()
     {
         return getAngle() <= DANGER_ZONE - CLOSED_LOOP_TOLERANCE;

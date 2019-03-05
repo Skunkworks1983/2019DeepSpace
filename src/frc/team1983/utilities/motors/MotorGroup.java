@@ -1,7 +1,9 @@
 package frc.team1983.utilities.motors;
 
+import frc.team1983.Robot;
+import frc.team1983.constants.Constants;
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.control.MotorGroupController;
+import frc.team1983.utilities.control.PIDFController;
 import frc.team1983.utilities.control.PIDInput;
 import frc.team1983.utilities.control.PIDOutput;
 import frc.team1983.utilities.motion.MotionProfile;
@@ -10,7 +12,6 @@ import frc.team1983.utilities.sensors.Encoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Function;
 
 /**
  * This class represents a system of motors and an encoder
@@ -19,10 +20,10 @@ public class MotorGroup implements PIDInput, PIDOutput
 {
     public static ArrayList<MotorGroup> motorGroups = new ArrayList<>();
 
-    private Object ffOperator;
-
     protected ArrayList<Motor> motors;
-    protected MotorGroupController controller;
+
+    protected PIDFController controller;
+    protected FeedbackType feedbackType = FeedbackType.NONE;
 
     private double conversionRatio = 1;
     private double encoderOffset; // added to encoder setpoint for manual encoder zeroing
@@ -32,7 +33,6 @@ public class MotorGroup implements PIDInput, PIDOutput
 
     private double cruiseVelocity = 0;
     private double movementAcceleration = 0;
-    private double setpoint = 0;
 
     /**
      * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
@@ -79,19 +79,6 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * Sets the neos smart current limit
-     *
-     * @param limit The current limit
-     */
-    public void setCurrentLimit(int limit)
-    {
-        for (Motor motor : motors)
-        {
-            motor.setCurrentLimit(limit);
-        }
-    }
-
-    /**
      * Reset the encoder offset to that it reads zero at its current position
      */
     public void zero()
@@ -109,23 +96,9 @@ public class MotorGroup implements PIDInput, PIDOutput
         // is only created when we want to use closed-loop control.
         if (controller == null)
         {
-            controller = new MotorGroupController(this);
+            controller = new PIDFController(this);
             controller.start();
         }
-    }
-
-    /**
-     * Adds a feedforward term to the controller
-     */
-    public void addFFTerm(Function<Object, Double> feedforward)
-    {
-        createController();
-        controller.addFeedforward(feedforward);
-    }
-
-    public void setFFOperator(Object ffOperator)
-    {
-        this.ffOperator = ffOperator;
     }
 
     /**
@@ -152,11 +125,10 @@ public class MotorGroup implements PIDInput, PIDOutput
         }
         else
         {
-            if(value == setpoint) return;
-            setpoint = value;
+            if(value == controller.getSetpoint()) return;
 
             createController();
-            if(controlMode == ControlMode.MotionMagic)
+            if(controlMode == ControlMode.PositionProfiled)
                 controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration));
             else controller.setSetpoint(value);
         }
@@ -169,6 +141,11 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         for (Motor motor : motors)
             motor.set(throttle);
+
+        if(Math.abs(throttle) > 0.01)
+            for(Motor motor: motors)
+                if(Robot.getInstance().getPDP().getCurrent(motor.getDeviceID()) < Constants.EPSILON)
+                    Logger.getInstance().warn("Motor " + motor.getDeviceID() + " not pulling current!", this.getClass());
     }
 
     /**
@@ -178,20 +155,6 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         for (Motor motor : motors)
             motor.setBrake(brake);
-    }
-
-    /**
-     * Sets the PID gains of the controller
-     */
-    public void setKP(double kP)
-    {
-        createController();
-        controller.setKP(kP);
-    }
-
-    public double getSetpoint()
-    {
-        return setpoint;
     }
 
     /**
@@ -227,19 +190,49 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
+     * @param output For the PIDFController. Just sets the raw percent output.
+     */
+    @Override
+    public void pidSet(double output)
+    {
+        setRawThrottle(output);
+    }
+
+    /**
+     * @return For the PIDFController. Returns position or velocity depending on the configured feedbacktype
+     */
+    @Override
+    public double pidGet()
+    {
+        return feedbackType == FeedbackType.VELOCITY ? getVelocity() : getPosition();
+    }
+
+    public void follow(MotorGroup leader)
+    {
+        createController();
+        controller.setInput(leader);
+    }
+
+    public void setConversionRatio(double conversionRatio)
+    {
+        this.conversionRatio = conversionRatio;
+    }
+
+    /**
+     * Sets the PID gains of the controller
+     */
+    public void setKP(double kP)
+    {
+        createController();
+        controller.setKP(kP);
+    }
+
+    /**
      * @return The name of this motorGroup (for logging)
      */
     public String getName()
     {
         return name;
-    }
-
-    /**
-     * @return The configured cruise velocity for this motorGroup
-     */
-    public double getCruiseVelocity()
-    {
-        return cruiseVelocity;
     }
 
     /**
@@ -251,78 +244,10 @@ public class MotorGroup implements PIDInput, PIDOutput
     }
 
     /**
-     * @return The configured max acceleration for this motorGroup
-     */
-    public double getMovementAcceleration()
-    {
-        return movementAcceleration;
-    }
-
-    /**
      * @param movementAcceleration Sets the max acceleration of this motorGroup
      */
     public void setMovementAcceleration(double movementAcceleration)
     {
         this.movementAcceleration = movementAcceleration;
-    }
-
-    /**
-     * @param output For the MotorGroupController. Just sets the raw percent output.
-     */
-    @Override
-    public void pidWrite(double output)
-    {
-        setRawThrottle(output);
-    }
-
-
-    /**
-     * @return For the MotorGroupController. Returns position or velocity depending on the configured feedbacktype
-     */
-    @Override
-    public double pidGet()
-    {
-        return getPositionTicks() * conversionRatio;
-    }
-
-    /**
-     * @return For calculating the arbitrary feed forward terms in MotorGroupController
-     */
-    @Override
-    public Object getFFOperator()
-    {
-        return ffOperator;
-    }
-
-    public double getP()
-    {
-        return controller.getKP();
-    }
-
-
-    public void follow(MotorGroup leader)
-    {
-        createController();
-        controller.follow(leader);
-    }
-
-    public void enableController()
-    {
-        controller.enable();
-    }
-
-    public double getConversionRatio()
-    {
-        return conversionRatio;
-    }
-
-    public void setConversionRatio(double conversionRatio)
-    {
-        this.conversionRatio = conversionRatio;
-    }
-
-    public boolean controllerIsEnabled()
-    {
-        return controller.isEnabled();
     }
 }

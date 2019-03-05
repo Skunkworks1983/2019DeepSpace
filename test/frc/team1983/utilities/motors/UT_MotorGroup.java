@@ -1,7 +1,7 @@
 package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.control.MotorGroupController;
+import frc.team1983.utilities.control.PIDFController;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class UT_MotorGroup
     public Logger logger;
 
     @Mock
-    private MotorGroupController controller;
+    private PIDFController controller;
 
     @Mock
     private DigitalInputEncoder dioEncoder;
@@ -125,12 +125,5 @@ public class UT_MotorGroup
         motorGroup.setBrake(false);
         verify(motor1, times(1)).setBrake(false);
         verify(motor2, times(1)).setBrake(false);
-    }
-
-    @Test
-    public void updatesPGain()
-    {
-        motorGroup.setKP(1);
-        assertThat(motorGroup.getP(), is(1.0));
     }
 }

@@ -3,7 +3,6 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.utilities.motors.ControlMode;
-import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Talon;
 

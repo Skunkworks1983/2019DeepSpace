@@ -2,6 +2,8 @@ package frc.team1983;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,19 +30,18 @@ public class Robot extends TimedRobot
     private Manipulator manipulator;
 
     private Compressor compressor;
+    private PowerDistributionPanel pdp;
+
     private NavX navx;
     private StateEstimator estimator;
     private OI oi;
-    Logger logger;
 
     Robot()
     {
         instance = this;
 
-        logger = Logger.getInstance();
-        logger.setGlobalLevel(Level.INFO);
-
         compressor = new Compressor(RobotMap.COMPRESSOR);
+        pdp = new PowerDistributionPanel(RobotMap.PDP);
 
         drivebase = new Drivebase();
         drivebase.zero();
@@ -146,6 +147,11 @@ public class Robot extends TimedRobot
     public Compressor getCompressor()
     {
         return compressor;
+    }
+
+    public PowerDistributionPanel getPDP()
+    {
+        return pdp;
     }
 
     public Gyro getGyro()

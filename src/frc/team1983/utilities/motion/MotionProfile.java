@@ -1,7 +1,6 @@
 package frc.team1983.utilities.motion;
 
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.motors.FeedbackType;
 
 public interface MotionProfile
 {

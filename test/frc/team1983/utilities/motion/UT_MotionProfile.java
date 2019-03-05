@@ -1,6 +1,5 @@
 package frc.team1983.utilities.motion;
 
-import frc.team1983.utilities.motors.FeedbackType;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

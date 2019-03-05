@@ -1,7 +1,6 @@
 package frc.team1983.utilities.control;
 
 import frc.team1983.utilities.motion.MotionProfile;
-import frc.team1983.utilities.motors.FeedbackType;
 import frc.team1983.utilities.motors.MotorGroup;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class UT_MotorGroupController
     @Mock
     MotorGroup motorGroup;
 
-    private MotorGroupController controller;
+    private PIDFController controller;
 
     @Before
     public void setup()
@@ -29,7 +28,7 @@ public class UT_MotorGroupController
         initMocks(this);
         when(motorGroup.pidGet()).thenReturn(0.0);
         when(motorGroup.getPositionTicks()).thenReturn(0.0);
-        controller = new MotorGroupController(motorGroup);
+        controller = new PIDFController(motorGroup);
         controller.setKP(1);
     }
 
@@ -50,7 +49,7 @@ public class UT_MotorGroupController
         ArgumentCaptor<Double> argumentCaptor = ArgumentCaptor.forClass(Double.class);
         try {TimeUnit.SECONDS.sleep(1);} catch(Exception e) {assertEquals(0,1);}
         controller.execute();
-        verify(motorGroup).pidWrite(argumentCaptor.capture());
+        verify(motorGroup).pidSet(argumentCaptor.capture());
         assertNotEquals(0.0, argumentCaptor.getValue());
     }
 
@@ -66,7 +65,7 @@ public class UT_MotorGroupController
     {
         controller.disable();
         controller.start();
-        verify(motorGroup, never()).pidWrite(anyDouble());
+        verify(motorGroup, never()).pidSet(anyDouble());
     }
 
     @Test

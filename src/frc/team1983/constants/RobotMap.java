@@ -3,6 +3,7 @@ package frc.team1983.constants;
 public class RobotMap
 {
     public static final int COMPRESSOR = 7;
+    public static final int PDP = 0;
 
     public static class Drivebase
     {
