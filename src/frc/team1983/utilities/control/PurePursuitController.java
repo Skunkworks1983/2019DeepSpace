@@ -40,9 +40,10 @@ public class PurePursuitController
     {
         Pair<Double, Double> output = new Pair<>(velocity, velocity);
         
-        // Adjust path to limelight
-        if (PurePursuitController.inDeadzone(pose, path))
+        // Adjust pose to limelight feedback
 
+        // If deadzoned stop
+        if (PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
 
 //        Vector2 closestPoint = path.evaluateClosestPoint(pose.getPosition());

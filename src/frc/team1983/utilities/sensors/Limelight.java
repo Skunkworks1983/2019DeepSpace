@@ -48,52 +48,52 @@ public class Limelight implements Runnable
         roll = pnp[5];
     }
 
-    public boolean isTargetDetected()
+    public synchronized boolean isTargetDetected()
     {
         return targetDetected;
     }
 
-    public double getX()
+    public synchronized double getX()
     {
         return x;
     }
 
-    public double getY()
+    public synchronized double getY()
     {
         return y;
     }
 
-    public double getArea()
+    public synchronized double getArea()
     {
         return area;
     }
 
-    public double getSkew()
+    public synchronized double getSkew()
     {
         return skew;
     }
 
-    public double getXOffset()
+    public synchronized double getXOffset()
     {
         return xOffset;
     }
 
-    public double getYOffset()
+    public synchronized double getYOffset()
     {
         return yOffset;
     }
 
-    public double getPitch()
+    public synchronized double getPitch()
     {
         return pitch;
     }
 
-    public double getYaw()
+    public synchronized double getYaw()
     {
         return yaw;
     }
 
-    public double getRoll()
+    public synchronized double getRoll()
     {
         return roll;
     }

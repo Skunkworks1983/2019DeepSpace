@@ -1,6 +1,7 @@
 package frc.team1983.utilities.math;
 
 import frc.team1983.utilities.Pair;
+import frc.team1983.utilities.pathing.Pose;
 
 import java.util.Arrays;
 
@@ -89,6 +90,17 @@ public class Bezier
     public Vector2 evaluateNormal(double t)
     {
         Vector2 tangent = evaluateTangent(t); return new Vector2(-tangent.getY(), tangent.getX());
+    }
+
+    /**
+     * Evaluate a pose at a value of t
+     *
+     * @param t the percentage along the curve [0, 1]
+     * @return pose
+     */
+    public Pose evaluatePose(double t)
+    {
+        return new Pose(evaluate(t), evaluateTangent(t));
     }
 
     /**

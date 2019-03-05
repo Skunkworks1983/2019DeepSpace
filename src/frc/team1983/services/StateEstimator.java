@@ -5,6 +5,7 @@ import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.Limelight;
 
 /**
  * This class estimates the position of the robot. Coordinate system conventions are
@@ -37,6 +38,24 @@ public class StateEstimator implements Runnable
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getGyro());
     }
 
+    protected synchronized void execute()
+    {
+        double leftPosition = drivebase.getLeftPosition();
+        double rightPosition = drivebase.getRightPosition();
+        double angle = Math.toRadians(gyro.getHeading());
+
+        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
+        position.add(Vector2.scale(new Vector2(Math.cos(angle), Math.sin(angle)), displacement));
+
+        lastLeftPosition = leftPosition;
+        lastRightPosition = rightPosition;
+    }
+
+    public synchronized void setPosition(Limelight limelight, Pose target)
+    {
+        position = Vector2.add(target.getPosition(), Vector2.twist(new Vector2(limelight.getXOffset(), limelight.getYOffset()), target.getPosition(), target.getHeading()));
+    }
+
     public synchronized void setPose(Pose pose)
     {
         position = pose.getPosition();
@@ -51,19 +70,6 @@ public class StateEstimator implements Runnable
     public synchronized Vector2 getPosition()
     {
         return position;
-    }
-
-    protected synchronized void execute()
-    {
-        double leftPosition = drivebase.getLeftPosition();
-        double rightPosition = drivebase.getRightPosition();
-        double angle = Math.toRadians(gyro.getHeading());
-
-        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
-        position.add(Vector2.scale(new Vector2(Math.cos(angle), Math.sin(angle)), displacement));
-
-        lastLeftPosition = leftPosition;
-        lastRightPosition = rightPosition;
     }
 
     @Override

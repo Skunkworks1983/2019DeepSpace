@@ -185,6 +185,18 @@ public class Path
     }
 
     /**
+     * Evaluate a pose at a value of t
+     *
+     * @param t the percentage along the curve [0, 1]
+     * @return pose
+     */
+    public Pose evaluatePose(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluatePose((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
      * Evaluates the center of curvature of a point on the path
      *
      * @param t the percentage along the curve [0, 1]

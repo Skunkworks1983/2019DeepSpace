@@ -11,10 +11,10 @@ import frc.team1983.utilities.pathing.Path;
 
 public class DrivePath extends Command
 {
-    private Drivebase drivebase;
-    private StateEstimator estimator;
-    private Path path;
-    private double velocity;
+    protected Drivebase drivebase;
+    protected StateEstimator estimator;
+    protected Path path;
+    protected double velocity;
 
     public DrivePath(Drivebase drivebase, StateEstimator estimator, Path path, double velocity)
     {

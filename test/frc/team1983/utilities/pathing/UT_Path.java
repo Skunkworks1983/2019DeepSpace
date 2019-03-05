@@ -1,5 +1,6 @@
 package frc.team1983.utilities.pathing;
 
+import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
@@ -66,6 +67,19 @@ public class UT_Path
 
         assertThat(Vector2.equals(path.evaluateTangent(0.0), new Vector2(0.0, 1.0)), equalTo(true));
         assertThat(Vector2.equals(path.evaluateTangent(1.0), new Vector2(1.0, 0.0)), equalTo(true));
+    }
+
+    @Test
+    public void evaluatePoseTest()
+    {
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(0, 5, 90),
+                new Pose(10, 10, 0)
+        );
+
+        assertThat(Pose.equals(path.evaluatePose(0), new Pose(0, 0, 90)), equalTo(true));
+        assertThat(Pose.equals(path.evaluatePose(1.0), new Pose(10, 10, 0)), equalTo(true));
     }
 
     @Test
