@@ -1,12 +1,10 @@
 package frc.team1983.services;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
-import frc.team1983.utilities.sensors.Pigeon;
 
 /**
  * This class estimates the position of the robot. Coordinate system conventions are
@@ -32,7 +30,7 @@ public class StateEstimator implements Runnable
         lastRightPosition = drivebase.getRightPosition();
 
         new Thread(this).start();
-    }
+}
 
     public StateEstimator()
     {
@@ -79,9 +77,9 @@ public class StateEstimator implements Runnable
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
             }
-            catch(InterruptedException exception)
+            catch(InterruptedException e)
             {
-                exception.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
