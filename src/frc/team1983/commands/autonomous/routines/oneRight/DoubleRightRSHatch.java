@@ -12,6 +12,10 @@ import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
+/*
+Starting backwards on the right side, this auto places two hatches on the top position of the right side rocket.
+ */
+
 public class DoubleRightRSHatch extends Routine
 {
     public DoubleRightRSHatch()

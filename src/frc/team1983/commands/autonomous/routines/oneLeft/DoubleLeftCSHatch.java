@@ -10,6 +10,10 @@ import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
+/*
+This auto places two hatches on the closest two positions on the side of the cargo ship.
+ */
+
 public class DoubleLeftCSHatch extends Routine
 {
     public DoubleLeftCSHatch()

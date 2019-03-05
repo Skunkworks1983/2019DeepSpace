@@ -11,6 +11,11 @@ import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
+/*
+This auto places one hatch on the closest hatch position on the left side of the cargo ship, and one additional hatch on
+the left side rocket's top position.
+ */
+
 public class DoubleLeftComboHatch extends Routine
 {
     public DoubleLeftComboHatch()

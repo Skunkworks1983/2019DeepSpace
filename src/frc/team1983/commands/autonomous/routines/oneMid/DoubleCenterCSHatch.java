@@ -11,6 +11,11 @@ import frc.team1983.subsystems.Manipulator;
 import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
+/*
+This auto places two hatches on the front two positions of the cargo ship. It crosses the right side robot's area of
+operation to get the second hatch, so be sure that this is not used unless that side of the field is clear.
+ */
+
 public class DoubleCenterCSHatch extends Routine
 {
     public DoubleCenterCSHatch()
