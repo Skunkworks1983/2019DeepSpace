@@ -151,6 +151,14 @@ public class OI
 
     public void initializeBindings()
     {
+        getButton(Joysticks.PANEL, ELEVATOR_1).whenReleased(new SetElevatorPosition(Elevator.Setpoints.BOTTOM));
+        getButton(Joysticks.PANEL, ELEVATOR_1).whenReleased(new SetElevatorPosition(Elevator.FunctionalSetpoint.GROUND_COLLECT));
+        getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new SetElevatorPosition(Elevator.FunctionalSetpoint.LOADING_STATION));
+        getButton(Joysticks.PANEL, ELEVATOR_3).whenPressed(new SetElevatorPosition(Elevator.FunctionalSetpoint.CARGO_SHIP));
+        getButton(Joysticks.PANEL, ELEVATOR_4).whenPressed(new SetElevatorPosition(Elevator.FunctionalSetpoint.ROCKET_BOTTOM));
+        getButton(Joysticks.PANEL, ELEVATOR_5).whenPressed(new SetElevatorPosition(Elevator.FunctionalSetpoint.ROCKET_MIDDLE));
+        getButton(Joysticks.PANEL, ELEVATOR_6).whenPressed(new SetElevatorPosition(Elevator.FunctionalSetpoint.ROCKET_TOP));
+
         /*
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(
@@ -271,6 +279,7 @@ public class OI
                 new SetCollectorRollerThrottle(-1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
+        */
 
         getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
         getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
@@ -325,6 +334,5 @@ public class OI
 
 //        getButton(Joysticks.LEFT, 1).whenPressed(new IncrementElevatorPosition(3));
 //        getButton(Joysticks.LEFT, 2).whenPressed(new IncrementElevatorPosition(-3));
-        */
     }
 }

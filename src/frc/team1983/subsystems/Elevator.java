@@ -3,6 +3,7 @@ package frc.team1983.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
+import frc.team1983.services.OI;
 import frc.team1983.utilities.motors.ControlMode;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Spark;
@@ -52,7 +53,7 @@ public class Elevator extends Subsystem
     public static final double kG = 0.07; // %
 
     private double desiredPosition = Setpoints.BOTTOM;
-    private FunctionalSetpoint functionalSetpoint = null;
+    private FunctionalSetpoint functionalSetpoint = FunctionalSetpoint.CUSTOM;
 
     private boolean automationEnabled = true;
 
@@ -85,7 +86,7 @@ public class Elevator extends Subsystem
     {
         if(!automationEnabled) return;
 
-        if(functionalSetpoint != FunctionalSetpoint.CUSTOM)
+        if(!functionalSetpoint.equals(FunctionalSetpoint.CUSTOM))
             desiredPosition = (Robot.getInstance().isInPanelMode() ? Setpoints.Panel : Setpoints.Ball).get(functionalSetpoint);
 
         // if we are in the way of the collector, move out of the way
@@ -117,6 +118,11 @@ public class Elevator extends Subsystem
 
         automationEnabled = true;
         desiredPosition = position;
+    }
+
+    public void setFunctionalSetpoint(FunctionalSetpoint functionalSetpoint)
+    {
+        this.functionalSetpoint = functionalSetpoint;
     }
 
     public double getPosition()

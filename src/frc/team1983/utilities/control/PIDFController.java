@@ -153,6 +153,7 @@ public class PIDFController extends Thread
     public synchronized void runMotionProfile(MotionProfile motionProfile)
     {
         this.motionProfile = motionProfile;
+        setpoint = motionProfile.evaluate(motionProfile.getDuration());
         profileStartTime = System.currentTimeMillis() / 1000.0;
         enable();
     }

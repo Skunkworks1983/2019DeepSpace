@@ -21,4 +21,14 @@ public class SetElevatorPosition extends InstantCommand
     {
         this(Robot.getInstance().getElevator(), setpoint);
     }
+
+    public SetElevatorPosition(Elevator elevator, Elevator.FunctionalSetpoint functionalSetpoint)
+    {
+        super(elevator, () -> elevator.setFunctionalSetpoint(functionalSetpoint));
+    }
+
+    public SetElevatorPosition(Elevator.FunctionalSetpoint functionalSetpoint)
+    {
+        this(Robot.getInstance().getElevator(), functionalSetpoint);
+    }
 }

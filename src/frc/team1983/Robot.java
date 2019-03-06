@@ -41,7 +41,7 @@ public class Robot extends TimedRobot
         instance = this;
 
         compressor = new Compressor(RobotMap.COMPRESSOR);
-        pdp = new PowerDistributionPanel(RobotMap.PDP);
+        //pdp = new PowerDistributionPanel(RobotMap.PDP);
 
         drivebase = new Drivebase();
         drivebase.zero();
