@@ -141,6 +141,7 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 0, 90);
 
         Path path = new Path(
+                true,
                 new Pose(0, 0, 90),
                 new Pose(0, 10, 90)
         );

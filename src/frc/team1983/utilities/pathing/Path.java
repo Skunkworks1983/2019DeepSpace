@@ -21,6 +21,7 @@ public class Path
 
     protected Bezier[] curves;
     protected double length = 0;
+    protected boolean reversed;
 
     /**
      * Creates bezier curves between given poses
@@ -30,10 +31,15 @@ public class Path
      * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
      * and ending at the next pose.
      *
-     * @param morePoses More poses that the path should have
+     * @param reversed if the path is reversed
+     * @param pose1 the first pose
+     * @param pose2 the second pose
+     * @param morePoses more poses that the path should have
      */
-    public Path(Pose pose1, Pose pose2, Pose... morePoses)
+    public Path(boolean reversed, Pose pose1, Pose pose2, Pose... morePoses)
     {
+        this.reversed = reversed;
+
         ArrayList<Pose> poses = new ArrayList<>();
         poses.add(pose1);
         poses.add(pose2);
@@ -55,16 +61,30 @@ public class Path
             ) < Constants.EPSILON;
 
             if(collinear)
+            {
                 curves[i] = new Bezier(position0, position1);
+            }
             else
-                curves[i] = new Bezier(
-                        position0,
-                        new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH,
-                                position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
-                        new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH,
-                                position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
-                        position1);
+            {
+                int sign = reversed ? -1 : 1;
+                curves[i] = new Bezier(position0,
+                                       new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH * sign,
+                                                   position0.getY() + Math.sin(theta0) * TANGENT_LENGTH * sign),
+                                       new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH * sign,
+                                                   position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH * sign),
+                                       position1);
+            }
         }
+    }
+
+    public Path(Pose pose1, Pose pose2, Pose... morePoses)
+    {
+        this(false, pose1, pose2, morePoses);
+    }
+
+    public boolean isReversed()
+    {
+        return reversed;
     }
 
     /**

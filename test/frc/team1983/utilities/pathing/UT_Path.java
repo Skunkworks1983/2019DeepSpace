@@ -1,6 +1,5 @@
 package frc.team1983.utilities.pathing;
 
-import frc.team1983.utilities.math.Bezier;
 import frc.team1983.utilities.math.Vector2;
 import org.junit.Test;
 
@@ -11,6 +10,19 @@ import static org.junit.Assert.assertNotEquals;
 
 public class UT_Path
 {
+    @Test
+    public void reverseTest()
+    {
+        Path path = new Path(
+                true,
+                new Pose(0, 0, 90),
+                new Pose(10, 10, 0)
+        );
+
+        assertThat(path.evaluateTangent(0).equals(new Vector2(0, -1)), equalTo(true));
+        assertThat(path.evaluateTangent(1).equals(new Vector2(-1, 0)), equalTo(true));
+    }
+
     @Test
     public void getLengthTest()
     {
@@ -267,30 +279,5 @@ public class UT_Path
 
         Pose[] poses = {new Pose(3, 3, 3), new Pose(1, 1, 1)};
         assertEquals(3, new Path(new Pose(0, 0, 0), new Pose(2, 2, 2), poses).curves.length);
-    }
-
-    @Test
-    public void constantsStayConstantTest()
-    {
-        Pose originBefore = Pose.ORIGIN.copy();
-        Pose defalutBefore = Pose.DEFAULT.copy();
-        Pose cargoShipMiddleLeftBefore = Pose.CARGO_SHIP_MIDDLE_LEFT;
-        Pose rightRocketCloseBefore = Pose.RIGHT_ROCKET_CLOSE;
-
-        Path path = new Path(
-          Pose.ORIGIN,
-          Pose.DEFAULT,
-          Pose.CARGO_SHIP_MIDDLE_LEFT,
-          Pose.RIGHT_ROCKET_CLOSE
-        );
-
-        path.evaluate(0.5);
-        path.getLength();
-        path.evaluateClosestPointAndT(new Vector2(1, 1));
-
-        assertThat(originBefore.equals(Pose.ORIGIN), equalTo(true));
-        assertThat(defalutBefore.equals(Pose.DEFAULT), equalTo(true));
-        assertThat(cargoShipMiddleLeftBefore.equals(Pose.CARGO_SHIP_MIDDLE_LEFT), equalTo(true));
-        assertThat(rightRocketCloseBefore.equals(Pose.RIGHT_ROCKET_CLOSE), equalTo(true));
     }
 }

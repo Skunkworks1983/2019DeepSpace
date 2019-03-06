@@ -74,6 +74,7 @@ public class PurePursuitController
         // Slow down around curves
         double t = path.evaluateClosestT(pose.getPosition());
         Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
+        // TODO: test
 //        if (curveIcc != null)
 //        {
 //            double slowdown = Math.min(CURVATURE_SLOWDOWN / path.evaluateRadiusOfCurvatuve(t), velocity);
