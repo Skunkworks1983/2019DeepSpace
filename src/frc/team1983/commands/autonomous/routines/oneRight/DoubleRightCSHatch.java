@@ -4,6 +4,7 @@ import frc.team1983.Robot;
 import frc.team1983.commands.autonomous.Routine;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetHooksOpen;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.subsystems.Elevator;
 import frc.team1983.subsystems.Manipulator;
@@ -23,12 +24,14 @@ public class DoubleRightCSHatch extends Routine
 
 
         addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
+        addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
                 (Pose.LEVEL_1_RIGHT),
                 (Pose.CARGO_SHIP_RIGHT_CLOSE)
         ), 0.8));
 
+        addSequential(new SetHooksOpen(manipulator, false));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
 
         addSequential(new DrivePath(new Path(
@@ -42,13 +45,15 @@ public class DoubleRightCSHatch extends Routine
         ), 0.8));
 
         addSequential(new SetManipulatorRollerSpeed(manipulator, -0.3, true));
+        addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                new Pose(25.1, 1.54, 90),
-                new Pose(22.77, 10.7, -109.29),
+                (Pose.RIGHT_LOADING_STATION),
+                new Pose(20.24, 23.64, -90),
                 (Pose.CARGO_SHIP_RIGHT_MIDDLE)
         ), -0.6));
 
+        addSequential(new SetHooksOpen(manipulator, false));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
     }
 }

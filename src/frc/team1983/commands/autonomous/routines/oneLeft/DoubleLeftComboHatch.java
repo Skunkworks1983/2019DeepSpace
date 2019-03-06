@@ -4,6 +4,7 @@ import frc.team1983.Robot;
 import frc.team1983.commands.autonomous.Routine;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetHooksOpen;
 import frc.team1983.commands.manipulator.SetManipulatorExtended;
 import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.subsystems.Elevator;
@@ -24,12 +25,15 @@ public class DoubleLeftComboHatch extends Routine
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
 
+        addSequential(new SetHooksOpen(manipulator, true));
+        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
+
         addSequential(new DrivePath(new Path(
                 (Pose.LEVEL_1_LEFT),
                 (Pose.CARGO_SHIP_LEFT_CLOSE)
         ), 0.8));
 
-        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
+        addSequential(new SetHooksOpen(manipulator, false));
         addSequential(new SetManipulatorRollerSpeed(manipulator, 0.5, true));
 
         addSequential(new DrivePath(new Path(

@@ -13,7 +13,7 @@ import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
 /*
-Starting backwards on the right side, this auto places two hatches on the top position of the right side rocket.
+Starting backwards on the right side, this auto places two hatches on the top far position of the right side rocket.
  */
 
 public class DoubleRightRSHatch extends Routine
@@ -26,38 +26,46 @@ public class DoubleRightRSHatch extends Routine
         addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                new Pose(24.72, 21.64, -61.25),
-                new Pose(22.62, 23.89, -90)
-        ), -0.8));
-
-        addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
+                new Pose(17.33, 5.54, -90),
+                new Pose(22.52, 23.89, -90)
+        ), -3.0));
 
         addSequential(new DrivePath(new Path(
-                new Pose(22.62, 23.89, -90),
+                new Pose(22.52, 23.89, -90),
                 (Pose.RIGHT_ROCKET_FAR)
-        ), 0.3));
+        ), .5));
 
         addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
+        addSequential(new SetHooksOpen(manipulator, false));
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
+        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM_HATCH));
 
         addSequential(new DrivePath(new Path(
-                new Pose(22.28, 23.89, -90),
+                new Pose(22.52, 23.89, -90),
+                new Pose(21.11, 19.22, -90)
+        ), -2.0));
+
+        addSequential(new DrivePath(new Path(
+                new Pose(21.11, 19.22, -90),
                 (Pose.RIGHT_LOADING_STATION)
-        ), 3));
+        ), 3.0));
 
         addSequential(new SetManipulatorRollerSpeed(manipulator, -0.3, true));
+        addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(
-                new Pose(25.1, 1.54, 90),
-                (Pose.RIGHT_ROCKET_CLOSE)
-        ), -3));
+                (Pose.RIGHT_LOADING_STATION),
+                new Pose(22.52, 23.89, -90),
+                (Pose.RIGHT_ROCKET_FAR)
+        ), -3.0));
 
         addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
+        addSequential(new SetElevatorPosition(elevator, 0));
 
     }
 }

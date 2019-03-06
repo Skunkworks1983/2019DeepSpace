@@ -19,7 +19,7 @@ public class L2DoubleRightRSHatch extends Routine
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
-        addSequential(new SetElevatorPosition(elevator, /*setpoint*/));
+
         addSequential(new SetHooksOpen(manipulator, true));
 
         addSequential(new DrivePath(new Path(

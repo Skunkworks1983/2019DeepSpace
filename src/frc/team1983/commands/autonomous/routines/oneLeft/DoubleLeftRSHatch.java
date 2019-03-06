@@ -12,20 +12,23 @@ import frc.team1983.utilities.pathing.Path;
 import frc.team1983.utilities.pathing.Pose;
 
 /*
-This auto places two hatches on the two top positions on the left rocket
+This auto places two hatches on the two top positions on the left rocket.
  */
 
 public class DoubleLeftRSHatch extends Routine
 {
     public DoubleLeftRSHatch()
     {
+
+        System.out.println("yeah, thats your code.");
+
         Elevator elevator = Robot.getInstance().getElevator();
         Manipulator manipulator = Robot.getInstance().getManipulator();
 
         addSequential(new DrivePath(new Path(
                 new Pose(9.67, 5.54, -90),
                 new Pose(4.33, 33.23, -90)
-        ), -0.3));
+        ), -3));
 
         addSequential(new SetElevatorPosition(elevator, elevator.TOP_HATCH));
         addSequential(new SetManipulatorExtended(manipulator, true));
@@ -33,7 +36,7 @@ public class DoubleLeftRSHatch extends Routine
         addSequential(new DrivePath(new Path(
                 new Pose(4.33, 33.23, -90),
                 (Pose.LEFT_ROCKET_FAR)
-        ), 0.3));
+        ), 3));
 
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
@@ -43,12 +46,12 @@ public class DoubleLeftRSHatch extends Routine
         addSequential(new DrivePath(new Path(
                 (Pose.LEFT_ROCKET_FAR),
                 new Pose(4.82, 23.59, -90)
-        ), -0.3));
+        ), 3));
 
         addSequential(new DrivePath(new Path(
                 new Pose(4.82, 23.59, -90),
                (Pose.LEFT_LOADING_STATION)
-        ), 0.8));
+        ), 8));
 
 
         addSequential(new DrivePath(new Path(
@@ -60,5 +63,6 @@ public class DoubleLeftRSHatch extends Routine
         addSequential(new SetManipulatorExtended(manipulator, true));
         addSequential(new SetManipulatorRollerSpeed(manipulator, .3, true));
         addSequential(new SetManipulatorExtended(manipulator, false));
+        addSequential(new SetElevatorPosition(elevator, elevator.BOTTOM));
     }
 }
