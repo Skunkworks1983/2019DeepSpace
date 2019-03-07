@@ -54,13 +54,6 @@ public class UT_MotorGroupController
     }
 
     @Test
-    public void doesNotAttemptToRunNullMotionProfile()
-    {
-        controller.runMotionProfile(null);
-        controller.execute();
-    }
-
-    @Test
     public void doesNotRunWhenNotEnabled()
     {
         controller.disable();
