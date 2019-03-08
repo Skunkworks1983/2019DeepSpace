@@ -39,7 +39,10 @@ public class Collector extends Subsystem
 
     public Collector()
     {
-        roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        roller = new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED);
+//        roller = new MotorGroup("Collector roller",
+//                new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED));
+//                //new Spark(RobotMap.Collector.ROLLER2, RobotMap.Collector.ROLLER2_REVERSED));
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
