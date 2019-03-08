@@ -69,17 +69,17 @@ public class Collector extends Subsystem
         if(!automationEnabled) return;
 
         // fold/unfold logic
-        if(!climbing)
-        {
+       // if(!climbing)
+      //  {
             if (getAngle() > FOLD_ANGLE && isFolded())
                 setFolded(false);
             else if (getAngle() < FOLD_ANGLE && !isFolded())
                 setFolded(true);
-        }
+      /*  }
         else
-            setFolded(false);
+            setFolded(false); */
 
-        if(getAngle() < 15.0) setRollerThrottle(0);
+       // if(getAngle() < 15.0) setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint
@@ -87,8 +87,8 @@ public class Collector extends Subsystem
             wristRight.set(ControlMode.Position, desiredAngle);
 
         // if we are in the way of the elevator, move to the danger zone to let the elevator go by
-        if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
-            wristRight.set(ControlMode.Position, DANGER_ZONE);
+       /* if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
+            wristRight.set(ControlMode.Position, DANGER_ZONE); */
     }
 
     /**

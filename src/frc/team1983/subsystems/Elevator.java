@@ -152,4 +152,9 @@ public class Elevator extends Subsystem
                 || getPosition() < DANGER_ZONE);
 
     }
+
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(motorGroup.getSetpoint() - getPosition()) <= CLOSED_LOOP_TOLERANCE;
+    }
 }

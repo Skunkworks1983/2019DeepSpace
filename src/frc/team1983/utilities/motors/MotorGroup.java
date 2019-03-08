@@ -255,4 +255,9 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         this.movementAcceleration = movementAcceleration;
     }
+
+    public double getSetpoint()
+    {
+        return controller.getSetpoint();
+    }
 }

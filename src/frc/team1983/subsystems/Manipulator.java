@@ -56,6 +56,9 @@ public class Manipulator extends Subsystem
             setExtended(true);
         }
 
+        if (!Robot.getInstance().getElevator().isAtSetpoint())
+            setExtended(false);
+
         lastBallSensorValue = value;
     }
 
