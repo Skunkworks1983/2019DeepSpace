@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
-import frc.team1983.commands.climber.ClimbLevelThree;
-import frc.team1983.commands.climber.ClimbLevelTwo;
+import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
 import frc.team1983.commands.manipulator.*;
@@ -281,8 +280,8 @@ public class OI
         getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
-                new ClimbLevelTwo(),
-                new ClimbLevelThree(),
+                new Climb(-14, -8),
+                new Climb(-25, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
 
