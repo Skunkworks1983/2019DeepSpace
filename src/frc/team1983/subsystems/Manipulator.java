@@ -50,9 +50,9 @@ public class Manipulator extends Subsystem
     {
         boolean value = ballSensor.get();
 
-        if(value && !lastBallSensorValue && Robot.getInstance().getElevator().isInDangerZone() && !Robot.getInstance().getOI().isInHatchMode())
+        if(!value && lastBallSensorValue && Robot.getInstance().getElevator().isInDangerZone() && !Robot.getInstance().getOI().isInHatchMode())
         {
-            Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 6.0, 24.0));
+            Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 6.0, 12.0));
             setExtended(true);
         }
 //        System.out.println("ballSensor: " + ballSensor.get());

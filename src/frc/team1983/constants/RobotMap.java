@@ -34,10 +34,8 @@ public class RobotMap
         public static final boolean ROLLER1_REVERSED = false;
         public static final boolean ROLLER2_REVERSED = false;
 
-        // port 0 on Comp
-        public static final int PISTON_FORWARD = 1;
-        // Port 1 on comp
-        public static final int PISTON_REVERSE = 0;
+        public static final int PISTON_FORWARD = 0;
+        public static final int PISTON_REVERSE = 1;
     }
 
     public static class Manipulator

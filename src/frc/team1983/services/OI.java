@@ -70,7 +70,7 @@ public class OI
     public static final int CLIMB = 13;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 3;
+    protected static final double JOYSTICK_EXPONENT = 2.2;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -226,11 +226,13 @@ public class OI
 
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
                 // speed -1 on comp
+                //TODO fix on comp bot
                 new SetManipulatorRollerSpeed(1),
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
                 // speed 1 on comp
+                // TODO fix on comp bot
                 new SetCollectorRollerThrottle(-1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
@@ -280,7 +282,7 @@ public class OI
         getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
-                new Climb(-14, -8),
+                new Climb(-12, -8),
                 new Climb(-25, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));

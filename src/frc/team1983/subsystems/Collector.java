@@ -42,7 +42,7 @@ public class Collector extends Subsystem
         //roller = new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED);
         roller = new MotorGroup("Collector roller",
                 new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED),
-                new Spark(RobotMap.Collector.ROLLER2, RobotMap.Collector.ROLLER2_REVERSED));
+                new Talon(RobotMap.Collector.ROLLER2, RobotMap.Collector.ROLLER2_REVERSED));
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -51,12 +51,15 @@ public class Collector extends Subsystem
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
         wristRight.setKP(0.06);
+        wristRight.setCurrentLimit(40);
+
 
         wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
         wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
+        wristLeft.setCurrentLimit(40);
     }
 
     @Override
