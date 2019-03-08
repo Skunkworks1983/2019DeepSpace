@@ -16,11 +16,11 @@ public class StateEstimator implements Runnable
 {
     public static final int UPDATE_RATE = 20;
 
-    private Drivebase drivebase;
-    private Gyro gyro;
+    protected Drivebase drivebase;
+    protected Gyro gyro;
 
-    private double lastLeftPosition, lastRightPosition;
-    private Vector2 position = Vector2.ZERO;
+    protected double lastLeftPosition, lastRightPosition;
+    protected Vector2 position = Vector2.ZERO;
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -51,9 +51,11 @@ public class StateEstimator implements Runnable
         lastRightPosition = rightPosition;
     }
 
-    public synchronized void setPosition(Limelight limelight, Pose target)
+    public synchronized void setTargetOffset(Limelight limelight, Pose target)
     {
-        position = Vector2.add(target.getPosition(), Vector2.twist(new Vector2(limelight.getXOffset(), limelight.getYOffset()), target.getPosition(), target.getHeading()));
+        Vector2 offset  = new Vector2(limelight.getXOffset(), limelight.getYOffset());
+        offset.twist(target.getHeading() - 90);
+        position = Vector2.add(target.getPosition(), offset);
     }
 
     public synchronized void setPose(Pose pose)
@@ -70,6 +72,14 @@ public class StateEstimator implements Runnable
     public synchronized Vector2 getPosition()
     {
         return position;
+    }
+
+    protected synchronized void zero()
+    {
+        lastLeftPosition = 0.0;
+        lastRightPosition = 0.0;
+
+        position.zero();
     }
 
     @Override

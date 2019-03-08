@@ -63,6 +63,11 @@ public class Vector2
         set(v.x, v.y);
     }
 
+    public void zero()
+    {
+        set(Vector2.ZERO);
+    }
+
     /**
      * Returns a copied instance of a vector
      *
@@ -305,6 +310,16 @@ public class Vector2
     public void twist(Vector2 center, double degrees)
     {
         set(Vector2.twist(this, center, degrees));
+    }
+
+    /**
+     * Rotates this point around zero by a number of degrees
+     *
+     * @param degrees the difference in rotation. Positive values are counter-clockwise, and negative v
+     */
+    public void twist(double degrees)
+    {
+        twist(Vector2.ZERO, degrees);
     }
 
     /**

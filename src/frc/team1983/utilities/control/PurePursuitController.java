@@ -39,8 +39,6 @@ public class PurePursuitController
     public static Pair<Double, Double> evaluateOutput(Pose pose, Path path, double velocity)
     {
         Pair<Double, Double> output = new Pair<>(velocity, velocity);
-        
-        // Adjust pose to limelight feedback
 
         // If deadzoned stop
         if (PurePursuitController.inDeadzone(pose, path))

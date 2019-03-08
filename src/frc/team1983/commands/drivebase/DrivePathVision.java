@@ -28,7 +28,7 @@ public class DrivePathVision extends DrivePath
     protected void execute()
     {
         if(Vector2.getDistance(estimator.getPosition(), path.evaluate(1.0)) < ACTIVATION_DISTANCE && limelight.isTargetDetected())
-            estimator.setPosition(limelight, path.evaluatePose(1.0));
+            estimator.setTargetOffset(limelight, path.evaluatePose(1.0));
         super.execute();
     }
 }
