@@ -225,15 +225,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                // speed -1 on comp
-                //TODO fix on comp bot
                 new SetManipulatorRollerSpeed(1),
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                // speed 1 on comp
-                // TODO fix on comp bot
-                new SetCollectorRollerThrottle(-1),
+                new SetCollectorRollerThrottle(-.5),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
