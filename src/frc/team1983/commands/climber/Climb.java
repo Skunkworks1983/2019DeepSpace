@@ -51,7 +51,7 @@ public class Climb extends Command
         collector.setWristThrottle(throttle);
         //collector.setRollerThrottle(climber.getPosition() > driveHeight ? 1 : 0.4);
         // TODO fix on compBot
-        collector.setRollerThrottle(-0.4);
+        collector.setRollerThrottle(0.4);
 
         if(climber.getPosition() <= driveHeight)
             drivebase.set(ControlMode.Throttle, 0.2);
