@@ -28,7 +28,7 @@ public class Collector extends Subsystem
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
     public static final double DANGER_ZONE = 125.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 110; //TODO find exact value
+    public static final double FOLD_ANGLE = 106; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value

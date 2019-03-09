@@ -229,7 +229,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-.5),
+                new SetCollectorRollerThrottle(-.75),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
@@ -273,7 +273,7 @@ public class OI
         getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
         getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
 
-        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(112));
+        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(109));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
         getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
 
