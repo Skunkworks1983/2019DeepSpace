@@ -20,7 +20,7 @@ public class Collector extends Subsystem
         public static final double COLLECT = 140.0;
     }
 
-    private Talon roller;
+    private MotorGroup roller;
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
 
@@ -28,7 +28,7 @@ public class Collector extends Subsystem
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
     public static final double DANGER_ZONE = 125.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 110; //TODO find exact value
+    public static final double FOLD_ANGLE = 106; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
@@ -39,7 +39,10 @@ public class Collector extends Subsystem
 
     public Collector()
     {
-        roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        //roller = new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED);
+        roller = new MotorGroup("Collector roller",
+                new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED),
+                new Talon(RobotMap.Collector.ROLLER2, RobotMap.Collector.ROLLER2_REVERSED));
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -48,12 +51,15 @@ public class Collector extends Subsystem
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
         wristRight.setKP(0.06);
+        wristRight.setCurrentLimit(40);
+
 
         wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
         wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
+        wristLeft.setCurrentLimit(40);
     }
 
     @Override
@@ -141,7 +147,7 @@ public class Collector extends Subsystem
      */
     public void setRollerThrottle(double throttle)
     {
-        roller.set(throttle);
+        roller.set(ControlMode.Throttle, throttle);
     }
 
     /**

@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
-import frc.team1983.commands.climber.ClimbLevelThree;
-import frc.team1983.commands.climber.ClimbLevelTwo;
+import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
 import frc.team1983.commands.manipulator.*;
@@ -71,7 +70,7 @@ public class OI
     public static final int CLIMB = 13;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 3;
+    protected static final double JOYSTICK_EXPONENT = 2.2;
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -226,11 +225,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetManipulatorRollerSpeed(-1),
+                new SetManipulatorRollerSpeed(1),
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(1),
+                new SetCollectorRollerThrottle(-.75),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
@@ -246,7 +245,7 @@ public class OI
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
-                new SetManipulatorExtended(false),
+                new SetManipulatorExtended(true),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
@@ -261,25 +260,26 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
-                new SetManipulatorRollerSpeed(1),
+                // speed 1 on comp
+                new SetManipulatorRollerSpeed(-1),
                 (args) -> !isInHatchMode()
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-1),
+                new SetCollectorRollerThrottle(1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
 
         getButton(Joysticks.PANEL,EXTEND_MANIPULATOR).whenPressed(new SetManipulatorExtended(false));
         getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
 
-        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(112));
+        getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(109));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
         getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
-                new ClimbLevelTwo(),
-                new ClimbLevelThree(),
+                new Climb(-12, -8),
+                new Climb(-25, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
 
