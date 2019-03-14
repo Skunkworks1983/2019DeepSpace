@@ -77,9 +77,8 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         getGyro().reset();
-        estimator.setPose(Pose.LEVEL_1_MIDDLE);
+        estimator.setPose(Pose.LEVEL_1_RIGHT_REVERSED);
         compressor.start();
-        navx.reset();
     }
 
 
@@ -96,7 +95,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        
+        Scheduler.getInstance().add(new DrivePath(Path.REVERSED_LEVEL_1_RIGHT_TO_RIGHT_ROCKET_FAR_DRIVER_SWITCH, 5));
     }
 
     @Override
@@ -104,11 +103,6 @@ public class Robot extends TimedRobot
     {
         drivebase.setBrake(true);
         compressor.start();
-
-        Scheduler.getInstance().add(new DrivePath(new Path(
-                Pose.LEVEL_1_MIDDLE,
-                Pose.CARGO_SHIP_MIDDLE_RIGHT
-        ), 4));
     }
 
     @Override
@@ -121,7 +115,6 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-        Scheduler.getInstance().add(new RunTankDrive());
 //                drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
 //                drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
 

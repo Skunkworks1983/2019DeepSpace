@@ -17,14 +17,15 @@ public class PurePursuitController
     public static final double STEERING_FACTOR = 1.5; // unitless
     public static final double LOOKAHEAD_DISTANCE = 4.0; // feet
     public static final double SLOWDOWN_DISTANCE = 4.0; // feet
-    public static final double CURVATURE_SLOWDOWN = 0.1; // unitless
+    // TODO: tune
+    public static final double CURVATURE_SLOWDOWN = 0.05; // unitless
 
-    public static final double ANGLE_CORRECTION = 4.0; // unitless
+    public static final double ANGLE_CORRECTION = 6.0; // unitless
     public static final double ANGLE_CORRECTION_DISTANCE = 3.5; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
-    public static final double VELOCITY_DEADZONE = 0.2; // feet
-    public static final double HEADING_DEADZONE = 3.0; // degrees
+    public static final double VELOCITY_DEADZONE = 1.0; // feet
+    public static final double HEADING_DEADZONE = 20.0; // degrees
 
     /**
      * Evaluates the motor output
@@ -49,8 +50,11 @@ public class PurePursuitController
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
 
-        if (velocity < 0)
+        if (path.isReversed())
+        {
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
+            velocity *= -1;
+        }
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
 
@@ -95,8 +99,9 @@ public class PurePursuitController
             angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
 
         // Set velocities
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
+        int sign = path.isReversed() ? -1 : 1;
+        output.setValue1(velocity * (radius + sign * Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
+        output.setValue2(velocity * (radius - sign * Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
 
         return output;
     }
@@ -218,9 +223,10 @@ public class PurePursuitController
         double closeToEnd = path.evaluateClosestT(pose.getPosition());
 
         double angleError = getAngleError(endTangent, pose);
-        return closeToEnd > 1.0 - deadzoneT * 2 &&
-                Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
+        System.out.println(angleError);
+        return closeToEnd > 1.0 - deadzoneT * 2
+                && Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2
+                && Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2
+                && ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
     }
 }
