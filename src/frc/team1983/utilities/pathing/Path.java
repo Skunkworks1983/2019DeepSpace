@@ -20,6 +20,9 @@ public class Path
     public static final Path REVERSED_LEVEL_1_LEFT_TO_LEFT_ROCKET_FAR_DRIVER_SWITCH = new Path(true, Pose.LEVEL_1_LEFT_REVERSED, Pose.LEFT_ROCKET_FAR_DRIVER_SWITCH);
     public static final Path REVERSED_LEVEL_1_RIGHT_TO_RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Path(true, Pose.LEVEL_1_RIGHT_REVERSED, Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH);
 
+    public static final Path LEFT_ROCKET_FAR_TO_LEFT_LOADING_STATION = new Path(Pose.LEFT_ROCKET_FAR, Pose.LEFT_LOADING_STATION);
+    public static final Path RIGHT_ROCKET_FAR_TO_LEFT_LOADING_STATION = new Path(Pose.RIGHT_ROCKET_FAR, Pose.RIGHT_LOADING_STATION);
+
     public static final double TANGENT_LENGTH = 5.0; // feet
 
     protected Bezier[] curves;
