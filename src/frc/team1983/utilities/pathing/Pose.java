@@ -30,11 +30,11 @@ public final class Pose
     public static final Pose RIGHT_ROCKET_MIDDLE = new Pose(24 + (8.5 / 12.0) - L / 2.0, 19, 0);
     public static final Pose RIGHT_ROCKET_FAR = new Pose(25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25);
 
-    protected static final double DRIVER_SWITCH_DISTANCE = 3;
+    protected static final double DRIVER_SWITCH_DISTANCE = 3.0; // feet
     static double dxDriverSwitch = DRIVER_SWITCH_DISTANCE * Math.cos(Math.toRadians(61.25));
     static double dyDriverSwitch = DRIVER_SWITCH_DISTANCE * Math.sin(Math.toRadians(61.25));
-    public static final Pose LEFT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dyDriverSwitch, dyDriverSwitch)), -61.25);
-    public static final Pose RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dyDriverSwitch, dyDriverSwitch)), -61.25);
+    public static final Pose LEFT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxDriverSwitch, dyDriverSwitch)), -118.75);
+    public static final Pose RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxDriverSwitch, dyDriverSwitch)), -61.25);
 
     // Cargo ship
     public static final Pose CARGO_SHIP_LEFT_CLOSE = new Pose(11 + (7.25 / 12.0) - (5.125 / 12.0) - L / 2.0, 25 + (7.5 / 12.0), 0);
@@ -119,7 +119,7 @@ public final class Pose
     @Override
     public String toString()
     {
-        return getPosition() + ", " + getDirection();
+        return getPosition() + ", " + getDirection() + ", " + getHeading();
     }
 
     public static boolean equals(Pose pose1, Pose pose2)

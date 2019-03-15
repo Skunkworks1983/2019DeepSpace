@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.drivebase.DrivePath;
-import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -102,12 +101,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic()
     {
-        compressor.start();
-        Scheduler.getInstance().add(new RunTankDrive());
-        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
 
-        manipulator.setExtended(false);
-        manipulator.setOpen(false);
     }
 
     @Override
@@ -120,15 +114,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic()
     {
-//                drivebase.setLeft(ControlMode.Throttle, oi.getLeftY() * abs(oi.getLeftY()));
-//                drivebase.setRight(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
 
-//        climber.setThrottle(oi.getRightY() * abs(oi.getRightY()));
-
-//        collector.setWristThrottle(oi.getLeftY() * abs(oi.getLeftY()));
-
-//                if (!oi.getButton(OI.Joysticks.RIGHT, 1).get()) manipulator.setGrippers(oi.getRightY() * abs(oi.getRightY()));
-//                else elevator.set(ControlMode.Throttle, oi.getRightY() * abs(oi.getRightY()));
     }
 
     @Override
