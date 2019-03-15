@@ -108,6 +108,11 @@ public class OI
         return scale(-right.getY());
     }
 
+    public double getRightX()
+    {
+        return scale(right.getX());
+    }
+
     public JoystickButton getButton(Joysticks joystickPort, int button)
     {
         Joystick joystick;
