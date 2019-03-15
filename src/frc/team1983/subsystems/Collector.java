@@ -2,7 +2,9 @@ package frc.team1983.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
+import frc.team1983.services.OI;
 import frc.team1983.utilities.motors.*;
 
 /**
@@ -11,30 +13,53 @@ import frc.team1983.utilities.motors.*;
  */
 public class Collector extends Subsystem
 {
-    private Talon roller;
+    public static class Setpoints
+    {
+        public static final double STOW = 0.0;
+        public static final double STOW_UPPER = 115.0;
+        public static final double COLLECT = 140.0;
+    }
+
+    private MotorGroup roller;
     private DoubleSolenoid piston;
     public MotorGroup wristLeft, wristRight;
 
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
+    public static final double CLOSED_LOOP_TOLERANCE = 3.0;
+
+    public static final double DANGER_ZONE = 125.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 106; //TODO find exact value
+
+    public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
+    public static final double STOW_ZONE = 6.0; //TODO change value
+
+    public double desiredAngle = 0.0;
+    public boolean automationEnabled = true;
+    public boolean climbing = false;
 
     public Collector()
     {
-        roller = new Talon(RobotMap.Collector.ROLLER, RobotMap.Collector.ROLLER_REVERSED);
+        //roller = new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED);
+        roller = new MotorGroup("Collector roller",
+                new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED),
+                new Talon(RobotMap.Collector.ROLLER2, RobotMap.Collector.ROLLER2_REVERSED));
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
-        wristRight = new MotorGroup("Collector Wrist Right", FeedbackType.POSITION,
+        wristRight = new MotorGroup("Collector Wrist Right",
                 new Spark(RobotMap.Collector.RIGHT, RobotMap.Collector.RIGHT_REVERSED));
 
         wristRight.setConversionRatio(DEGREES_PER_TICK);
-        wristRight.setPID(0.06, 0, 0);
-        wristRight.setUseMotionProfiles(false);
+        wristRight.setKP(0.06);
+        wristRight.setCurrentLimit(40);
 
-        wristLeft = new MotorGroup("Collector Wrist Left", FeedbackType.POSITION,
+
+        wristLeft = new MotorGroup("Collector Wrist Left",
                 new Spark(RobotMap.Collector.LEFT, RobotMap.Collector.LEFT_REVERSED));
 
-        wristLeft.setPID(0.21, 0, 0);
+        wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
+        wristLeft.setCurrentLimit(40);
     }
 
     @Override
@@ -46,7 +71,29 @@ public class Collector extends Subsystem
     @Override
     public void periodic()
     {
+        //if(!automationEnabled) return;
 
+        // fold/unfold logic
+        if(!climbing)
+        {
+            if (getAngle() > FOLD_ANGLE && isFolded())
+                setFolded(false);
+            else if (getAngle() < FOLD_ANGLE && !isFolded())
+                setFolded(true);
+        }
+        else
+            setFolded(false);
+
+        if(getAngle() < 15.0) setRollerThrottle(0);
+
+        // if the elevator is not between where we are and where we want to go,
+        // proceed to the desired setpoint
+        if (!elevatorIsInCollectorPath())
+            wristRight.set(ControlMode.Position, desiredAngle);
+
+        // if we are in the way of the elevator, move to the danger zone to let the elevator go by
+        if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
+            wristRight.set(ControlMode.Position, DANGER_ZONE);
     }
 
     /**
@@ -54,6 +101,7 @@ public class Collector extends Subsystem
      */
     public void setWristThrottle(double output)
     {
+        automationEnabled = false;
         wristRight.set(ControlMode.Throttle, output);
     }
 
@@ -73,7 +121,8 @@ public class Collector extends Subsystem
      */
     public void setAngle(double angle)
     {
-        wristRight.set(ControlMode.Position, angle);
+        automationEnabled = true;
+        desiredAngle = angle;
     }
 
     /**
@@ -82,7 +131,7 @@ public class Collector extends Subsystem
 
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     /**
      *
@@ -90,7 +139,7 @@ public class Collector extends Subsystem
      */
     public boolean isFolded()
     {
-        return piston.get() == DoubleSolenoid.Value.kReverse;
+        return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
     /**
@@ -109,9 +158,23 @@ public class Collector extends Subsystem
         return wristRight.getPosition();
     }
 
-    /**
-     * Zeros the wrist
-     */
+    public boolean isAtSetpoint()
+    {
+        return Math.abs(wristRight.getPosition() - wristRight.getSetpoint()) < CLOSED_LOOP_TOLERANCE;
+    }
+
+    public boolean isInDangerZone()
+    {
+        return getAngle() <= DANGER_ZONE - CLOSED_LOOP_TOLERANCE;
+    }
+
+    public boolean elevatorIsInCollectorPath()
+    {
+        Elevator elevator = Robot.getInstance().getElevator();
+        return elevator.isInDangerZone() && ((desiredAngle < ELEVATOR_BOUNDARY && getAngle() >= ELEVATOR_BOUNDARY)
+                || (desiredAngle > ELEVATOR_BOUNDARY && getAngle() <= ELEVATOR_BOUNDARY));
+    }
+
     public void zero()
     {
         wristLeft.zero();

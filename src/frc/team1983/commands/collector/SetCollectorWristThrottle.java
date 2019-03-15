@@ -15,6 +15,8 @@ public class SetCollectorWristThrottle extends Command
 
     public SetCollectorWristThrottle(Collector collector, double throttle)
     {
+        requires(collector);
+
         this.collector = collector;
         this.throttle = throttle;
     }

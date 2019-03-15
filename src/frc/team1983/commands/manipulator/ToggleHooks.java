@@ -8,7 +8,7 @@ public class ToggleHooks extends InstantCommand
 {
     public ToggleHooks(Manipulator manipulator)
     {
-        super(manipulator, () -> manipulator.setHooks(!manipulator.getHooks()));
+        super(manipulator, () -> manipulator.setOpen(!manipulator.getOpen()));
     }
 
     public ToggleHooks()

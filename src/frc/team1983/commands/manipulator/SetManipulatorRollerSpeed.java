@@ -1,6 +1,7 @@
 package frc.team1983.commands.manipulator;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team1983.Robot;
 import frc.team1983.subsystems.Manipulator;
 
 /**
@@ -41,11 +42,20 @@ public class SetManipulatorRollerSpeed extends Command
         this(manipulator, speed, speed, zeroOnInterrupt);
     }
 
+    public SetManipulatorRollerSpeed(double speed, boolean zeroOnInterrupt)
+    {
+        this(Robot.getInstance().getManipulator(), speed, zeroOnInterrupt);
+    }
+
+    public SetManipulatorRollerSpeed(double speed)
+    {
+        this(speed, true);
+    }
+
     @Override
     public void initialize()
     {
-        manipulator.setLeftGripper(leftSpeed);
-        manipulator.setRightGripper(rightSpeed);
+        manipulator.setGrippers(leftSpeed);
     }
 
     @Override

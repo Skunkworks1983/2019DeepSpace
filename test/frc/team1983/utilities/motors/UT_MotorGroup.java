@@ -1,7 +1,7 @@
 package frc.team1983.utilities.motors;
 
 import frc.team1983.services.logging.Logger;
-import frc.team1983.utilities.control.PIDFController;
+import frc.team1983.utilities.control.MotorGroupController;
 import frc.team1983.utilities.sensors.DigitalInputEncoder;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class UT_MotorGroup
     public Logger logger;
 
     @Mock
-    private PIDFController controller;
+    private MotorGroupController controller;
 
     @Mock
     private DigitalInputEncoder dioEncoder;
@@ -38,7 +38,7 @@ public class UT_MotorGroup
     {
         initMocks(this);
 
-        motorGroup = new MotorGroup("Test Drivebase", FeedbackType.VELOCITY, (Motor) motor1, motor2);
+        motorGroup = new MotorGroup("Test Drivebase", (Motor) motor1, motor2);
     }
 
     @Test
@@ -115,8 +115,8 @@ public class UT_MotorGroup
     public void setsThrottleWhenSetRawThrottle()
     {
         motorGroup.setRawThrottle(0);
-        verify(motor1, times(1)).set(ControlMode.Throttle, 0);
-        verify(motor2, times(1)).set(ControlMode.Throttle, 0);
+        verify(motor1, times(1)).set(0);
+        verify(motor2, times(1)).set(0);
     }
 
     @Test
@@ -128,18 +128,9 @@ public class UT_MotorGroup
     }
 
     @Test
-    public void updatesPIDGains()
+    public void updatesPGain()
     {
-        motorGroup.setPID(1, 2, 3);
+        motorGroup.setKP(1);
         assertThat(motorGroup.getP(), is(1.0));
-        assertThat(motorGroup.getI(), is(2.0));
-        assertThat(motorGroup.getD(), is(3.0));
-    }
-
-    @Test
-    public void pidGetRespectsFeedbackType()
-    {
-        motorGroup.pidGet();
-        verify(motor1).getVelocity();
     }
 }

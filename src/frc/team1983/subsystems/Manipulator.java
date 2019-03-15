@@ -1,36 +1,42 @@
 package frc.team1983.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team1983.Robot;
 import frc.team1983.constants.RobotMap;
-import frc.team1983.services.logging.Logger;
+import frc.team1983.utilities.motors.ControlMode;
+import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.motors.Talon;
 
 /**
  * The manipulator is mounted to the elevator, and is how we score game pieces. It has four actuators on it:
- * The extender pushes the entire mechanism out and in. The hooks grabs hatch panels by opening up. The grippers grip cargo.
+ * The extender pushes the entire mechanism out and in. The opener grabs hatch panels by opening up. The grippers grip cargo.
  */
 public class Manipulator extends Subsystem
 {
-    private Logger logger;
-
     private DoubleSolenoid extender;
-    private DoubleSolenoid hooks;
+    private DoubleSolenoid opener;
 
-    private Talon leftGripper;
-    private Talon rightGripper;
+    private MotorGroup grippers;
+
+    private DigitalInput ballSensor;
+    private DigitalInput hatchSensor;
+
+    private boolean lastBallSensorValue = false;
+
 
     public Manipulator()
     {
-        leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
-        rightGripper = new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
-
         extender = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.EXTENDER_FORWARD, RobotMap.Manipulator.EXTENDER_REVERSE);
-        hooks = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
-        leftGripper = new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED);
-        rightGripper = new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED);
+        opener = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Manipulator.HOOKS_FORWARD, RobotMap.Manipulator.HOOKS_REVERSE);
+
+        grippers = new MotorGroup("Manipulator Grippers", RobotMap.Manipulator.GRIPPER_ENCODER,
+                new Talon(RobotMap.Manipulator.LEFT_GRIPPER, RobotMap.Manipulator.LEFT_GRIPPER_REVERSED),
+                new Talon(RobotMap.Manipulator.RIGHT_GRIPPER, RobotMap.Manipulator.RIGHT_GRIPPER_REVERSED));
+
+        ballSensor = new DigitalInput(RobotMap.Manipulator.BALL_SENSOR);
+        hatchSensor = new DigitalInput(RobotMap.Manipulator.HATCH_SENSOR);
     }
 
     @Override
@@ -42,67 +48,51 @@ public class Manipulator extends Subsystem
     @Override
     public void periodic()
     {
-        
+        boolean value = ballSensor.get();
+
+        if(value && !lastBallSensorValue && Robot.getInstance().getElevator().isInDangerZone() && !Robot.getInstance().getOI().isInHatchMode())
+        {
+            Robot.getInstance().getElevator().setPosition(Math.min(Robot.getInstance().getElevator().getPosition() + 6.0, 12.0));
+            setExtended(true);
+        }
+//        System.out.println("ballSensor: " + ballSensor.get());
+//        System.out.println("hatchSensor: " + hatchSensor.get());
+//        System.out.println("gripperEncoder: " + grippers.getPositionTicks());
+
+        lastBallSensorValue = value;
     }
 
     /**
      * @param shouldExtend If the manipulator should be extended or not
      */
-    public void setExtender(boolean shouldExtend)
+    public void setExtended(boolean shouldExtend)
     {
-        extender.set(shouldExtend ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-    }
-
-    public boolean isExtenderExtended()
-    {
-        return extender.get() == DoubleSolenoid.Value.kForward;
+        extender.set(shouldExtend ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
 
     /**
      *
      * @return state of the extender //todo fix naming convention
      */
-    public boolean getExtender()
+    public boolean getExtended()
     {
-        return extender.get() == DoubleSolenoid.Value.kForward;
+        return extender.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**
-     * @param shouldOpen If the hooks should be opened or closed
+     * @param open If the opener should be opened or closed
      */
-    public void setHooks(boolean shouldOpen)
+    public void setOpen(boolean open)
     {
-        hooks.set(shouldOpen ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        opener.set(open ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
     }
-
-    public boolean isHooksOpen()
-    {
-        return hooks.get() == DoubleSolenoid.Value.kForward;
-    }
-
     /**
      *
-     * @return state of the hooks //todo fix naming convention
+     * @return state of the opener //todo fix naming convention
      */
-    public boolean getHooks()
+    public boolean getOpen()
     {
-        return hooks.get() == DoubleSolenoid.Value.kForward;
-    }
-
-    /**
-     * @param output The percentoutput that should be applied to the motor
-     */
-    public void setLeftGripper(double output)
-    {
-        leftGripper.set(ControlMode.PercentOutput, output);
-    }
-
-    /**
-     * @param output The percentoutput that should be applied to the motor
-     */
-    public void setRightGripper(double output)
-    {
-        rightGripper.set(ControlMode.PercentOutput, output);
+        return opener.get() == DoubleSolenoid.Value.kReverse;
     }
 
     /**
@@ -110,7 +100,16 @@ public class Manipulator extends Subsystem
      */
     public void setGrippers(double output)
     {
-        setLeftGripper(output);
-        setRightGripper(output);
+        grippers.set(ControlMode.Throttle, output);
+    }
+
+    public boolean getBallSensorValue()
+    {
+        return ballSensor.get();
+    }
+
+    public boolean getHatchSensorValue()
+    {
+        return hatchSensor.get();
     }
 }

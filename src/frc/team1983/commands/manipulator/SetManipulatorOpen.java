@@ -1,11 +1,10 @@
 package frc.team1983.commands.manipulator;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Manipulator;
 
-public class SetHooksOpen extends InstantCommand
+public class SetManipulatorOpen extends InstantCommand
 {
     /**
      * This constructor allows you to set if the manipulator is opened or not
@@ -13,12 +12,12 @@ public class SetHooksOpen extends InstantCommand
      * @param manipulator The manipulator
      * @param open  If the manipulator should open or close
      */
-    public SetHooksOpen(Manipulator manipulator, boolean open)
+    public SetManipulatorOpen(Manipulator manipulator, boolean open)
     {
-        super(manipulator, () -> manipulator.setHooks(open));
+        super(manipulator, () -> manipulator.setOpen(open));
     }
 
-    public SetHooksOpen(boolean open)
+    public SetManipulatorOpen(boolean open)
     {
         this(Robot.getInstance().getManipulator(), open);
     }
