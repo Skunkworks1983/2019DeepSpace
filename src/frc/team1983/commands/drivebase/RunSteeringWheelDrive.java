@@ -47,6 +47,7 @@ public class RunSteeringWheelDrive extends Command
     {
         drivebase = Robot.getInstance().getDrivebase();
         oi = Robot.getInstance().getOI();
+        requires(drivebase);
     }
 
 

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.commands.drivebase.RunSteeringWheelDrive;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.drivebase.RunVelocityTankDrive;
 import frc.team1983.constants.RobotMap;
@@ -111,6 +112,12 @@ public class Robot extends TimedRobot
         compressor.start();
 //        Scheduler.getInstance().add(new RunTankDrive());
         Scheduler.getInstance().add(new RunVelocityTankDrive());
+//        Scheduler.getInstance().add(new RunSteeringWheelDrive());
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
     }
 
     public static Robot getInstance()

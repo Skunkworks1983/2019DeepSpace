@@ -17,6 +17,7 @@ public class RunVelocityTankDrive extends Command
         this.drivebase = drivebase;
         this.oi = oi;
         this.maxVelocity = maxVelocity;
+        requires(drivebase);
     }
 
     public RunVelocityTankDrive()

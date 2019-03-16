@@ -297,7 +297,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return useVelocity ? -getVelocity() : getPosition();
+        return useVelocity ? getVelocity() : getPosition();
     }
 
     /**
