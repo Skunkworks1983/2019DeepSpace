@@ -8,8 +8,8 @@ import frc.team1983.utilities.motors.ControlMode;
 
 public class RunTankDrive extends Command
 {
-    private Drivebase drivebase;
-    private OI oi;
+    protected Drivebase drivebase;
+    protected OI oi;
 
     public RunTankDrive(Drivebase drivebase, OI oi)
     {

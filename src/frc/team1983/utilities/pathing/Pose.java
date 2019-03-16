@@ -18,21 +18,31 @@ public final class Pose
 
     static double L = Constants.ROBOT_LENGTH;
 
+    protected static final double ROCKET_LINE_UP_DISTANCE = 4.0; // feet
+    protected static final double ROCKET_DRIVER_SWITCH_DISTANCE = 1.5; // feet
+    protected static final double LOADING_STATION_DRIVER_SWITCH_DISTANCE = 1.5; // feet
+
     // Rockets
-    static double dx = L / 2.0 * Math.cos(Math.toRadians(61.25));
-    static double dy = L / 2.0 * Math.sin(Math.toRadians(61.25));
+    static double dx = Math.cos(Math.toRadians(61.25));
+    static double dy = Math.sin(Math.toRadians(61.25));
 
-    public static final Pose LEFT_ROCKET_CLOSE = new Pose(1 + (6.5 / 12.0) + dx, 17 + (8.5 / 12.0) - dy, 118.75);
+    static double dxRocket = L / 2.0 * dx;
+    static double dyRocket = L / 2.0 * dy;
+    public static final Pose LEFT_ROCKET_CLOSE = new Pose(1 + (6.5 / 12.0) + dxRocket, 17 + (8.5 / 12.0) - dyRocket, 118.75);
     public static final Pose LEFT_ROCKET_MIDDLE = new Pose(2 + (3.5 / 12.0) + L / 2.0, 19, 180);
-    public static final Pose LEFT_ROCKET_FAR = new Pose(1 + (6.5 / 12.0) + dx, 20 + (3.5 / 12.0) + dy, -118.75);
+    public static final Pose LEFT_ROCKET_FAR = new Pose(1 + (6.5 / 12.0) + dxRocket, 20 + (3.5 / 12.0) + dyRocket, -118.75);
 
-    public static final Pose RIGHT_ROCKET_CLOSE = new Pose(25 + (5.5 / 12.0) - dx, 17 + (8.5 / 12.0) - dy, 61.25);
+    public static final Pose RIGHT_ROCKET_CLOSE = new Pose(25 + (5.5 / 12.0) - dxRocket, 17 + (8.5 / 12.0) - dyRocket, 61.25);
     public static final Pose RIGHT_ROCKET_MIDDLE = new Pose(24 + (8.5 / 12.0) - L / 2.0, 19, 0);
-    public static final Pose RIGHT_ROCKET_FAR = new Pose(25 + (5.5 / 12.0) - dx, 20 + (3.5 / 12.0) + dy, -61.25);
+    public static final Pose RIGHT_ROCKET_FAR = new Pose(25 + (5.5 / 12.0) - dxRocket, 20 + (3.5 / 12.0) + dyRocket, -61.25);
 
-    protected static final double DRIVER_SWITCH_DISTANCE = 3.0; // feet
-    static double dxDriverSwitch = DRIVER_SWITCH_DISTANCE * Math.cos(Math.toRadians(61.25));
-    static double dyDriverSwitch = DRIVER_SWITCH_DISTANCE * Math.sin(Math.toRadians(61.25));
+    static double dxLineUp = ROCKET_LINE_UP_DISTANCE * dx;
+    static double dyLineUp = ROCKET_LINE_UP_DISTANCE * dy;
+    public static final Pose LEFT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxLineUp, dyLineUp)), -118.75);
+    public static final Pose RIGHT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxLineUp, dyLineUp)), -61.25);
+
+    static double dxDriverSwitch = ROCKET_DRIVER_SWITCH_DISTANCE * dx;
+    static double dyDriverSwitch = ROCKET_DRIVER_SWITCH_DISTANCE * dy;
     public static final Pose LEFT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxDriverSwitch, dyDriverSwitch)), -118.75);
     public static final Pose RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxDriverSwitch, dyDriverSwitch)), -61.25);
 
@@ -47,8 +57,14 @@ public final class Pose
     public static final Pose CARGO_SHIP_MIDDLE_RIGHT = new Pose(14 + (5 / 12.0), 18 + (10.875 / 12.0) - (7.5 / 12.0) - L / 2.0, 90);
 
     // Loading stations
-    public static final Pose LEFT_LOADING_STATION = new Pose(1 + (10.75 / 12.0), L / 2.0, -90);
-    public static final Pose RIGHT_LOADING_STATION = new Pose(25 + (1.25 / 12.0), L / 2.0, -90);
+    public static final Pose LEFT_LOADING_STATION = new Pose(2 + (2.75 / 12.0), L / 2.0, -90);
+    public static final Pose RIGHT_LOADING_STATION = new Pose(24 + (9.25 / 12.0), L / 2.0, -90);
+
+    public static final Pose LEFT_LOADING_STATION_LINE_UP = new Pose(Pose.LEFT_ROCKET_FAR_LINE_UP.getPosition().getX() + 3, Pose.LEFT_ROCKET_FAR_LINE_UP.getPosition().getY(), -90);
+    public static final Pose RIGHT_LOADING_STATION_LINE_UP = new Pose(Pose.RIGHT_ROCKET_FAR_LINE_UP.getPosition().getX() - 3, Pose.RIGHT_ROCKET_FAR_LINE_UP.getPosition().getY(), -90);
+
+    public static final Pose LEFT_LOADING_STATION_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_LOADING_STATION.getPosition(), new Vector2(0, LOADING_STATION_DRIVER_SWITCH_DISTANCE)), -90);
+    public static final Pose RIGHT_LOADING_STATION_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_LOADING_STATION.getPosition(), new Vector2(0, LOADING_STATION_DRIVER_SWITCH_DISTANCE)), -90);
 
     // HAB
     public static final Pose LEVEL_1_LEFT = new Pose(9 + (8 / 12.0), 4 + L / 2.0, 90);

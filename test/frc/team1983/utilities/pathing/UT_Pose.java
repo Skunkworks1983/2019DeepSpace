@@ -27,11 +27,4 @@ public class UT_Pose
 
         assertThat(Math.abs(p.getReversed().getHeading() + 90) < Constants.EPSILON, equalTo(true));
     }
-
-    @Test
-    public void printPoses()
-    {
-        System.out.println(Pose.LEFT_ROCKET_FAR_DRIVER_SWITCH);
-        System.out.println(Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH);
-    }
 }

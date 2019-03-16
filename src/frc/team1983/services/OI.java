@@ -37,6 +37,9 @@ public class OI
         }
     }
 
+    public static final int JOYSTICK_TRIGGER = 1;
+    public static final int JOYSTICK_TOP_BUTTON = 2;
+
     public static final int HATCH_MODE_ENABLED = 14;
 
     public static final int ELEVATOR_1 = 16;

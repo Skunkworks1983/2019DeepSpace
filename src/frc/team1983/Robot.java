@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.autonomous.RightRocketFarHatch;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.constants.RobotMap;
@@ -95,7 +96,8 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        Scheduler.getInstance().add(new DrivePath(Path.REVERSED_LEVEL_1_RIGHT_TO_RIGHT_ROCKET_FAR_DRIVER_SWITCH, 5));
+        manipulator.setOpen(true);
+        Scheduler.getInstance().add(new RightRocketFarHatch());
     }
 
     @Override
