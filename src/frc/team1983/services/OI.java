@@ -70,7 +70,7 @@ public class OI
     public static final int CLIMB = 13;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 2.2;
+    protected static final double JOYSTICK_EXPONENT = 1.7;
 //    protected static final double JOYSTICK_EXPONENT = 3;
     protected static final double LINEAR_ZONE = 0.4;
     protected static final double LINEAR_SLOPE = Math.abs(Math.pow(LINEAR_ZONE, JOYSTICK_EXPONENT) / (LINEAR_ZONE - JOYSTICK_DEADZONE));
@@ -235,7 +235,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-.75),
+                new SetCollectorRollerThrottle(-1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
