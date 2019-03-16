@@ -266,7 +266,6 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
-                // speed 1 on comp
                 new SetManipulatorRollerSpeed(-1),
                 (args) -> !isInHatchMode()
         ));

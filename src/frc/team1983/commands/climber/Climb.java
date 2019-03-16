@@ -44,13 +44,13 @@ public class Climb extends Command
     @Override
     protected void execute()
     {
-        double throttle = gyro.getPitch() / 4;
+        double throttle = gyro.getPitch() / 3;
 
         if (collector.getAngle() < 90 && throttle < 0) throttle = 0;
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
         collector.setWristThrottle(throttle);
-        //collector.setRollerThrottle(climber.getPosition() > driveHeight ? 1 : 0.4);
-        collector.setRollerThrottle(-0.4);
+        //collector.setRollerThrottle(climber.getPosition() < driveHeight ? -1 : -0.4);
+        collector.setRollerThrottle(-1);
 
         if(climber.getPosition() <= driveHeight)
             drivebase.set(ControlMode.Throttle, 0.2);
