@@ -284,7 +284,7 @@ public class OI
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
                 new Climb(-12, -8),
-                new Climb(-25, -16),
+                new Climb(-24, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
 
