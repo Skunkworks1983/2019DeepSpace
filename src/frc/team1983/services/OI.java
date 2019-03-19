@@ -67,7 +67,10 @@ public class OI
     public static final int CLIMB = 13;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 2.2;
+    protected static final double JOYSTICK_EXPONENT = 1.7;
+//    protected static final double JOYSTICK_EXPONENT = 3;
+    protected static final double LINEAR_ZONE = 0.4;
+    protected static final double LINEAR_SLOPE = Math.abs(Math.pow(LINEAR_ZONE, JOYSTICK_EXPONENT) / (LINEAR_ZONE - JOYSTICK_DEADZONE));
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -91,8 +94,11 @@ public class OI
 
     protected static double scale(double raw)
     {
-        double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? raw : 0;
-        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
+        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
+        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+        else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
+
+//        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
@@ -246,7 +252,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-.75),
+                new SetCollectorRollerThrottle(-1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
@@ -281,7 +287,6 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
-                // speed 1 on comp
                 new SetManipulatorRollerSpeed(-1),
                 (args) -> !isInHatchMode()
         ));
@@ -304,7 +309,7 @@ public class OI
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
                 new Climb(-12, -8),
-                new Climb(-25, -16),
+                new Climb(-24, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
 

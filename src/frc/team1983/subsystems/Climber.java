@@ -21,7 +21,7 @@ public class Climber extends Subsystem
         );
 
         motorGroup.setConversionRatio(INCHES_PER_TICK);
-        motorGroup.setKP(0.1);
+        motorGroup.setKP(0.15);
 
         motorGroup.setBrake(true);
     }

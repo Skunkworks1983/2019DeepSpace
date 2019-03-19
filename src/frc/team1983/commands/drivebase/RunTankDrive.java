@@ -27,8 +27,8 @@ public class RunTankDrive extends Command
     @Override
     protected void execute()
     {
-        drivebase.setLeft(ControlMode.Throttle, oi.getLeftY());
-        drivebase.setRight(ControlMode.Throttle, oi.getRightY());
+            drivebase.setLeft(ControlMode.Throttle, oi.getLeftY());
+            drivebase.setRight(ControlMode.Throttle, oi.getRightY());
     }
 
     @Override
