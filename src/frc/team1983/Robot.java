@@ -5,10 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.commands.drivebase.RunArcadeDrive;
-import frc.team1983.commands.drivebase.RunSteeringWheelDrive;
 import frc.team1983.commands.drivebase.RunTankDrive;
-import frc.team1983.commands.drivebase.RunVelocityTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -73,6 +70,7 @@ public class Robot extends TimedRobot
     {
         getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
+        Scheduler.getInstance().add(new RunTankDrive());
         CameraServer.getInstance().startAutomaticCapture();
     }
 

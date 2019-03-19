@@ -13,6 +13,8 @@ public class RunTankDrive extends Command
 
     public RunTankDrive(Drivebase drivebase, OI oi)
     {
+        requires(drivebase);
+
         this.drivebase = drivebase;
         this.oi = oi;
     }
@@ -20,12 +22,6 @@ public class RunTankDrive extends Command
     public RunTankDrive()
     {
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getOI());
-    }
-
-    @Override
-    protected void initialize()
-    {
-        requires(drivebase);
     }
 
     @Override

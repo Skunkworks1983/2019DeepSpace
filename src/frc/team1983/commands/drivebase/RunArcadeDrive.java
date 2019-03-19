@@ -14,6 +14,8 @@ public class RunArcadeDrive extends Command
 
     public RunArcadeDrive(Drivebase drivebase, OI oi, double spinThreshold)
     {
+        requires(drivebase);
+
         this.drivebase = drivebase;
         this.oi = oi;
         this.spinThreshold = spinThreshold;
@@ -22,12 +24,6 @@ public class RunArcadeDrive extends Command
     public RunArcadeDrive()
     {
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getOI(), 0.9);
-    }
-
-    @Override
-    protected void initialize()
-    {
-        requires(drivebase);
     }
 
     @Override
