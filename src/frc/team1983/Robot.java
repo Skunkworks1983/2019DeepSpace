@@ -99,7 +99,7 @@ public class Robot extends TimedRobot
     {
         compressor.start();
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
-
+        Scheduler.getInstance().add(new RunTankDrive());
         manipulator.setExtended(false);
         manipulator.setOpen(false);
     }
@@ -107,6 +107,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     @Override
