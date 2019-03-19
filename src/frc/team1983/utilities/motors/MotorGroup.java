@@ -200,6 +200,15 @@ public class MotorGroup implements PIDInput, PIDOutput
         controller.setKP(kP);
     }
 
+    /**
+     * Sets the PID gains of the controller
+     */
+    public void setKD(double kD)
+    {
+        createController();
+        controller.setKD(kD);
+    }
+
     public double getSetpoint()
     {
         return setpoint;

@@ -7,6 +7,8 @@ import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.drivebase.RunArcadeDrive;
+import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.manipulator.*;
 import frc.team1983.subsystems.*;
 import frc.team1983.commands.climber.ManualClimber;
@@ -36,6 +38,7 @@ public class OI
             return port;
         }
     }
+    private static boolean useDriveMode1 = false;
 
     public static final int HATCH_MODE_ENABLED = 14;
 
@@ -154,6 +157,16 @@ public class OI
 
     public void initializeBindings()
     {
+        getButton(Joysticks.RIGHT, 1).whenPressed(new ConditionalCommand(
+                new RunTankDrive(),
+                new RunArcadeDrive(),
+                (args) -> {
+                    useDriveMode1 = !useDriveMode1;
+                    return useDriveMode1;
+                }
+
+        ));
+
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),

@@ -38,7 +38,7 @@ public class RunSteeringWheelDrive extends Command
 {
     private Drivebase drivebase;
     private OI oi;
-    private static final double MAX_VELOCITY = 0;
+    private static final double MAX_VELOCITY = 1000;
     private static final double HALF_TRACK_WIDTH = Drivebase.TRACK_WIDTH / 2;
 
 

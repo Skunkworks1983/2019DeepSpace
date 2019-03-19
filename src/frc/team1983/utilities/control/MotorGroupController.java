@@ -24,7 +24,7 @@ public class MotorGroupController extends Thread
 
     protected MotionProfile motionProfile;
 
-    private double kP, setpoint, profileStartTime;
+    private double kP, kD, setpoint, profileStartTime, prevTime, prevError;
 
     private ArrayList<Function<Object, Double>> ffTerms;
 
@@ -37,12 +37,13 @@ public class MotorGroupController extends Thread
      * @param ffTerms An array of Function objects, which will be passed the output of input.getFF() and
      *                should return a value that will be added to the final output.
      */
-    public MotorGroupController(PIDInput input, PIDOutput output, double kP,
+    public MotorGroupController(PIDInput input, PIDOutput output, double kP, double kD,
                                 ArrayList<Function<Object, Double>> ffTerms)
     {
         this.input = input;
         this.output = output;
         this.kP = kP;
+        this.kD = kD;
 
         this.ffTerms = ffTerms;
     }
@@ -55,7 +56,7 @@ public class MotorGroupController extends Thread
      */
     public MotorGroupController(MotorGroup motorGroup)
     {
-        this(motorGroup, motorGroup, 0, new ArrayList<>());
+        this(motorGroup, motorGroup, 0, 0, new ArrayList<>());
     }
 
     /**
@@ -64,6 +65,11 @@ public class MotorGroupController extends Thread
     public synchronized void setKP(double kP)
     {
         this.kP = kP;
+    }
+
+    public synchronized void setKD(double kD)
+    {
+        this.kD = kD;
     }
 
     public synchronized double getKP()
@@ -147,8 +153,13 @@ public class MotorGroupController extends Thread
         double currentValue = input.pidGet();
         double error = setpoint - currentValue; // Current error
         double output; // Percent output to be applied to the motor
+        double deltaTime = System.currentTimeMillis() - prevTime;
+        double deltaError = error - prevError;
+        prevTime = System.currentTimeMillis();
+        prevError = error;
 
         output = error * kP;
+        output -= deltaError / deltaTime * kD;
 
         Object ffOperator = input.getFFOperator();
         for (Function<Object, Double> ffTerm : ffTerms)
@@ -192,6 +203,8 @@ public class MotorGroupController extends Thread
     {
         //setpoint = input.pidGet();
         enabled = true;
+        prevTime = System.currentTimeMillis();
+        prevError = 0;
     }
 
     /**

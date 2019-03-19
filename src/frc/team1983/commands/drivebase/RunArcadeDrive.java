@@ -6,20 +6,22 @@ import frc.team1983.services.OI;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.motors.ControlMode;
 
-public class RunTankDrive extends Command
+public class RunArcadeDrive extends Command
 {
     private Drivebase drivebase;
     private OI oi;
+    private final double spinThreshold;
 
-    public RunTankDrive(Drivebase drivebase, OI oi)
+    public RunArcadeDrive(Drivebase drivebase, OI oi, double spinThreshold)
     {
         this.drivebase = drivebase;
         this.oi = oi;
+        this.spinThreshold = spinThreshold;
     }
 
-    public RunTankDrive()
+    public RunArcadeDrive()
     {
-        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getOI());
+        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getOI(), 0.9);
     }
 
     @Override
@@ -31,7 +33,13 @@ public class RunTankDrive extends Command
     @Override
     protected void execute()
     {
-        drivebase.set(ControlMode.Throttle, oi.getLeftY(), oi.getRightY());
+        double throttle = oi.getRightY();
+        double x = oi.getRightX();
+
+        if(x > 0)
+            drivebase.set(ControlMode.Throttle, throttle, throttle * (1 - (Math.abs(x) / spinThreshold)));
+        else
+            drivebase.set(ControlMode.Throttle, throttle * (1 - (Math.abs(x) / spinThreshold)), throttle);
     }
 
     @Override
