@@ -100,7 +100,6 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         compressor.start();
-        Scheduler.getInstance().add(new RunTankDrive());
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
 
         manipulator.setExtended(false);
