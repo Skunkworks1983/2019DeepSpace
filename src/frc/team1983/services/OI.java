@@ -289,11 +289,6 @@ public class OI
                 new SetCollectorFolded(true),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
-        getButton(Joysticks.PANEL, EXPEL_BALL).whenReleased(new ConditionalCommand(
-                new SetCollectorFolded(false),
-                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
-        ));
-
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
                 new SetCollectorRollerThrottle(1),
