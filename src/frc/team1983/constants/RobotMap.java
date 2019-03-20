@@ -66,9 +66,10 @@ public class RobotMap
 
     public static class Climber
     {
-        public static final int RIGHT1 = 6;
-        public static final int Right2 = 8;
-        public static final boolean RIGHT1_REVERSED = false;
-        public static final boolean RIGHT2_REVERSED = false;
+        public static final int RIGHT = 6;
+        public static final boolean RIGHT_REVERSED = false;
+
+        public static final int LEFT = 8;
+        public static final boolean LEFT_REVERSED = false;
     }
 }

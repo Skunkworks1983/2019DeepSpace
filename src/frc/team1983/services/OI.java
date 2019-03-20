@@ -6,6 +6,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
+import frc.team1983.commands.collector.*;
+import frc.team1983.commands.manipulator.*;
+import frc.team1983.subsystems.*;
+import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
 import frc.team1983.commands.collector.SetCollectorRollerThrottle;
@@ -189,7 +193,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_2).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -200,7 +208,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_3).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_3).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -211,7 +223,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_4).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_4).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -222,7 +238,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_5).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_5).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -233,7 +253,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_6).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_6).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -260,6 +284,10 @@ public class OI
                 new SetCollectorAngle(Collector.Setpoints.COLLECT),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(true),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
+        ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
@@ -282,6 +310,10 @@ public class OI
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
                 new SetManipulatorRollerSpeed(-1),
                 (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(true),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().getPosition() < 12.0
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(

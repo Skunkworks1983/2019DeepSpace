@@ -27,8 +27,8 @@ public class Collector extends Subsystem
     public static final double DEGREES_PER_TICK = 90.0 / 93.0; // TODO find more exact value
     public static final double CLOSED_LOOP_TOLERANCE = 3.0;
 
-    public static final double DANGER_ZONE = 125.0; //TODO find exact value
-    public static final double FOLD_ANGLE = 106; //TODO find exact value
+    public static final double DANGER_ZONE = 100.0; //TODO find exact value
+    public static final double FOLD_ANGLE = 35.0; //TODO find exact value
 
     public static final double ELEVATOR_BOUNDARY = 35.0; //TODO change this later
     public static final double STOW_ZONE = 6.0; //TODO change value
@@ -37,10 +37,13 @@ public class Collector extends Subsystem
     public boolean automationEnabled = true;
     public boolean climbing = false;
 
+    public boolean desiredFoldedState = false;
+
     public Collector()
     {
-        roller = new MotorGroup("Collector roller",
-                new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED));
+        roller = new MotorGroup("Collector Roller",
+                new Talon(RobotMap.Collector.ROLLER1, RobotMap.Collector.ROLLER1_REVERSED)
+        );
 
         piston = new DoubleSolenoid(RobotMap.COMPRESSOR, RobotMap.Collector.PISTON_FORWARD, RobotMap.Collector.PISTON_REVERSE);
 
@@ -74,15 +77,16 @@ public class Collector extends Subsystem
         // fold/unfold logic
         if(!climbing)
         {
-            if (getAngle() > FOLD_ANGLE && isFolded())
-                setFolded(false);
-            else if (getAngle() < FOLD_ANGLE && !isFolded())
-                setFolded(true);
+            System.out.println(desiredFoldedState);
+            if (getAngle() > FOLD_ANGLE)
+                piston.set(desiredFoldedState ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+            else if (getAngle() < FOLD_ANGLE)
+                piston.set(DoubleSolenoid.Value.kForward);
         }
         else
             setFolded(false);
 
-        if(getAngle() < 15.0) setRollerThrottle(0);
+        if(getAngle() < 15.0 || isFolded()) setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint
@@ -129,7 +133,7 @@ public class Collector extends Subsystem
 
     public void setFolded(boolean folded)
     {
-        piston.set(folded ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        desiredFoldedState = folded;
     }
     /**
      *
