@@ -325,8 +325,11 @@ public class OI
         getButton(Joysticks.PANEL,RETRACT_MANIPULATOR).whenPressed(new SetManipulatorExtended(true));
 
         getButton(Joysticks.PANEL, 19).whenPressed(new SetCollectorAngle(109));
+        getButton(Joysticks.PANEL, 19).whileHeld(new SetCollectorFolded(true));
         getButton(Joysticks.PANEL, 18).whenPressed(new SetCollectorAngle(150));
+        getButton(Joysticks.PANEL, 18).whileHeld(new SetCollectorFolded(true));
         getButton(Joysticks.PANEL, 17).whenPressed(new SetCollectorAngle(0));
+        getButton(Joysticks.PANEL, 17).whileHeld(new SetCollectorFolded(true));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
                 new Climb(-12, -8),

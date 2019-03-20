@@ -69,6 +69,7 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         getGyro().reset();
+        compressor.start();
         estimator.setPose(Pose.DEFAULT);
         Scheduler.getInstance().add(new RunTankDrive());
         CameraServer.getInstance().startAutomaticCapture();
@@ -107,6 +108,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+        compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
