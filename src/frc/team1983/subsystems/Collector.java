@@ -75,16 +75,10 @@ public class Collector extends Subsystem
         //if(!automationEnabled) return;
 
         // fold/unfold logic
-        if(!climbing)
-        {
-            System.out.println(desiredFoldedState);
-            if (getAngle() > FOLD_ANGLE)
-                piston.set(desiredFoldedState ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
-            else if (getAngle() < FOLD_ANGLE)
-                piston.set(DoubleSolenoid.Value.kForward);
-        }
-        else
-            setFolded(false);
+        if (getAngle() > FOLD_ANGLE)
+            piston.set(desiredFoldedState ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+        else if (getAngle() < FOLD_ANGLE)
+            piston.set(DoubleSolenoid.Value.kForward);
 
         if(getAngle() < 15.0 || isFolded()) setRollerThrottle(0);
 
