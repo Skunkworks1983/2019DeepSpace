@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.autonomous.LeftRocketFarHatch;
 import frc.team1983.autonomous.RightRocketFarHatch;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.drivebase.DrivePath;
@@ -77,7 +78,7 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         getGyro().reset();
-        estimator.setPose(Pose.LEVEL_1_RIGHT_REVERSED);
+        estimator.setPose(Pose.LEVEL_1_LEFT_REVERSED);
         compressor.start();
         CameraServer.getInstance().startAutomaticCapture();
     }
@@ -97,7 +98,7 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         manipulator.setOpen(true);
-        Scheduler.getInstance().add(new RightRocketFarHatch());
+        Scheduler.getInstance().add(new LeftRocketFarHatch());
     }
 
     @Override

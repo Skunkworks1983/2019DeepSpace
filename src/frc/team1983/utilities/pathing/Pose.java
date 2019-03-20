@@ -18,9 +18,9 @@ public final class Pose
 
     static double L = Constants.ROBOT_LENGTH;
 
-    protected static final double ROCKET_LINE_UP_DISTANCE = 4.0; // feet
-    protected static final double ROCKET_DRIVER_SWITCH_DISTANCE = 1.5; // feet
-    protected static final double LOADING_STATION_DRIVER_SWITCH_DISTANCE = 1.5; // feet
+    protected static final double ROCKET_LINE_UP_DISTANCE = 3.75; // feet
+    protected static final double ROCKET_DRIVER_SWITCH_DISTANCE = 2.0; // feet
+    protected static final double LOADING_STATION_DRIVER_SWITCH_DISTANCE = 3.0; // feet
 
     // Rockets
     static double dx = Math.cos(Math.toRadians(61.25));

@@ -17,7 +17,7 @@ public class PurePursuitController
     public static final double STEERING_FACTOR = 1.25; // unitless
     public static final double LOOKAHEAD_DISTANCE = 5.0; // feet
     public static final double SLOWDOWN_DISTANCE = 5.0; // feet
-    public static final double SLOWDOWN_FACTOR = 1.0; // unitless
+    public static final double SLOWDOWN_FACTOR = 1.5; // unitless
     // TODO: tune
     public static final double CURVATURE_SLOWDOWN = 0.05; // unitless
 
@@ -25,7 +25,7 @@ public class PurePursuitController
     public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
-    public static final double VELOCITY_DEADZONE = 0.3; // feet
+    public static final double VELOCITY_DEADZONE = 0.5; // feet
     public static final double HEADING_DEADZONE = 12; // degrees
 
     /**
@@ -73,9 +73,9 @@ public class PurePursuitController
         velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE / SLOWDOWN_FACTOR, 1);
 
         // Slow down around curves
-        double t = path.evaluateClosestT(pose.getPosition());
-        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
         // TODO: test
+//        double t = path.evaluateClosestT(pose.getPosition())
+//        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
 //        if (curveIcc != null)
 //        {
 //            double slowdown = Math.min(CURVATURE_SLOWDOWN / path.evaluateRadiusOfCurvatuve(t), velocity);
@@ -144,10 +144,16 @@ public class PurePursuitController
      */
     protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookahead)
     {
+        Line l1 = new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0));
+
+        Vector2 direction = Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()), 90);
+
+        if(direction.equals(Vector2.ZERO))
+            return null;
+
+        Line l2 = new Line(Vector2.findCenter(pose.getPosition(), lookahead), direction.getNormalized());
         return Line.cast(
-                new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
-                new Line(Vector2.findCenter(pose.getPosition(), lookahead),
-                        Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()).getNormalized(), 90.0))
+                l1, l2
         );
     }
 
@@ -162,7 +168,8 @@ public class PurePursuitController
      */
     protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
     {
-        double radius = Vector2.getDistance(pose.getPosition(), icc);
+        Vector2 posePosition = pose.getPosition();
+        double radius = Vector2.getDistance(posePosition, icc);
         double direction = Vector2.dot(Vector2.rotate(pose.getDirection(), -90.0), Vector2.sub(icc, pose.getPosition()).getNormalized());
         radius *= Math.signum(direction);
 
