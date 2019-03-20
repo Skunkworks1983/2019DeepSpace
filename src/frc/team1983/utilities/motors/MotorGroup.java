@@ -34,6 +34,8 @@ public class MotorGroup implements PIDInput, PIDOutput
     private double movementAcceleration = 0;
     private double setpoint = 0;
 
+    private boolean useVelocity = false;
+
     /**
      * Constructor for a motorGroup with a name, master, encoder, and other motors, regardless
      * of whether or not the motor controllers are Talons or Sparks.
@@ -149,17 +151,26 @@ public class MotorGroup implements PIDInput, PIDOutput
         {
             disableController();
             setRawThrottle(value);
+            return;
+        }
+
+        if(controlMode == ControlMode.Velocity)
+        {
+            setUseVelocity(true);
         }
         else
         {
-            if(value == setpoint) return;
-            setpoint = value;
-
-            createController();
-            if(controlMode == ControlMode.MotionMagic)
-                controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration));
-            else controller.setSetpoint(value);
+            setUseVelocity(false);
         }
+
+        if(value == setpoint) return;
+        setpoint = value;
+
+        createController();
+        if(controlMode == ControlMode.MotionMagic)
+            controller.runMotionProfile(MotionProfile.generateProfile(pidGet(), value, cruiseVelocity, movementAcceleration));
+        else controller.setSetpoint(value);
+
     }
 
     /**
@@ -187,6 +198,15 @@ public class MotorGroup implements PIDInput, PIDOutput
     {
         createController();
         controller.setKP(kP);
+    }
+
+    /**
+     * Sets the PID gains of the controller
+     */
+    public void setKD(double kD)
+    {
+        createController();
+        controller.setKD(kD);
     }
 
     public double getSetpoint()
@@ -275,6 +295,10 @@ public class MotorGroup implements PIDInput, PIDOutput
         setRawThrottle(output);
     }
 
+    public void setUseVelocity(boolean useVelocity)
+    {
+        this.useVelocity = useVelocity;
+    }
 
     /**
      * @return For the MotorGroupController. Returns position or velocity depending on the configured feedbacktype
@@ -282,7 +306,7 @@ public class MotorGroup implements PIDInput, PIDOutput
     @Override
     public double pidGet()
     {
-        return getPositionTicks() * conversionRatio;
+        return useVelocity ? getVelocity() : getPosition();
     }
 
     /**

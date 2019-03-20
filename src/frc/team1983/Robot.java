@@ -70,6 +70,7 @@ public class Robot extends TimedRobot
     {
         getGyro().reset();
         estimator.setPose(Pose.DEFAULT);
+        Scheduler.getInstance().add(new RunTankDrive());
         CameraServer.getInstance().startAutomaticCapture();
     }
 
@@ -97,9 +98,8 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         compressor.start();
-        Scheduler.getInstance().add(new RunTankDrive());
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
-
+        Scheduler.getInstance().add(new RunTankDrive());
         manipulator.setExtended(false);
         manipulator.setOpen(false);
     }
@@ -107,8 +107,12 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
+    }
+
+    @Override
+    public void teleopPeriodic()
+    {
     }
 
     public static Robot getInstance()

@@ -4,5 +4,6 @@ public enum ControlMode
 {
     Throttle,
     Position,
-    MotionMagic
+    MotionMagic,
+    Velocity
 }
