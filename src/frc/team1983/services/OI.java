@@ -2,6 +2,7 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
@@ -9,8 +10,19 @@ import frc.team1983.commands.collector.*;
 import frc.team1983.commands.manipulator.*;
 import frc.team1983.subsystems.*;
 import frc.team1983.commands.climber.ManualClimber;
+import frc.team1983.commands.climber.ManualClimber;
+import frc.team1983.commands.collector.SetCollectorAngle;
+import frc.team1983.commands.collector.SetCollectorRollerThrottle;
+import frc.team1983.commands.collector.SetCollectorWristThrottle;
+import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.drivebase.RunArcadeDrive;
+import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetManipulatorExtended;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
+import frc.team1983.commands.manipulator.ToggleHooks;
+import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
@@ -33,6 +45,7 @@ public class OI
             return port;
         }
     }
+    private static boolean useDriveMode1 = false;
 
     public static final int HATCH_MODE_ENABLED = 14;
 
@@ -111,6 +124,11 @@ public class OI
         return scale(-right.getY());
     }
 
+    public double getRightX()
+    {
+        return scale(right.getX());
+    }
+
     public JoystickButton getButton(Joysticks joystickPort, int button)
     {
         Joystick joystick;
@@ -152,6 +170,9 @@ public class OI
 
     public void initializeBindings()
     {
+        getButton(Joysticks.RIGHT, 1).whileHeld(new RunArcadeDrive());
+        getButton(Joysticks.RIGHT, 1).whenReleased(new RunTankDrive());
+
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
