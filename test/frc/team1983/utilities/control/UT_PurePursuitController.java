@@ -22,17 +22,17 @@ public class UT_PurePursuitController
                 new Pose(0, 10, 90)
         );
 
-//        Pair output = PurePursuitController.evaluateOutput(pose, path, 1);
-//        double lv = (double) output.getValue1();
-//        double rv = (double) output.getValue2();
-//        assertThat(lv > 0, equalTo(true));
-//        assertThat(rv > 0, equalTo(true));
-
-        pose = new Pose(0, 15, 90);
-
         Pair output = PurePursuitController.evaluateOutput(pose, path, 1);
         double lv = (double) output.getValue1();
         double rv = (double) output.getValue2();
+        assertThat(lv > 0, equalTo(true));
+        assertThat(rv > 0, equalTo(true));
+
+        pose = new Pose(0, 15, 90);
+
+        output = PurePursuitController.evaluateOutput(pose, path, 1);
+        lv = (double) output.getValue1();
+        rv = (double) output.getValue2();
         assertThat(lv < 0, equalTo(true));
         assertThat(rv < 0, equalTo(true));
     }
