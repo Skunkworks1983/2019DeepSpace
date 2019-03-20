@@ -292,7 +292,7 @@ public class OI
         ));
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
                 new SetCollectorFolded(true),
-                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().getPosition() < 12.0
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(

@@ -86,7 +86,7 @@ public class Collector extends Subsystem
         else
             setFolded(false);
 
-        if(getAngle() < 15.0) setRollerThrottle(0);
+        if(getAngle() < 15.0 || isFolded()) setRollerThrottle(0);
 
         // if the elevator is not between where we are and where we want to go,
         // proceed to the desired setpoint
