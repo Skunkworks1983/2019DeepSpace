@@ -110,7 +110,6 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
     }
 

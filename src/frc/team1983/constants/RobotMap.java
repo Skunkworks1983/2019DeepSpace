@@ -30,9 +30,7 @@ public class RobotMap
         public static final boolean RIGHT_REVERSED = true;
 
         public static final int ROLLER1 = 5;
-        public static final int ROLLER2 = 8;
         public static final boolean ROLLER1_REVERSED = false;
-        public static final boolean ROLLER2_REVERSED = false;
 
         public static final int PISTON_FORWARD = 0;
         public static final int PISTON_REVERSE = 1;
@@ -70,5 +68,8 @@ public class RobotMap
     {
         public static final int RIGHT = 6;
         public static final boolean RIGHT_REVERSED = false;
+
+        public static final int LEFT = 8;
+        public static final boolean LEFT_REVERSED = false;
     }
 }

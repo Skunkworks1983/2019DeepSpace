@@ -2,18 +2,27 @@ package frc.team1983.services;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
-import frc.team1983.commands.collector.SetCollectorRollerThrottle;
-import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.collector.*;
 import frc.team1983.commands.manipulator.*;
 import frc.team1983.subsystems.*;
 import frc.team1983.commands.climber.ManualClimber;
+import frc.team1983.commands.climber.ManualClimber;
 import frc.team1983.commands.collector.SetCollectorAngle;
+import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
+import frc.team1983.commands.collector.ToggleCollector;
+import frc.team1983.commands.drivebase.RunArcadeDrive;
+import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
+import frc.team1983.commands.manipulator.SetManipulatorExtended;
+import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
+import frc.team1983.commands.manipulator.ToggleHooks;
+import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Elevator;
 
 import java.util.HashMap;
@@ -36,6 +45,7 @@ public class OI
             return port;
         }
     }
+    private static boolean useDriveMode1 = false;
 
     public static final int JOYSTICK_TRIGGER = 1;
     public static final int JOYSTICK_TOP_BUTTON = 2;
@@ -73,7 +83,10 @@ public class OI
     public static final int CLIMB = 13;
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
-    protected static final double JOYSTICK_EXPONENT = 2.2;
+    protected static final double JOYSTICK_EXPONENT = 1.7;
+//    protected static final double JOYSTICK_EXPONENT = 3;
+    protected static final double LINEAR_ZONE = 0.4;
+    protected static final double LINEAR_SLOPE = Math.abs(Math.pow(LINEAR_ZONE, JOYSTICK_EXPONENT) / (LINEAR_ZONE - JOYSTICK_DEADZONE));
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -97,8 +110,11 @@ public class OI
 
     protected static double scale(double raw)
     {
-        double deadzoned = Math.abs(raw) > JOYSTICK_DEADZONE ? raw : 0;
-        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
+        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
+        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+        else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
+
+//        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
@@ -109,6 +125,11 @@ public class OI
     public double getRightY()
     {
         return scale(-right.getY());
+    }
+
+    public double getRightX()
+    {
+        return scale(right.getX());
     }
 
     public JoystickButton getButton(Joysticks joystickPort, int button)
@@ -152,6 +173,9 @@ public class OI
 
     public void initializeBindings()
     {
+        getButton(Joysticks.RIGHT, 1).whileHeld(new RunArcadeDrive());
+        getButton(Joysticks.RIGHT, 1).whenReleased(new RunTankDrive());
+
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
@@ -172,7 +196,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_2).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_2).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -183,7 +211,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_3).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_3).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -194,7 +226,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_4).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_4).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -205,7 +241,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_5).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_5).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -216,7 +256,11 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, ELEVATOR_6).whenPressed(new ConditionalCommand(
-                new SetCollectorAngle(Collector.Setpoints.STOW),
+                new SetCollectorAngle(Collector.Setpoints.STOW_UPPER),
+                (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, ELEVATOR_6).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(false),
                 (args) -> !isInHatchMode()
         ));
 
@@ -232,7 +276,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-.75),
+                new SetCollectorRollerThrottle(-1),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
@@ -241,6 +285,10 @@ public class OI
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
                 new SetCollectorAngle(Collector.Setpoints.COLLECT),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
+        ));
+        getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(true),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenReleased(new ConditionalCommand(
@@ -263,9 +311,12 @@ public class OI
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
-                // speed 1 on comp
                 new SetManipulatorRollerSpeed(-1),
                 (args) -> !isInHatchMode()
+        ));
+        getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
+                new SetCollectorFolded(true),
+                (args) -> !isInHatchMode() && Robot.getInstance().getElevator().getPosition() < 12.0
         ));
 
         getButton(Joysticks.PANEL, EXPEL_BALL).whileHeld(new ConditionalCommand(
@@ -282,7 +333,7 @@ public class OI
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
                 new Climb(-12, -8),
-                new Climb(-25, -16),
+                new Climb(-24, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
 
