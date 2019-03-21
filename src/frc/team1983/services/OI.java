@@ -117,10 +117,9 @@ public class OI
     protected static double scale(double raw)
     {
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
-        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw - Math.signum(raw) * JOYSTICK_DEADZONE;
+        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw - Math.signum(raw) * JOYSTICK_DEADZONE;
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
-
-//        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
