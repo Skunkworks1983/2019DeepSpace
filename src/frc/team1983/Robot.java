@@ -75,7 +75,7 @@ public class Robot extends TimedRobot
     {
         getGyro().reset();
         estimator.setPose(Pose.LEVEL_1_LEFT_REVERSED);
-
+        compressor.start();
         CameraServer.getInstance().startAutomaticCapture();
     }
 
