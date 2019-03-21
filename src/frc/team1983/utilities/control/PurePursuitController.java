@@ -251,7 +251,6 @@ public class PurePursuitController
 
         Vector2 direction = path.isReversed() ? endTangent.getNegative() : endTangent.copy();
         double angleError = getAngleError(direction, pose);
-        System.out.println(angleError);
         return ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
     }
 

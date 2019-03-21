@@ -4,22 +4,16 @@ import frc.team1983.Robot;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.subsystems.Drivebase;
-import frc.team1983.utilities.pathing.Pose;
 
 public class DriverSwitch extends RunTankDrive
 {
     protected StateEstimator estimator;
-    protected Pose resetPose;
-    protected OI.Joysticks joy;
     protected int button;
 
     public DriverSwitch(Drivebase drivebase, OI oi, StateEstimator estimator)
     {
         super(drivebase, oi);
         this.estimator = estimator;
-        this.resetPose = resetPose;
-        this.joy = joy;
-        this.button = button;
     }
 
     public DriverSwitch()

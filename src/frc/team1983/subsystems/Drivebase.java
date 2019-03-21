@@ -14,7 +14,7 @@ import frc.team1983.utilities.motors.Spark;
 public class Drivebase extends Subsystem
 {
     public static final double FEET_PER_TICK = (6.0 * Math.PI / 12.0) / (8.69/* * Spark.SPARK_INTERNAL_ENCODER_RESOLUTION*/); // encoder pulses / feet of travel
-    public static final double MAX_VELOCITY = 1000.0; // Whatever the sparks return. Empirically measured by Bella driving like a madman.
+    public static final double MAX_VELOCITY = 14.0; // Whatever the sparks return. Empirically measured by Bella driving like a madman.
     public static final double TRACK_WIDTH = (Constants.ROBOT_WIDTH - (3.0 / 12.0)); // feet, horizontal distance between left and right wheels
 
     public MotorGroup left, right;

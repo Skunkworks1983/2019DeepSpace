@@ -3,6 +3,7 @@ package frc.team1983.commands.drivebase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team1983.Robot;
+import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.Pair;
@@ -16,6 +17,7 @@ public class DrivePath extends Command
 
     protected Drivebase drivebase;
     protected StateEstimator estimator;
+    protected OI oi;
     protected Path path;
     protected double velocity;
 
@@ -24,19 +26,20 @@ public class DrivePath extends Command
     private double dt;
     private double endTimer;
 
-    public DrivePath(Drivebase drivebase, StateEstimator estimator, Path path, double velocity)
+    public DrivePath(Drivebase drivebase, StateEstimator estimator, OI oi, Path path, double velocity)
     {
         requires(drivebase);
 
         this.drivebase = drivebase;
         this.estimator = estimator;
+        this.oi = oi;
         this.path = path;
         this.velocity = velocity;
     }
 
     public DrivePath(Path path, double velocity)
     {
-        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), path, velocity);
+        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), Robot.getInstance().getOI(), path, velocity);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class DrivePath extends Command
     @Override
     protected void execute()
     {
-        time = RobotController.getFPGATime();
+        time = RobotController.getFPGATime() / 1000000.0;
         dt = time - lastTime;
 
         Pair output = PurePursuitController.evaluateOutput(estimator.getCurrentPose(), path, velocity);
@@ -67,7 +70,7 @@ public class DrivePath extends Command
     @Override
     protected boolean isFinished()
     {
-        return endTimer > DEADZONE_TIME;
+        return endTimer > DEADZONE_TIME || oi.getLeftY() != 0 || oi.getRightY() != 0;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package frc.team1983.commands.drivebase;
 
 import frc.team1983.Robot;
+import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
@@ -13,15 +14,15 @@ public class DrivePathVision extends DrivePath
 
     private Limelight limelight;
 
-    public DrivePathVision(Drivebase drivebase, StateEstimator estimator, Path path, double velocity, Limelight limelight)
+    public DrivePathVision(Drivebase drivebase, StateEstimator estimator, OI oi, Path path, double velocity, Limelight limelight)
     {
-        super(drivebase, estimator, path, velocity);
+        super(drivebase, estimator, oi, path, velocity);
         this.limelight = limelight;
     }
 
-    public DrivePathVision(Drivebase drivebase, StateEstimator estimator, Path path, double velocity)
+    public DrivePathVision(Path path, double velocity)
     {
-        this(drivebase, estimator, path, velocity, Robot.getInstance().getLimelight());
+        this(Robot.getInstance().getDrivebase(), Robot.getInstance().getEstimator(), Robot.getInstance().getOI(), path, velocity, Robot.getInstance().getLimelight());
     }
 
     @Override

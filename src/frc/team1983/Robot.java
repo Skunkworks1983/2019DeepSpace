@@ -73,16 +73,14 @@ public class Robot extends TimedRobot
         oi.initializeBindings();
     }
 
-
     @Override
     public void robotInit()
     {
         getGyro().reset();
         estimator.setPose(Pose.LEVEL_1_LEFT_REVERSED);
-        compressor.start();
+
         CameraServer.getInstance().startAutomaticCapture();
     }
-
 
     @Override
     public void robotPeriodic()
@@ -97,6 +95,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
+        compressor.start();
         manipulator.setOpen(true);
         Scheduler.getInstance().add(new LeftRocketFarHatch());
     }
@@ -110,6 +109,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
+        compressor.start();
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
