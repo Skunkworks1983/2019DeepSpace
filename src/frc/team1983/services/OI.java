@@ -110,8 +110,6 @@ public class OI
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
         if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
-
-//        return Math.pow(Math.abs(deadzoned), JOYSTICK_EXPONENT) * Math.signum(deadzoned);
     }
 
     public double getLeftY()
@@ -273,7 +271,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-1),
+                new SetCollectorRollerThrottle(-0.8),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
