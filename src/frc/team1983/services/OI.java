@@ -4,9 +4,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
+import frc.team1983.autonomous.*;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.*;
+import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.manipulator.*;
 import frc.team1983.subsystems.*;
 import frc.team1983.commands.climber.ManualClimber;
@@ -24,6 +26,7 @@ import frc.team1983.commands.manipulator.SetManipulatorRollerSpeed;
 import frc.team1983.commands.manipulator.ToggleHooks;
 import frc.team1983.subsystems.Collector;
 import frc.team1983.subsystems.Elevator;
+import frc.team1983.utilities.pathing.Path;
 
 import java.util.HashMap;
 public class OI
@@ -48,7 +51,10 @@ public class OI
     private static boolean useDriveMode1 = false;
 
     public static final int JOYSTICK_TRIGGER = 1;
-    public static final int JOYSTICK_TOP_BUTTON = 2;
+    public static final int JOYSTICK_BOTTOM_BUTTON = 2;
+    public static final int JOYSTICK_TOP_BUTTON = 3;
+    public static final int JOYSTICK_LEFT_BUTTON = 4;
+    public static final int JOYSTICK_RIGHT_BUTTON = 5;
 
     public static final int HATCH_MODE_ENABLED = 14;
 
@@ -173,8 +179,22 @@ public class OI
 
     public void initializeBindings()
     {
-        getButton(Joysticks.RIGHT, 1).whileHeld(new RunArcadeDrive());
-        getButton(Joysticks.RIGHT, 1).whenReleased(new RunTankDrive());
+        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whileHeld(new RunArcadeDrive());
+        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whenReleased(new RunTankDrive());
+
+        // Quick paths
+        getButton(Joysticks.LEFT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new LeftLoading());
+        getButton(Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new RightLoading());
+
+        getButton(Joysticks.LEFT, JOYSTICK_LEFT_BUTTON).whenPressed(new LeftLoadingToRocketClose());
+        getButton(Joysticks.RIGHT, JOYSTICK_LEFT_BUTTON).whenPressed(new RightLoadingToRocketClose());
+
+        getButton(Joysticks.LEFT, JOYSTICK_TOP_BUTTON).whenPressed(new LeftLoadingToRocketMiddle());
+        getButton(Joysticks.RIGHT, JOYSTICK_TOP_BUTTON).whenPressed(new RightLoadingToRocketMiddle());
+
+        getButton(Joysticks.LEFT, JOYSTICK_RIGHT_BUTTON).whenPressed(new LeftLoadingToRocketFar());
+        getButton(Joysticks.RIGHT, JOYSTICK_RIGHT_BUTTON).whenPressed(new RightLoadingToRocketFar());
+
 
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenPressed(new SetCollectorAngle(Collector.Setpoints.STOW));
         getButton(Joysticks.PANEL, HATCH_MODE_ENABLED).whenReleased(new ConditionalCommand(

@@ -31,7 +31,20 @@ public class UT_Pose
     @Test
     public void printPoses()
     {
+        System.out.println(Pose.LEFT_ROCKET_CLOSE_LINE_UP);
+        System.out.println(Pose.RIGHT_ROCKET_CLOSE_LINE_UP);
+        System.out.println(Pose.LEFT_ROCKET_MIDDLE_LINE_UP);
+        System.out.println(Pose.RIGHT_ROCKET_MIDDLE_LINE_UP);
         System.out.println(Pose.LEFT_ROCKET_FAR_LINE_UP);
         System.out.println(Pose.RIGHT_ROCKET_FAR_LINE_UP);
+
+        System.out.println("");
+
+        System.out.println(Pose.LEFT_ROCKET_CLOSE_DRIVER_SWITCH);
+        System.out.println(Pose.RIGHT_ROCKET_CLOSE_DRIVER_SWITCH);
+        System.out.println(Pose.LEFT_ROCKET_MIDDLE_DRIVER_SWITCH);
+        System.out.println(Pose.RIGHT_ROCKET_MIDDLE_DRIVER_SWITCH);
+        System.out.println(Pose.LEFT_ROCKET_FAR_DRIVER_SWITCH);
+        System.out.println(Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH);
     }
 }

@@ -24,6 +24,6 @@ public class DriverSwitch extends RunTankDrive
     @Override
     protected boolean isFinished()
     {
-        return oi.getButton(OI.Joysticks.LEFT, OI.JOYSTICK_TOP_BUTTON).get() || oi.getButton(OI.Joysticks.RIGHT, OI.JOYSTICK_TOP_BUTTON).get();
+        return oi.getButton(OI.Joysticks.LEFT, OI.JOYSTICK_BOTTOM_BUTTON).get() || oi.getButton(OI.Joysticks.RIGHT, OI.JOYSTICK_BOTTOM_BUTTON).get();
     }
 }

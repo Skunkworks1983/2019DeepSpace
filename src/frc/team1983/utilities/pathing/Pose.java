@@ -36,15 +36,27 @@ public final class Pose
     public static final Pose RIGHT_ROCKET_MIDDLE = new Pose(24 + (8.5 / 12.0) - L / 2.0, 19, 0);
     public static final Pose RIGHT_ROCKET_FAR = new Pose(25 + (5.5 / 12.0) - dxRocket, 20 + (3.5 / 12.0) + dyRocket, -61.25);
 
+    // Rocket line up
     static double dxLineUp = ROCKET_LINE_UP_DISTANCE * dx;
     static double dyLineUp = ROCKET_LINE_UP_DISTANCE * dy;
-    public static final Pose LEFT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxLineUp, dyLineUp)), -118.75);
-    public static final Pose RIGHT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxLineUp, dyLineUp)), -61.25);
 
+    public static final Pose LEFT_ROCKET_CLOSE_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_CLOSE.getPosition(), new Vector2(dxLineUp, -dyLineUp)), LEFT_ROCKET_CLOSE.getHeading());
+    public static final Pose RIGHT_ROCKET_CLOSE_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_CLOSE.getPosition(), new Vector2(-dxLineUp, -dyLineUp)), RIGHT_ROCKET_CLOSE.getHeading());
+    public static final Pose LEFT_ROCKET_MIDDLE_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_MIDDLE.getPosition(), new Vector2(ROCKET_LINE_UP_DISTANCE, 0)), LEFT_ROCKET_MIDDLE.getHeading());
+    public static final Pose RIGHT_ROCKET_MIDDLE_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_MIDDLE.getPosition(), new Vector2(-ROCKET_LINE_UP_DISTANCE, 0)), RIGHT_ROCKET_MIDDLE.getHeading());
+    public static final Pose LEFT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxLineUp, dyLineUp)), LEFT_ROCKET_FAR.getHeading());
+    public static final Pose RIGHT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxLineUp, dyLineUp)), RIGHT_ROCKET_FAR.getHeading());
+
+    // Rocket driver switch
     static double dxDriverSwitch = ROCKET_DRIVER_SWITCH_DISTANCE * dx;
     static double dyDriverSwitch = ROCKET_DRIVER_SWITCH_DISTANCE * dy;
-    public static final Pose LEFT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxDriverSwitch, dyDriverSwitch)), -118.75);
-    public static final Pose RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxDriverSwitch, dyDriverSwitch)), -61.25);
+
+    public static final Pose LEFT_ROCKET_CLOSE_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_CLOSE.getPosition(), new Vector2(dxDriverSwitch, -dyDriverSwitch)), LEFT_ROCKET_CLOSE.getHeading());
+    public static final Pose RIGHT_ROCKET_CLOSE_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_CLOSE.getPosition(), new Vector2(-dxDriverSwitch, -dyDriverSwitch)), RIGHT_ROCKET_CLOSE.getHeading());
+    public static final Pose LEFT_ROCKET_MIDDLE_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_MIDDLE.getPosition(), new Vector2(ROCKET_DRIVER_SWITCH_DISTANCE, 0)), LEFT_ROCKET_MIDDLE.getHeading());
+    public static final Pose RIGHT_ROCKET_MIDDLE_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_MIDDLE.getPosition(), new Vector2(-ROCKET_DRIVER_SWITCH_DISTANCE, 0)), RIGHT_ROCKET_MIDDLE.getHeading());
+    public static final Pose LEFT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxDriverSwitch, dyDriverSwitch)), LEFT_ROCKET_FAR.getHeading());
+    public static final Pose RIGHT_ROCKET_FAR_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxDriverSwitch, dyDriverSwitch)), RIGHT_ROCKET_FAR.getHeading());
 
     // Cargo ship
     public static final Pose CARGO_SHIP_LEFT_CLOSE = new Pose(11 + (7.25 / 12.0) - (5.125 / 12.0) - L / 2.0, 25 + (7.5 / 12.0), 0);
@@ -60,9 +72,11 @@ public final class Pose
     public static final Pose LEFT_LOADING_STATION = new Pose(2 + (2.75 / 12.0), L / 2.0, -90);
     public static final Pose RIGHT_LOADING_STATION = new Pose(24 + (9.25 / 12.0), L / 2.0, -90);
 
+    // Loading station line up
     public static final Pose LEFT_LOADING_STATION_LINE_UP = new Pose(Pose.LEFT_ROCKET_FAR_LINE_UP.getPosition().getX() + 3, Pose.LEFT_ROCKET_FAR_LINE_UP.getPosition().getY(), -90);
     public static final Pose RIGHT_LOADING_STATION_LINE_UP = new Pose(Pose.RIGHT_ROCKET_FAR_LINE_UP.getPosition().getX() - 3, Pose.RIGHT_ROCKET_FAR_LINE_UP.getPosition().getY(), -90);
 
+    // Loading station driver switch
     public static final Pose LEFT_LOADING_STATION_DRIVER_SWITCH = new Pose(Vector2.add(LEFT_LOADING_STATION.getPosition(), new Vector2(0, LOADING_STATION_DRIVER_SWITCH_DISTANCE)), -90);
     public static final Pose RIGHT_LOADING_STATION_DRIVER_SWITCH = new Pose(Vector2.add(RIGHT_LOADING_STATION.getPosition(), new Vector2(0, LOADING_STATION_DRIVER_SWITCH_DISTANCE)), -90);
 
@@ -73,6 +87,7 @@ public final class Pose
     public static final Pose LEVEL_2_LEFT = new Pose(9 + (8 / 12.0), L / 2.0, 90);
     public static final Pose LEVEL_2_RIGHT = new Pose(17 + (4 / 12.0), L / 2.0, 90);
 
+    // HAB reversed
     public static final Pose LEVEL_1_LEFT_REVERSED = LEVEL_1_LEFT.getReversed();
     public static final Pose LEVEL_1_MIDDLE_REVERSED = LEVEL_1_MIDDLE.getReversed();
     public static final Pose LEVEL_1_RIGHT_REVERSED = LEVEL_1_RIGHT.getReversed();
