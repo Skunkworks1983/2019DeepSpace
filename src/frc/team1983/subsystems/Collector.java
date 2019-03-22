@@ -88,7 +88,7 @@ public class Collector extends Subsystem
             wristRight.set(ControlMode.Position, desiredAngle);
 
         // if we are in the way of the elevator, move to the danger zone to let the elevator go by
-        if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE)
+        if (Robot.getInstance().getElevator().collectorIsInElevatorPath() && desiredAngle > DANGER_ZONE && !Robot.getInstance().getOI().isInManualMode())
             wristRight.set(ControlMode.Position, DANGER_ZONE);
     }
 
