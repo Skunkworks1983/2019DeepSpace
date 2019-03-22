@@ -25,8 +25,8 @@ public class Path
     public static final Path RIGHT_LOADING_STATION_TO_ROCKET_CLOSE_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, Pose.RIGHT_ROCKET_CLOSE_LINE_UP);
     public static final Path LEFT_LOADING_STATION_TO_ROCKET_MIDDLE_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, Pose.LEFT_ROCKET_MIDDLE_LINE_UP);
     public static final Path RIGHT_LOADING_STATION_TO_ROCKET_MIDDLE_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, Pose.RIGHT_ROCKET_MIDDLE_LINE_UP);
-    public static final Path LEFT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, new Pose(Pose.LEFT_ROCKET_MIDDLE.getPosition().getX() + 2, Pose.LEFT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.LEFT_ROCKET_FAR_LINE_UP);
-    public static final Path RIGHT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, new Pose(Pose.RIGHT_ROCKET_MIDDLE.getPosition().getX() - 2, Pose.RIGHT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.RIGHT_ROCKET_FAR_LINE_UP);
+    public static final Path LEFT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, new Pose(Pose.LEFT_ROCKET_MIDDLE.getPosition().getX() + 1.5, Pose.LEFT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.LEFT_ROCKET_FAR_LINE_UP);
+    public static final Path RIGHT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, new Pose(Pose.RIGHT_ROCKET_MIDDLE.getPosition().getX() - 1.5, Pose.RIGHT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.RIGHT_ROCKET_FAR_LINE_UP);
 
     // Rocket line up to driver switch
     public static final Path LEFT_ROCKET_CLOSE_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.LEFT_ROCKET_CLOSE_LINE_UP, Pose.LEFT_ROCKET_CLOSE_DRIVER_SWITCH);

@@ -37,6 +37,12 @@ public class RunTankDrive extends Command
     }
 
     @Override
+    protected void interrupted()
+    {
+        // no-op
+    }
+
+    @Override
     protected void end()
     {
         drivebase.set(ControlMode.Throttle, 0, 0);

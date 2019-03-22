@@ -8,7 +8,7 @@ public class RightLoadingToRocketFar extends CommandGroup
 {
     public RightLoadingToRocketFar()
     {
-        addSequential(new DrivePath(Path.RIGHT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP, 8));
+        addSequential(new DrivePath(Path.RIGHT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP, 4));
         addSequential(new DrivePath(Path.RIGHT_ROCKET_FAR_LINE_UP_TO_DRIVER_SWITCH, 5));
     }
 }
