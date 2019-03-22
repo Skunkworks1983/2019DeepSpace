@@ -80,7 +80,7 @@ public class Robot extends TimedRobot
     public void robotInit()
     {
         getGyro().reset();
-        estimator.setPose(Pose.LEVEL_1_LEFT_REVERSED);
+        estimator.setPose(Pose.LEVEL_1_MIDDLE);
         compressor.start();
         CameraServer.getInstance().startAutomaticCapture();
 
@@ -98,7 +98,9 @@ public class Robot extends TimedRobot
 
         SmartDashboard.putData("Starting Pose", startingPoseChooser);
 
+
         autoChooser = new SendableChooser();
+        autoChooser.addDefault("Driver Control", new RunTankDrive());
         autoChooser.addOption("Right Rocket Hatch", new RightRocketFarHatch());
         autoChooser.addOption("Left Rocket Hatch", new LeftRocketFarHatch());
 
@@ -121,6 +123,7 @@ public class Robot extends TimedRobot
         estimator.setPose((Pose) startingPoseChooser.getSelected());
         compressor.start();
         manipulator.setOpen(true);
+        Scheduler.getInstance().removeAll();
         Scheduler.getInstance().add((Command) autoChooser.getSelected());
     }
 
@@ -135,6 +138,8 @@ public class Robot extends TimedRobot
     {
         estimator.setPose((Pose) startingPoseChooser.getSelected());
         compressor.start();
+        Scheduler.getInstance().removeAll();
+        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     @Override
