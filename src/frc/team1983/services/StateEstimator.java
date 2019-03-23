@@ -1,12 +1,11 @@
 package frc.team1983.services;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.Robot;
 import frc.team1983.subsystems.Drivebase;
 import frc.team1983.utilities.math.Vector2;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
-import frc.team1983.utilities.sensors.Pigeon;
+import frc.team1983.utilities.sensors.Limelight;
 
 /**
  * This class estimates the position of the robot. Coordinate system conventions are
@@ -17,14 +16,11 @@ public class StateEstimator implements Runnable
 {
     public static final int UPDATE_RATE = 20;
 
-    private Drivebase drivebase;
-    private Gyro gyro;
+    protected Drivebase drivebase;
+    protected Gyro gyro;
 
-    private double lastLeftPosition, lastRightPosition;
-    // TODO: find real
-//    private Vector2 position = new Vector2(0, 0);
-//    private Vector2 position = new Vector2(32.0 / 24.0, 36.0 / 24.0);
-    private Vector2 position = Vector2.ZERO;
+    protected double lastLeftPosition, lastRightPosition;
+    protected Vector2 position = Vector2.ZERO;
 
     public StateEstimator(Drivebase drivebase, Gyro gyro)
     {
@@ -35,11 +31,31 @@ public class StateEstimator implements Runnable
         lastRightPosition = drivebase.getRightPosition();
 
         new Thread(this).start();
-    }
+}
 
     public StateEstimator()
     {
         this(Robot.getInstance().getDrivebase(), Robot.getInstance().getGyro());
+    }
+
+    protected synchronized void execute()
+    {
+        double leftPosition = drivebase.getLeftPosition();
+        double rightPosition = drivebase.getRightPosition();
+        double angle = Math.toRadians(gyro.getHeading());
+
+        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
+        position.add(Vector2.scale(new Vector2(Math.cos(angle), Math.sin(angle)), displacement));
+
+        lastLeftPosition = leftPosition;
+        lastRightPosition = rightPosition;
+    }
+
+    public synchronized void setTargetOffset(Limelight limelight, Pose target)
+    {
+        Vector2 offset  = new Vector2(limelight.getXOffset(), limelight.getYOffset());
+        offset.twist(target.getHeading() - 90);
+        position = Vector2.add(target.getPosition(), offset);
     }
 
     public synchronized void setPose(Pose pose)
@@ -58,17 +74,12 @@ public class StateEstimator implements Runnable
         return position;
     }
 
-    protected synchronized void execute()
+    protected synchronized void zero()
     {
-        double leftPosition = drivebase.getLeftPosition();
-        double rightPosition = drivebase.getRightPosition();
-        double angle = Math.toRadians(gyro.getHeading());
+        lastLeftPosition = 0.0;
+        lastRightPosition = 0.0;
 
-        double displacement = ((leftPosition - lastLeftPosition) + (rightPosition - lastRightPosition)) / 2;
-        position.add(Vector2.scale(new Vector2(Math.cos(angle), Math.sin(angle)), displacement));
-
-        lastLeftPosition = leftPosition;
-        lastRightPosition = rightPosition;
+        position.zero();
     }
 
     @Override
@@ -82,9 +93,9 @@ public class StateEstimator implements Runnable
             {
                 Thread.sleep((long) 1000.0 / UPDATE_RATE);
             }
-            catch(InterruptedException exception)
+            catch(InterruptedException e)
             {
-                exception.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

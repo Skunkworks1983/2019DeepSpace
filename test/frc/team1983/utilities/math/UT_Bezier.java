@@ -1,5 +1,6 @@
 package frc.team1983.utilities.math;
 
+import frc.team1983.utilities.pathing.Pose;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -24,7 +25,7 @@ public class UT_Bezier
     }
 
     @Test
-    public void lengthTest()
+    public void evaluateLengthTest()
     {
         Bezier b = new Bezier(new Vector2(0, 10), new Vector2(10, 10));
 
@@ -32,7 +33,7 @@ public class UT_Bezier
     }
 
     @Test
-    public void tangentTest()
+    public void evaluateTangentTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
 
@@ -41,12 +42,21 @@ public class UT_Bezier
     }
 
     @Test
-    public void normalTest()
+    public void evaluateNormalTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
 
         assertThat(Vector2.equals(b.evaluateNormal(0), new Vector2(0, 1)), equalTo(true));
         assertThat(Vector2.equals(b.evaluateNormal(1), new Vector2(-1, 0)), equalTo(true));
+    }
+
+    @Test
+    public void evaluatePoseTest()
+    {
+        Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
+
+        assertThat(Pose.equals(b.evaluatePose(0), new Pose(0, 0, 0)), equalTo(true));
+        assertThat(Pose.equals(b.evaluatePose(1.0), new Pose(1, 1, 90)), equalTo(true));
     }
 
     @Test
@@ -59,7 +69,7 @@ public class UT_Bezier
     }
 
     @Test
-    public void centerOfCurvatureTest()
+    public void evaluateCenterOfCurvatureTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
@@ -82,7 +92,7 @@ public class UT_Bezier
     }
 
     @Test
-    public void radiusOfCurvatureTest()
+    public void evaluateRadiusOfCurvatureTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1));
 
@@ -98,7 +108,7 @@ public class UT_Bezier
     }
 
     @Test
-    public void closestPointTest()
+    public void evaluateClosestPointTest()
     {
         Bezier b = new Bezier(new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1));
 

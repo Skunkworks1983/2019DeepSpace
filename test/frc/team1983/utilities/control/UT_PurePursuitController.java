@@ -141,12 +141,13 @@ public class UT_PurePursuitController
         Pose pose = new Pose(0, 0, 90);
 
         Path path = new Path(
+                true,
                 new Pose(0, 0, 90),
                 new Pose(0, 10, 90)
         );
 
-        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue1() < 0, equalTo(true));
-        assertThat(PurePursuitController.evaluateOutput(pose, path, -1).getValue2() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue1() < 0, equalTo(true));
+        assertThat(PurePursuitController.evaluateOutput(pose, path, 1).getValue2() < 0, equalTo(true));
     }
 
     @Test
@@ -163,6 +164,54 @@ public class UT_PurePursuitController
 
         assertThat(output.getValue1() < 0, equalTo(true));
         assertThat(output.getValue2() < 0, equalTo(true));
+    }
+
+    @Test
+    public void getAngleErrorTest()
+    {
+        Pose pose = new Pose(10, 10, 10);
+        Path path = new Path(
+                new Pose(0, 0, 90),
+                new Pose(10, 10, 0)
+        );
+
+        Vector2 endTangent = path.evaluateTangent(1.0);
+        double angleError = PurePursuitController.getAngleError(endTangent, pose);
+        assertThat(angleError, equalTo(-10.0));
+
+        pose = Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH;
+        path = Path.REVERSED_LEVEL_1_RIGHT_TO_ROCKET_FAR_LINE_UP;
+
+        endTangent = path.evaluateTangent(1.0).getNegative();
+        angleError = PurePursuitController.getAngleError(endTangent, pose);
+        assertThat(angleError, equalTo(0.0));
+
+        pose = new Pose(Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getPosition().getX(),
+                        Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getPosition().getY(),
+                        Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getHeading() + 10);
+
+        endTangent = path.evaluateTangent(1.0).getNegative();
+        angleError = PurePursuitController.getAngleError(endTangent, pose);
+        assertThat(angleError, equalTo(-10.0));
+
+        pose = new Pose(Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getPosition().getX(),
+                Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getPosition().getY(),
+                Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH.getHeading() - 10);
+
+        endTangent = path.evaluateTangent(1.0).getNegative();
+        angleError = PurePursuitController.getAngleError(endTangent, pose);
+        assertThat(angleError, equalTo(10.0));
+
+        pose = new Pose(10, 10, -80);
+        path = new Path(
+                new Pose(10, 20, 0),
+                new Pose(10, 10, -90)
+        );
+
+        endTangent = path.evaluateTangent(1.0);
+        angleError = PurePursuitController.getAngleError(endTangent, pose);
+        assertThat(angleError, equalTo(-10.0));
+
     }
 
     @Test

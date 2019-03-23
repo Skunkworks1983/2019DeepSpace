@@ -3,18 +3,24 @@ package frc.team1983;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team1983.autonomous.routines.LeftRocketFarHatch;
+import frc.team1983.autonomous.routines.RightRocketFarHatch;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
 import frc.team1983.services.logging.Level;
 import frc.team1983.services.logging.Logger;
+import frc.team1983.subsystems.Drivebase;
 import frc.team1983.subsystems.*;
 import frc.team1983.utilities.motors.MotorGroup;
 import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
+import frc.team1983.utilities.sensors.Limelight;
 import frc.team1983.utilities.sensors.NavX;
 
 public class Robot extends TimedRobot
@@ -30,8 +36,12 @@ public class Robot extends TimedRobot
     private Compressor compressor;
     private NavX navx;
     private StateEstimator estimator;
+    private Limelight limelight;
     private OI oi;
     Logger logger;
+
+    private SendableChooser startingPoseChooser;
+    private SendableChooser autoChooser;
 
     Robot()
     {
@@ -60,19 +70,41 @@ public class Robot extends TimedRobot
 
         estimator = new StateEstimator();
 
+        limelight = new Limelight();
+
         oi = new OI();
         oi.initializeBindings();
     }
-
 
     @Override
     public void robotInit()
     {
         getGyro().reset();
+        estimator.setPose(Pose.LEVEL_1_MIDDLE);
         compressor.start();
-        estimator.setPose(Pose.DEFAULT);
-        Scheduler.getInstance().add(new RunTankDrive());
         CameraServer.getInstance().startAutomaticCapture();
+
+        startingPoseChooser = new SendableChooser();
+        startingPoseChooser.addDefault("Level 1 Middle", Pose.LEVEL_1_MIDDLE);
+        startingPoseChooser.addOption("Level 1 Left", Pose.LEVEL_1_LEFT);
+        startingPoseChooser.addOption("Level 1 Right", Pose.LEVEL_1_RIGHT);
+        startingPoseChooser.addOption("Level 1 Middle Reversed", Pose.LEVEL_1_MIDDLE_REVERSED);
+        startingPoseChooser.addOption("Level 1 Left Reversed", Pose.LEVEL_1_LEFT_REVERSED);
+        startingPoseChooser.addOption("Level 1 Right Reversed", Pose.LEVEL_1_RIGHT_REVERSED);
+        startingPoseChooser.addOption("Level 2 Left", Pose.LEVEL_2_LEFT);
+        startingPoseChooser.addOption("Level 2 Right", Pose.LEVEL_2_RIGHT);
+        startingPoseChooser.addOption("Level 2 Left Reversed", Pose.LEVEL_2_LEFT_REVERSED);
+        startingPoseChooser.addOption("Level 2 Right Reversed", Pose.LEVEL_2_RIGHT_REVERSED);
+
+        SmartDashboard.putData("Starting Pose", startingPoseChooser);
+
+
+        autoChooser = new SendableChooser();
+        autoChooser.addDefault("Driver Control", new RunTankDrive());
+        autoChooser.addOption("Right Rocket Hatch", new RightRocketFarHatch());
+        autoChooser.addOption("Left Rocket Hatch", new LeftRocketFarHatch());
+
+        SmartDashboard.putData("Auto Selected", autoChooser);
     }
 
     @Override
@@ -86,35 +118,44 @@ public class Robot extends TimedRobot
     }
 
     @Override
-    public void disabledInit()
+    public void autonomousInit()
     {
+        estimator.setPose((Pose) startingPoseChooser.getSelected());
+        compressor.start();
+        manipulator.setOpen(true);
         Scheduler.getInstance().removeAll();
-        for (MotorGroup motorGroup : MotorGroup.motorGroups)
-            motorGroup.disableController();
-        drivebase.setBrake(false);
-        compressor.stop();
+        Scheduler.getInstance().add((Command) autoChooser.getSelected());
     }
 
     @Override
-    public void autonomousInit()
+    public void autonomousPeriodic()
     {
-        compressor.start();
-        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
-        Scheduler.getInstance().add(new RunTankDrive());
-        manipulator.setExtended(false);
-        manipulator.setOpen(false);
+
     }
 
     @Override
     public void teleopInit()
     {
+        estimator.setPose((Pose) startingPoseChooser.getSelected());
         compressor.start();
+        Scheduler.getInstance().removeAll();
         Scheduler.getInstance().add(new RunTankDrive());
     }
 
     @Override
     public void teleopPeriodic()
     {
+
+    }
+
+    @Override
+    public void disabledInit()
+    {
+        Scheduler.getInstance().removeAll();
+        for(MotorGroup motorGroup : MotorGroup.motorGroups)
+            motorGroup.disableController();
+        drivebase.setBrake(false);
+        compressor.stop();
     }
 
     public static Robot getInstance()
@@ -152,6 +193,11 @@ public class Robot extends TimedRobot
     public Compressor getCompressor()
     {
         return compressor;
+    }
+
+    public Limelight getLimelight()
+    {
+        return limelight;
     }
 
     public Gyro getGyro()

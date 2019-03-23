@@ -41,7 +41,9 @@ public class Line
             return null;
 
         double t1 = (right.origin.getY() - left.origin.getY()) * right.direction.getX() - (right.origin.getX() - left.origin.getX()) * right.direction.getY();
+
         t1 /= right.direction.getX() * left.direction.getY() - right.direction.getY() * left.direction.getX();
+
 
         return Vector2.add(left.origin, Vector2.scale(left.direction, t1));
     }
