@@ -1,4 +1,4 @@
-package frc.team1983.autonomous.routines;
+package frc.team1983.autonomous;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team1983.Robot;
