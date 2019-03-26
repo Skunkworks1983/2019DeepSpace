@@ -295,7 +295,7 @@ public class OI
                 (args) -> !isInHatchMode()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whileHeld(new ConditionalCommand(
-                new SetCollectorRollerThrottle(-1),
+                new SetCollectorRollerThrottle(-0.8),
                 (args) -> !isInHatchMode() && Robot.getInstance().getElevator().isInDangerZone()
         ));
         getButton(Joysticks.PANEL, INTAKE_BALL).whenPressed(new ConditionalCommand(
