@@ -80,6 +80,8 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
+        System.out.println(oi.getLeftYOld() + ", " + oi.getLeftY());
+
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
@@ -101,8 +103,7 @@ public class Robot extends TimedRobot
         compressor.start();
         elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
         Scheduler.getInstance().add(new RunTankDrive());
-        manipulator.setExtended(false);
-        manipulator.setOpen(false);
+        manipulator.setOpen(true);
     }
 
     @Override

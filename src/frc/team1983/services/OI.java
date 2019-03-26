@@ -105,10 +105,19 @@ public class OI
         );
     }
 
-    protected static double scale(double raw)
+    // delete me after glacier peak
+    protected static double scaleOld(double raw)
     {
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
         if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+        else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
+    }
+
+    protected static double scale(double raw)
+    {
+        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
+//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+        if(Math.abs(raw) < LINEAR_ZONE) return (LINEAR_SLOPE * raw) - (Math.signum(raw) * JOYSTICK_DEADZONE);
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
     }
 
@@ -116,6 +125,13 @@ public class OI
     {
         return scale(-left.getY());
     }
+
+    // delete me after glacier peak
+    public double getLeftYOld()
+    {
+        return scaleOld(-left.getY());
+    }
+
 
     public double getRightY()
     {
