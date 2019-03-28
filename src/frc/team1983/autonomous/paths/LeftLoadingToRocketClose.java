@@ -1,4 +1,4 @@
-package frc.team1983.autonomous;
+package frc.team1983.autonomous.paths;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team1983.commands.drivebase.DrivePath;
