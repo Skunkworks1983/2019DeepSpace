@@ -76,7 +76,7 @@ public class Collector extends Subsystem
 
         // fold/unfold logic
         if (getAngle() > FOLD_ANGLE)
-            piston.set(desiredFoldedState ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+            piston.set(desiredFoldedState ? DoubleSolenoid.Value.kReverse : (Robot.getInstance().getElevator().getPosition() > 6.0 ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse));
         else if (getAngle() < FOLD_ANGLE)
             piston.set(DoubleSolenoid.Value.kForward);
 

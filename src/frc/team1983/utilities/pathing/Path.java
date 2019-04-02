@@ -17,10 +17,42 @@ import java.util.Arrays;
  */
 public class Path
 {
+    public static final Path REVERSED_LEVEL_1_LEFT_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.LEVEL_1_LEFT_REVERSED, Pose.LEFT_ROCKET_FAR_LINE_UP);
+    public static final Path REVERSED_LEVEL_1_RIGHT_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.LEVEL_1_RIGHT_REVERSED, Pose.RIGHT_ROCKET_FAR_LINE_UP);
+
+    // Loading to rocket line up
+    public static final Path LEFT_LOADING_STATION_TO_ROCKET_CLOSE_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, Pose.LEFT_ROCKET_CLOSE_LINE_UP);
+    public static final Path RIGHT_LOADING_STATION_TO_ROCKET_CLOSE_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, Pose.RIGHT_ROCKET_CLOSE_LINE_UP);
+    public static final Path LEFT_LOADING_STATION_TO_ROCKET_MIDDLE_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, Pose.LEFT_ROCKET_MIDDLE_LINE_UP);
+    public static final Path RIGHT_LOADING_STATION_TO_ROCKET_MIDDLE_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, Pose.RIGHT_ROCKET_MIDDLE_LINE_UP);
+    public static final Path LEFT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.LEFT_LOADING_STATION, new Pose(Pose.LEFT_ROCKET_MIDDLE.getPosition().getX() + 1.5, Pose.LEFT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.LEFT_ROCKET_FAR_LINE_UP);
+    public static final Path RIGHT_LOADING_STATION_TO_ROCKET_FAR_LINE_UP = new Path(true, Pose.RIGHT_LOADING_STATION, new Pose(Pose.RIGHT_ROCKET_MIDDLE.getPosition().getX() - 1.5, Pose.RIGHT_ROCKET_MIDDLE.getPosition().getY() - 3, -90), Pose.RIGHT_ROCKET_FAR_LINE_UP);
+
+    // Rocket line up to driver switch
+    public static final Path LEFT_ROCKET_CLOSE_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.LEFT_ROCKET_CLOSE_LINE_UP, Pose.LEFT_ROCKET_CLOSE_DRIVER_SWITCH);
+    public static final Path RIGHT_ROCKET_CLOSE_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.RIGHT_ROCKET_CLOSE_LINE_UP, Pose.RIGHT_ROCKET_CLOSE_DRIVER_SWITCH);
+    public static final Path LEFT_ROCKET_MIDDLE_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.LEFT_ROCKET_MIDDLE_LINE_UP, Pose.LEFT_ROCKET_MIDDLE_DRIVER_SWITCH);
+    public static final Path RIGHT_ROCKET_MIDDLE_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.RIGHT_ROCKET_MIDDLE_LINE_UP, Pose.RIGHT_ROCKET_MIDDLE_DRIVER_SWITCH);
+    public static final Path LEFT_ROCKET_FAR_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.LEFT_ROCKET_FAR_LINE_UP, Pose.LEFT_ROCKET_FAR_DRIVER_SWITCH);
+    public static final Path RIGHT_ROCKET_FAR_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.RIGHT_ROCKET_FAR_LINE_UP, Pose.RIGHT_ROCKET_FAR_DRIVER_SWITCH);
+
+    // Rocket to loading
+    public static final Path LEFT_ROCKET_CLOSE_TO_LOADING_STATION_DRIVER_SWITCH = new Path(true, Pose.RIGHT_ROCKET_CLOSE, Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
+    public static final Path RIGHT_ROCKET_CLOSE_TO_LOADING_STATION_DRIVER_SWITCH = new Path(true, Pose.RIGHT_ROCKET_CLOSE, Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
+
+    public static final Path LEFT_ROCKET_MIDDLE_TO_LOADING_STATION_DRIVER_SWITCH = new Path(true, Pose.RIGHT_ROCKET_MIDDLE, Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
+    public static final Path RIGHT_ROCKET_MIDDLE_TO_LOADING_STATION_DRIVER_SWITCH = new Path(true, Pose.RIGHT_ROCKET_MIDDLE, Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
+
+    public static final Path LEFT_ROCKET_FAR_TO_LOADING_STATION_LINE_UP = new Path(true, Pose.LEFT_ROCKET_FAR, Pose.LEFT_LOADING_STATION_LINE_UP);
+    public static final Path RIGHT_ROCKET_FAR_TO_LOADING_STATION_LINE_UP = new Path(true, Pose.RIGHT_ROCKET_FAR, Pose.RIGHT_LOADING_STATION_LINE_UP);
+    public static final Path LEFT_LOADING_STATION_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.LEFT_LOADING_STATION_LINE_UP, Pose.LEFT_LOADING_STATION_DRIVER_SWITCH);
+    public static final Path RIGHT_LOADING_STATION_LINE_UP_TO_DRIVER_SWITCH = new Path(Pose.RIGHT_LOADING_STATION_LINE_UP, Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
+
     public static final double TANGENT_LENGTH = 5.0; // feet
 
     protected Bezier[] curves;
     protected double length = 0;
+    protected boolean reversed;
 
     /**
      * Creates bezier curves between given poses
@@ -30,10 +62,15 @@ public class Path
      * a control point in the opposite direction of the next pose and TANGENT_LENGTH distance away,
      * and ending at the next pose.
      *
-     * @param morePoses More poses that the path should have
+     * @param reversed if the path is reversed
+     * @param pose1 the first pose
+     * @param pose2 the second pose
+     * @param morePoses more poses that the path should have
      */
-    public Path(Pose pose1, Pose pose2, Pose... morePoses)
+    public Path(boolean reversed, Pose pose1, Pose pose2, Pose... morePoses)
     {
+        this.reversed = reversed;
+
         ArrayList<Pose> poses = new ArrayList<>();
         poses.add(pose1);
         poses.add(pose2);
@@ -55,16 +92,30 @@ public class Path
             ) < Constants.EPSILON;
 
             if(collinear)
+            {
                 curves[i] = new Bezier(position0, position1);
+            }
             else
-                curves[i] = new Bezier(
-                        position0,
-                        new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH,
-                                position0.getY() + Math.sin(theta0) * TANGENT_LENGTH),
-                        new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH,
-                                position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH),
-                        position1);
+            {
+                int sign = reversed ? -1 : 1;
+                curves[i] = new Bezier(position0,
+                                       new Vector2(position0.getX() + Math.cos(theta0) * TANGENT_LENGTH * sign,
+                                                   position0.getY() + Math.sin(theta0) * TANGENT_LENGTH * sign),
+                                       new Vector2(position1.getX() + Math.cos(theta1) * -TANGENT_LENGTH * sign,
+                                                   position1.getY() + Math.sin(theta1) * -TANGENT_LENGTH * sign),
+                                       position1);
+            }
         }
+    }
+
+    public Path(Pose pose1, Pose pose2, Pose... morePoses)
+    {
+        this(false, pose1, pose2, morePoses);
+    }
+
+    public boolean isReversed()
+    {
+        return reversed;
     }
 
     /**
@@ -182,6 +233,18 @@ public class Path
     {
         Bezier curve = getCurve(t);
         return curve.evaluateNormal((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
+    }
+
+    /**
+     * Evaluate a pose at a value of t
+     *
+     * @param t the percentage along the curve [0, 1]
+     * @return pose
+     */
+    public Pose evaluatePose(double t)
+    {
+        Bezier curve = getCurve(t);
+        return curve.evaluatePose((evaluateLengthTo(t) - evaluateLengthToCurve(curve)) / curve.getLength());
     }
 
     /**

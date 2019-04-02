@@ -47,6 +47,12 @@ public class SetManipulatorRollerSpeed extends Command
         this(Robot.getInstance().getManipulator(), speed, zeroOnInterrupt);
     }
 
+    public SetManipulatorRollerSpeed(double speed, double timeout)
+    {
+        this(speed, true);
+        setTimeout(timeout);
+    }
+
     public SetManipulatorRollerSpeed(double speed)
     {
         this(speed, true);
@@ -61,7 +67,7 @@ public class SetManipulatorRollerSpeed extends Command
     @Override
     public boolean isFinished()
     {
-        return !zeroOnFinish;
+        return !zeroOnFinish || isTimedOut();
     }
 
     @Override

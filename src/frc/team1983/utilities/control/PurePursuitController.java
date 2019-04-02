@@ -14,16 +14,19 @@ import frc.team1983.utilities.pathing.Pose;
  */
 public class PurePursuitController
 {
-    public static final double LOOKAHEAD_DISTANCE = 4.0; // feet
-    public static final double SLOWDOWN_DISTANCE = 4.0; // feet
-    public static final double CURVATURE_SLOWDOWN = 0.1; // unitless
+    public static final double STEERING_FACTOR = 1.25; // unitless
+    public static final double LOOKAHEAD_DISTANCE = 5.0; // feet
+    public static final double SLOWDOWN_DISTANCE = 5.0; // feet
+    public static final double SLOWDOWN_FACTOR = 1.5; // unitless
+    // TODO: tune
+    public static final double CURVATURE_SLOWDOWN = 0.05; // unitless
 
-    public static final double ANGLE_CORRECTION = 3.5; // unitless
+    public static final double ANGLE_CORRECTION = 0.75; // unitless
     public static final double ANGLE_CORRECTION_DISTANCE = 3.0; // feet
     public static final double MAX_ANGLE_CORRECTION = 0.4;
 
-    public static final double VELOCITY_DEADZONE = 0.2; // feet
-    public static final double HEADING_DEADZONE = 3.0; // degrees
+    public static final double VELOCITY_DEADZONE = 0.5; // feet
+    public static final double HEADING_DEADZONE = 12; // degrees
 
     /**
      * Evaluates the motor output
@@ -37,6 +40,7 @@ public class PurePursuitController
     {
         Pair<Double, Double> output = new Pair<>(velocity, velocity);
 
+        // If deadzoned stop
         if (PurePursuitController.inDeadzone(pose, path))
             return new Pair<>(0.0, 0.0);
 
@@ -47,8 +51,11 @@ public class PurePursuitController
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
 
-        if (velocity < 0)
+        if (path.isReversed())
+        {
             pose = new Pose(pose.getPosition(), pose.getDirection().getNegative());
+            velocity *= -1;
+        }
 
         Vector2 lookahead = evaluateLookaheadPoint(pose, path);
 
@@ -63,11 +70,12 @@ public class PurePursuitController
         boolean pastPath = (path.evaluateClosestT(pose.getPosition()) >= 1.0) &&
                 Vector2.dot(endTangent, Vector2.sub(pose.getPosition(), end).getNormalized()) > 0;
 
-        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE, 1);
+        velocity *= (pastPath ? -1 : 1) * Math.min(distanceToEnd / SLOWDOWN_DISTANCE / SLOWDOWN_FACTOR, 1);
 
         // Slow down around curves
-        double t = path.evaluateClosestT(pose.getPosition());
-        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
+        // TODO: test
+//        double t = path.evaluateClosestT(pose.getPosition())
+//        Vector2 curveIcc = path.evaluateCenterOfCurvature(t);
 //        if (curveIcc != null)
 //        {
 //            double slowdown = Math.min(CURVATURE_SLOWDOWN / path.evaluateRadiusOfCurvatuve(t), velocity);
@@ -80,20 +88,24 @@ public class PurePursuitController
 //                velocity += slowdown;
 //        }
 
-        // If there is no center of curvature, go straight
-        if(icc == null)
-            return new Pair<>(velocity, velocity);
-
-        double radius = evaluateRadiusOfCurvature(pose, icc);
-
         // Correct for angle error
         double angleCorrection = 0;
         if(distanceToEnd < ANGLE_CORRECTION_DISTANCE)
-            angleCorrection = Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
+            angleCorrection = Drivebase.MAX_VELOCITY * Math.max(Math.min(getAngleError(endTangent, pose) / 180.0 * ANGLE_CORRECTION, MAX_ANGLE_CORRECTION), -MAX_ANGLE_CORRECTION);
+
+        if(inDistanceDeadzone(pose, path))
+            velocity = 0;
+
+        // If there is no center of curvature, go straight with angle correction
+        if(icc == null)
+            return new Pair<>(velocity - angleCorrection, velocity + angleCorrection);
+
+        double radius = evaluateRadiusOfCurvature(pose, icc) * STEERING_FACTOR;
 
         // Set velocities
-        output.setValue1(velocity * (radius + Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
-        output.setValue2(velocity * (radius - Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
+        int sign = path.isReversed() ? -1 : 1;
+        output.setValue1(velocity * (radius + sign * Drivebase.TRACK_WIDTH / 2.0) / radius - angleCorrection);
+        output.setValue2(velocity * (radius - sign * Drivebase.TRACK_WIDTH / 2.0) / radius + angleCorrection);
 
         return output;
     }
@@ -132,10 +144,16 @@ public class PurePursuitController
      */
     protected static Vector2 evaluateCenterOfCurvature(Pose pose, Vector2 lookahead)
     {
+        Line l1 = new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0));
+
+        Vector2 direction = Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()), 90);
+
+        if(direction.equals(Vector2.ZERO))
+            return null;
+
+        Line l2 = new Line(Vector2.findCenter(pose.getPosition(), lookahead), direction.getNormalized());
         return Line.cast(
-                new Line(pose.getPosition(), Vector2.rotate(pose.getDirection(), 90.0)),
-                new Line(Vector2.findCenter(pose.getPosition(), lookahead),
-                        Vector2.rotate(Vector2.sub(lookahead, pose.getPosition()).getNormalized(), 90.0))
+                l1, l2
         );
     }
 
@@ -150,7 +168,8 @@ public class PurePursuitController
      */
     protected static double evaluateRadiusOfCurvature(Pose pose, Vector2 icc)
     {
-        double radius = Vector2.getDistance(pose.getPosition(), icc);
+        Vector2 posePosition = pose.getPosition();
+        double radius = Vector2.getDistance(posePosition, icc);
         double direction = Vector2.dot(Vector2.rotate(pose.getDirection(), -90.0), Vector2.sub(icc, pose.getPosition()).getNormalized());
         radius *= Math.signum(direction);
 
@@ -195,13 +214,13 @@ public class PurePursuitController
     }
 
     /**
-     * Find out if the robot is within a deadzone from the end point
+     * Determine if robot is within the distance deadzone
      *
      * @param pose pose of the robot
      * @param path path to follow
-     * @return in deadzone
+     * @return if in distance deadzone
      */
-    protected static boolean inDeadzone(Pose pose, Path path)
+    public static boolean inDistanceDeadzone(Pose pose, Path path)
     {
         Vector2 end = path.evaluate(1.0);
         Vector2 endTangent = path.evaluateTangent(1.0);
@@ -214,10 +233,36 @@ public class PurePursuitController
 
         double closeToEnd = path.evaluateClosestT(pose.getPosition());
 
-        double angleError = getAngleError(endTangent, pose);
-        return closeToEnd > 1.0 - deadzoneT * 2 &&
-                Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2 &&
-                ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
+        return closeToEnd > 1.0 - deadzoneT * 2
+                && Vector2.getDistance(pointBehind, pointClosest) < VELOCITY_DEADZONE * 2
+                && Vector2.getDistance(pointAhead, pointClosest) < VELOCITY_DEADZONE * 2;
+    }
+
+    /**
+     * Determine if robot is within the heading deadzone
+     *
+     * @param pose pose of the robot
+     * @param path path to follow
+     * @return if in heading deadzone
+     */
+    public static boolean inHeadingDeadzone(Pose pose, Path path)
+    {
+        Vector2 endTangent = path.evaluateTangent(1.0);
+
+        Vector2 direction = path.isReversed() ? endTangent.getNegative() : endTangent.copy();
+        double angleError = getAngleError(direction, pose);
+        return ((angleError >= 0 && angleError < HEADING_DEADZONE) || (angleError <= 0 && angleError > -HEADING_DEADZONE));
+    }
+
+    /**
+     * Determine if the robot is within the distance deadzone and heading deadzone
+     *
+     * @param pose pose of the robot
+     * @param path path to follow
+     * @return in deadzone
+     */
+    public static boolean inDeadzone(Pose pose, Path path)
+    {
+        return inDistanceDeadzone(pose, path) && inHeadingDeadzone(pose, path);
     }
 }
