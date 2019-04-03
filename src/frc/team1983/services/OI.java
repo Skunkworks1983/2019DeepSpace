@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.autonomous.*;
+import frc.team1983.autonomous.paths.*;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.*;
@@ -114,7 +115,8 @@ public class OI
         );
     }
 
-    protected static double scale(double raw)
+    // delete me after glacier peak
+    protected static double scaleOld(double raw)
     {
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
 //        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
@@ -122,10 +124,25 @@ public class OI
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
     }
 
+    protected static double scale(double raw)
+    {
+        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
+//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+        if(Math.abs(raw) < LINEAR_ZONE) return (LINEAR_SLOPE * raw) - (Math.signum(raw) * JOYSTICK_DEADZONE);
+        else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
+    }
+
     public double getLeftY()
     {
         return scale(-left.getY());
     }
+
+    // delete me after glacier peak
+    public double getLeftYOld()
+    {
+        return scaleOld(-left.getY());
+    }
+
 
     public double getRightY()
     {

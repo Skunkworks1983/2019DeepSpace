@@ -50,7 +50,7 @@ public class Climb extends Command
         if (collector.getAngle() > 190 && throttle > 0) throttle = 0;
         collector.setWristThrottle(throttle);
         //collector.setRollerThrottle(climber.getPosition() < driveHeight ? -1 : -0.4);
-        collector.setRollerThrottle(-1);
+        collector.setRollerThrottle(-0.5);
 
         if(climber.getPosition() <= driveHeight)
             drivebase.set(ControlMode.Throttle, 0.2);
