@@ -88,9 +88,12 @@ public class Robot extends TimedRobot
         CameraServer.getInstance().startAutomaticCapture();
 
         startingPoseChooser = new SendableChooser<>();
-        startingPoseChooser.setDefaultOption("Middle forward", Pose.LEVEL_1_MIDDLE);
-        startingPoseChooser.addOption("Right reversed", Pose.LEVEL_1_RIGHT_REVERSED);
-        startingPoseChooser.addOption("Left reversed", Pose.LEVEL_1_LEFT_REVERSED);
+        startingPoseChooser.setDefaultOption("DO NOT RUN AUTO", Pose.LEVEL_1_MIDDLE);
+        startingPoseChooser.addOption("Level 1 middle forward", Pose.LEVEL_1_MIDDLE);
+        startingPoseChooser.addOption("Level 1 left reversed", Pose.LEVEL_1_LEFT_REVERSED);
+        startingPoseChooser.addOption("Level 1 right reversed", Pose.LEVEL_1_RIGHT_REVERSED);
+        startingPoseChooser.addOption("Level 2 left reversed", Pose.LEVEL_2_LEFT_REVERSED);
+        startingPoseChooser.addOption("Level 2 right reversed", Pose.LEVEL_2_RIGHT_REVERSED);
         SmartDashboard.putData("Starting pose chooser", startingPoseChooser);
 
         autoChooser = new SendableChooser<>();
@@ -114,8 +117,8 @@ public class Robot extends TimedRobot
     public void autonomousInit()
     {
         Scheduler.getInstance().removeAll();
-        Scheduler.getInstance().add(autoChooser.getSelected());
         estimator.setPose(startingPoseChooser.getSelected());
+        Scheduler.getInstance().add(autoChooser.getSelected());
 
         compressor.start();
         manipulator.setOpen(true);
@@ -149,12 +152,6 @@ public class Robot extends TimedRobot
         {
             oi.getButton(OI.Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new RightLoadingToRocketFar());
         }
-    }
-
-    @Override
-    public void teleopPeriodic()
-    {
-
     }
 
     @Override

@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
-import frc.team1983.autonomous.*;
-import frc.team1983.autonomous.paths.*;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
 import frc.team1983.commands.collector.*;
