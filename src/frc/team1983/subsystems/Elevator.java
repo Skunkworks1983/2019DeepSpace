@@ -35,7 +35,7 @@ public class Elevator extends Subsystem
             public static final double ROCKET_BOTTOM = 15.0;
             public static final double ROCKET_MIDDLE = 42.0;
             public static final double ROCKET_TOP = 69.5;
-            public static final double CARGOSHIP = 30.0;
+            public static final double CARGOSHIP = 27.0;
             public static final double LOADING_STATION = 34.5;
         }
     }

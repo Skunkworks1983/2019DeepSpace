@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team1983.autonomous.LeftRocketFarHatch;
 import frc.team1983.autonomous.RightRocketFarHatch;
+import frc.team1983.autonomous.paths.LeftLoading;
+import frc.team1983.autonomous.paths.LeftLoadingToRocketFar;
+import frc.team1983.autonomous.paths.RightLoading;
+import frc.team1983.autonomous.paths.RightLoadingToRocketFar;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
@@ -22,6 +26,8 @@ import frc.team1983.utilities.pathing.Pose;
 import frc.team1983.utilities.sensors.Gyro;
 import frc.team1983.utilities.sensors.Limelight;
 import frc.team1983.utilities.sensors.NavX;
+
+import static frc.team1983.services.OI.JOYSTICK_BOTTOM_BUTTON;
 
 public class Robot extends TimedRobot
 {
@@ -98,7 +104,6 @@ public class Robot extends TimedRobot
 
         SmartDashboard.putData("Starting Pose", startingPoseChooser);
 
-
         autoChooser = new SendableChooser();
         autoChooser.addDefault("Driver Control", new RunTankDrive());
         autoChooser.addOption("Right Rocket Hatch", new RightRocketFarHatch());
@@ -112,6 +117,8 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
+        System.out.println(oi.getLeftYOld() + ", " + oi.getLeftY());
+
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
@@ -122,9 +129,10 @@ public class Robot extends TimedRobot
     {
         estimator.setPose((Pose) startingPoseChooser.getSelected());
         compressor.start();
-        manipulator.setOpen(true);
+        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
         Scheduler.getInstance().removeAll();
         Scheduler.getInstance().add((Command) autoChooser.getSelected());
+        manipulator.setOpen(true);
     }
 
     @Override
@@ -136,8 +144,23 @@ public class Robot extends TimedRobot
     @Override
     public void teleopInit()
     {
-        estimator.setPose((Pose) startingPoseChooser.getSelected());
         compressor.start();
+
+        if( startingPoseChooser.getSelected().equals(Pose.LEVEL_1_LEFT_REVERSED) ||
+            startingPoseChooser.getSelected().equals(Pose.LEVEL_1_LEFT) ||
+            startingPoseChooser.getSelected().equals(Pose.LEVEL_2_LEFT_REVERSED) ||
+            startingPoseChooser.getSelected().equals(Pose.LEVEL_2_LEFT))
+        {
+            oi.getButton(OI.Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new LeftLoadingToRocketFar());
+        }
+        else if( startingPoseChooser.getSelected().equals(Pose.LEVEL_1_RIGHT_REVERSED) ||
+                startingPoseChooser.getSelected().equals(Pose.LEVEL_1_RIGHT) ||
+                startingPoseChooser.getSelected().equals(Pose.LEVEL_2_RIGHT_REVERSED) ||
+                startingPoseChooser.getSelected().equals(Pose.LEVEL_2_RIGHT))
+        {
+            oi.getButton(OI.Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new RightLoadingToRocketFar());
+        }
+
         Scheduler.getInstance().removeAll();
         Scheduler.getInstance().add(new RunTankDrive());
     }
