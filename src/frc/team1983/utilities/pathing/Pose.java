@@ -147,6 +147,21 @@ public final class Pose
         return new Pose(getPosition(), getDirection().getNegative());
     }
 
+    // +x is forward, standard cartesian coordinate system
+    public Pose translateRelative(double dx, double dy)
+    {
+        Vector2 position = getPosition();
+        Vector2 forward = getDirection();
+        Vector2 right = forward.getLeft();
+        return new Pose(Vector2.add(
+                getPosition(),
+                Vector2.add(
+                        Vector2.scale(forward, dx),
+                        Vector2.scale(right, dy)
+                )
+        ), getHeading());
+    }
+
     @Override
     public String toString()
     {

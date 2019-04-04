@@ -37,4 +37,11 @@ public class UT_Pose
         System.out.println(Pose.RIGHT_LOADING_STATION_LINE_UP);
         System.out.println(Pose.RIGHT_LOADING_STATION_DRIVER_SWITCH);
     }
+
+    @Test
+    public void translateRelativeTest()
+    {
+        System.out.println(new Pose(0, 0, 90).translateRelative(0, 1).toString());
+        System.out.println(Pose.RIGHT_ROCKET_FAR.translateRelative(-2, 0));
+    }
 }

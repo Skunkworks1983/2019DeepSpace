@@ -107,7 +107,7 @@ function ntConnect() {
     ntClient.start((isConnected, err) => {
         // Displays the error and the state of connection
         console.log({ isConnected, err });
-    }, '10.19.83.2');
+    }, '172.22.11.2');
 }
 
 // Called when we successfully connect to the network table. Updates buttons

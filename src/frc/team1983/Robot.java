@@ -7,13 +7,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team1983.autonomous.LeftRocketFarHatch;
-import frc.team1983.autonomous.RightRocketFarHatch;
-import frc.team1983.autonomous.paths.LeftLoading;
+import frc.team1983.autonomous.routines.LeftRocketFarHatch;
+import frc.team1983.autonomous.routines.RightRocketFarHatch;
 import frc.team1983.autonomous.paths.LeftLoadingToRocketFar;
-import frc.team1983.autonomous.paths.RightLoading;
 import frc.team1983.autonomous.paths.RightLoadingToRocketFar;
-import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.autonomous.routines.DoNothing;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -33,6 +31,8 @@ public class Robot extends TimedRobot
 {
     private static Robot instance;
 
+    private Logger logger;
+
     private Drivebase drivebase;
     private Elevator elevator;
     private Climber climber;
@@ -44,10 +44,9 @@ public class Robot extends TimedRobot
     private StateEstimator estimator;
     private Limelight limelight;
     private OI oi;
-    Logger logger;
 
-    private SendableChooser startingPoseChooser;
-    private SendableChooser autoChooser;
+    private SendableChooser<Pose> startingPoseChooser;
+    private SendableChooser<Command> autoChooser;
 
     Robot()
     {
@@ -73,6 +72,7 @@ public class Robot extends TimedRobot
         manipulator = new Manipulator();
 
         navx = new NavX();
+        navx.reset();
 
         estimator = new StateEstimator();
 
@@ -85,39 +85,25 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
-        getGyro().reset();
-        estimator.setPose(Pose.LEVEL_1_MIDDLE);
-        compressor.start();
         CameraServer.getInstance().startAutomaticCapture();
 
-        startingPoseChooser = new SendableChooser();
-        startingPoseChooser.addDefault("Level 1 Middle", Pose.LEVEL_1_MIDDLE);
-        startingPoseChooser.addOption("Level 1 Left", Pose.LEVEL_1_LEFT);
-        startingPoseChooser.addOption("Level 1 Right", Pose.LEVEL_1_RIGHT);
-        startingPoseChooser.addOption("Level 1 Middle Reversed", Pose.LEVEL_1_MIDDLE_REVERSED);
-        startingPoseChooser.addOption("Level 1 Left Reversed", Pose.LEVEL_1_LEFT_REVERSED);
-        startingPoseChooser.addOption("Level 1 Right Reversed", Pose.LEVEL_1_RIGHT_REVERSED);
-        startingPoseChooser.addOption("Level 2 Left", Pose.LEVEL_2_LEFT);
-        startingPoseChooser.addOption("Level 2 Right", Pose.LEVEL_2_RIGHT);
-        startingPoseChooser.addOption("Level 2 Left Reversed", Pose.LEVEL_2_LEFT_REVERSED);
-        startingPoseChooser.addOption("Level 2 Right Reversed", Pose.LEVEL_2_RIGHT_REVERSED);
+        startingPoseChooser = new SendableChooser<>();
+        startingPoseChooser.setDefaultOption("Middle forward", Pose.LEVEL_1_MIDDLE);
+        startingPoseChooser.addOption("Right reversed", Pose.LEVEL_1_RIGHT_REVERSED);
+        startingPoseChooser.addOption("Left reversed", Pose.LEVEL_1_LEFT_REVERSED);
+        SmartDashboard.putData("Starting pose chooser", startingPoseChooser);
 
-        SmartDashboard.putData("Starting Pose", startingPoseChooser);
-
-        autoChooser = new SendableChooser();
-        autoChooser.addDefault("Driver Control", new RunTankDrive());
-        autoChooser.addOption("Right Rocket Hatch", new RightRocketFarHatch());
-        autoChooser.addOption("Left Rocket Hatch", new LeftRocketFarHatch());
-
-        SmartDashboard.putData("Auto Selected", autoChooser);
+        autoChooser = new SendableChooser<>();
+        autoChooser.setDefaultOption("Driver controlled", new DoNothing());
+        autoChooser.addOption("Right rocket reversed", new RightRocketFarHatch());
+        autoChooser.addOption("Left rocket reversed", new LeftRocketFarHatch());
+        SmartDashboard.putData("Auto chooser", autoChooser);
     }
 
     @Override
     public void robotPeriodic()
     {
         Scheduler.getInstance().run();
-
-        System.out.println(oi.getLeftYOld() + ", " + oi.getLeftY());
 
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
@@ -127,18 +113,21 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit()
     {
-        estimator.setPose((Pose) startingPoseChooser.getSelected());
-        compressor.start();
-        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
         Scheduler.getInstance().removeAll();
-        Scheduler.getInstance().add((Command) autoChooser.getSelected());
+        Scheduler.getInstance().add(autoChooser.getSelected());
+        estimator.setPose(startingPoseChooser.getSelected());
+
+        compressor.start();
         manipulator.setOpen(true);
+
+        elevator.setPosition(Elevator.Setpoints.Panel.ROCKET_BOTTOM);
     }
 
     @Override
     public void autonomousPeriodic()
     {
-
+        if(oi.isInManualMode())
+            Scheduler.getInstance().removeAll();
     }
 
     @Override
@@ -146,23 +135,20 @@ public class Robot extends TimedRobot
     {
         compressor.start();
 
-        if( startingPoseChooser.getSelected().equals(Pose.LEVEL_1_LEFT_REVERSED) ||
+        if(startingPoseChooser.getSelected().equals(Pose.LEVEL_1_LEFT_REVERSED) ||
             startingPoseChooser.getSelected().equals(Pose.LEVEL_1_LEFT) ||
             startingPoseChooser.getSelected().equals(Pose.LEVEL_2_LEFT_REVERSED) ||
             startingPoseChooser.getSelected().equals(Pose.LEVEL_2_LEFT))
         {
             oi.getButton(OI.Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new LeftLoadingToRocketFar());
         }
-        else if( startingPoseChooser.getSelected().equals(Pose.LEVEL_1_RIGHT_REVERSED) ||
+        else if(startingPoseChooser.getSelected().equals(Pose.LEVEL_1_RIGHT_REVERSED) ||
                 startingPoseChooser.getSelected().equals(Pose.LEVEL_1_RIGHT) ||
                 startingPoseChooser.getSelected().equals(Pose.LEVEL_2_RIGHT_REVERSED) ||
                 startingPoseChooser.getSelected().equals(Pose.LEVEL_2_RIGHT))
         {
             oi.getButton(OI.Joysticks.RIGHT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new RightLoadingToRocketFar());
         }
-
-        Scheduler.getInstance().removeAll();
-        Scheduler.getInstance().add(new RunTankDrive());
     }
 
     @Override
@@ -177,7 +163,6 @@ public class Robot extends TimedRobot
         Scheduler.getInstance().removeAll();
         for(MotorGroup motorGroup : MotorGroup.motorGroups)
             motorGroup.disableController();
-        drivebase.setBrake(false);
         compressor.stop();
     }
 
