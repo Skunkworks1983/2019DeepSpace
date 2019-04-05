@@ -48,6 +48,9 @@ public class Drivebase extends Subsystem
         right.setKP(0.003);
         right.setKD(0.0015);
 
+        left.setBrake(false);
+        right.setBrake(false);
+
         zero();
     }
 

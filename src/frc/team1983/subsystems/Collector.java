@@ -61,6 +61,8 @@ public class Collector extends Subsystem
         wristLeft.setKP(0.21);
         wristLeft.follow(wristRight);
         wristLeft.setCurrentLimit(40);
+
+        setWristBrake(false);
     }
 
     @Override

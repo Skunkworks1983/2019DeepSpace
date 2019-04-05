@@ -44,7 +44,7 @@ public final class Pose
     public static final Pose RIGHT_ROCKET_CLOSE_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_CLOSE.getPosition(), new Vector2(-dxLineUp, -dyLineUp)), RIGHT_ROCKET_CLOSE.getHeading());
     public static final Pose LEFT_ROCKET_MIDDLE_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_MIDDLE.getPosition(), new Vector2(ROCKET_LINE_UP_DISTANCE, 0)), LEFT_ROCKET_MIDDLE.getHeading());
     public static final Pose RIGHT_ROCKET_MIDDLE_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_MIDDLE.getPosition(), new Vector2(-ROCKET_LINE_UP_DISTANCE, 0)), RIGHT_ROCKET_MIDDLE.getHeading());
-    public static final Pose LEFT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxLineUp, dyLineUp)), LEFT_ROCKET_FAR.getHeading());
+    public static final Pose LEFT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(LEFT_ROCKET_FAR.getPosition(), new Vector2(dxLineUp - 1.0, dyLineUp)), LEFT_ROCKET_FAR.getHeading());
     public static final Pose RIGHT_ROCKET_FAR_LINE_UP = new Pose(Vector2.add(RIGHT_ROCKET_FAR.getPosition(), new Vector2(-dxLineUp, dyLineUp)), RIGHT_ROCKET_FAR.getHeading());
 
     // Rocket driver switch

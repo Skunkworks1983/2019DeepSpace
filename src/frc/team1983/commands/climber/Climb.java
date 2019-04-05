@@ -36,7 +36,7 @@ public class Climb extends Command
     @Override
     public void initialize()
     {
-        Robot.getInstance().getCollector().climbing = true;
+        collector.climbing = true;
         gyro.setPitch(0);
         climber.set(ControlMode.Position, climbHeight);
     }
@@ -65,7 +65,7 @@ public class Climb extends Command
     @Override
     protected void end()
     {
-        Robot.getInstance().getCollector().climbing = false;
+        collector.climbing = false;
         collector.setWristThrottle(0);
         collector.setRollerThrottle(0);
         climber.set(ControlMode.Position, 0);

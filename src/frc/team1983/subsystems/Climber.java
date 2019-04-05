@@ -57,4 +57,9 @@ public class Climber extends Subsystem
     {
         motorGroup.set(ControlMode.Throttle, throttle);
     }
+
+    public void setBrake(boolean brake)
+    {
+        motorGroup.setBrake(brake);
+    }
 }

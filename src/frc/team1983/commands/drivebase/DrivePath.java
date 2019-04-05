@@ -14,6 +14,7 @@ import frc.team1983.utilities.pathing.Path;
 public class DrivePath extends Command
 {
     public final static double DEADZONE_TIME = 5.0; // seconds
+    public final static double THROTTLE_DEADZONE = 0.6;
 
     protected Drivebase drivebase;
     protected StateEstimator estimator;
@@ -70,7 +71,7 @@ public class DrivePath extends Command
     @Override
     protected boolean isFinished()
     {
-        return endTimer > DEADZONE_TIME || oi.getLeftY() != 0 || oi.getRightY() != 0;
+        return endTimer > DEADZONE_TIME || Math.abs(oi.getLeftY()) >= THROTTLE_DEADZONE || Math.abs(oi.getRightY()) >= THROTTLE_DEADZONE;
     }
 
     @Override

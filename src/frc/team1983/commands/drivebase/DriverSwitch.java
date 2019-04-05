@@ -8,7 +8,6 @@ import frc.team1983.subsystems.Drivebase;
 public class DriverSwitch extends RunTankDrive
 {
     protected StateEstimator estimator;
-    protected int button;
 
     public DriverSwitch(Drivebase drivebase, OI oi, StateEstimator estimator)
     {

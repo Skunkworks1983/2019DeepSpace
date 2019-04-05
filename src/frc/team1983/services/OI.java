@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team1983.Robot;
 import frc.team1983.commands.ConditionalCommand;
 import frc.team1983.commands.climber.Climb;
+import frc.team1983.commands.climber.FakeClimb;
 import frc.team1983.commands.collector.*;
 import frc.team1983.commands.drivebase.DrivePath;
 import frc.team1983.commands.manipulator.*;
@@ -125,7 +126,7 @@ public class OI
     protected static double scale(double raw)
     {
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
-//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
+//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw; nathan is a mega dumb dumb
         if(Math.abs(raw) < LINEAR_ZONE) return (LINEAR_SLOPE * raw) - (Math.signum(raw) * JOYSTICK_DEADZONE);
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
     }
@@ -369,10 +370,14 @@ public class OI
         getButton(Joysticks.PANEL, 17).whileHeld(new SetCollectorFolded(true));
 
         getButton(Joysticks.PANEL, CLIMB).whenPressed(new ConditionalCommand(
-                new Climb(-12, -8),
-                new Climb(-24, -16),
+                new Climb(-12.5, -8),
+                new Climb(-24.5, -16),
                 (args) -> isInLevelTwoClimbMode()
         ));
+
+        getButton(Joysticks.LEFT, 4).toggleWhenPressed(new FakeClimb(-12));
+        getButton(Joysticks.RIGHT, 4).whileHeld(new SetCollectorRollerThrottle(0.5));
+        getButton(Joysticks.RIGHT, 5).whileHeld(new SetCollectorRollerThrottle(-0.5));
 
         getButton(Joysticks.PANEL,TOGGLE_COLLECTOR_FOLDED).whenPressed(new ToggleCollector());
         getButton(Joysticks.PANEL,TOGGLE_COLLECTOR_CLOSED).whenPressed(new ToggleHooks());

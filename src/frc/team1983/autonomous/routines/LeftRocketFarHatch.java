@@ -10,7 +10,7 @@ public class LeftRocketFarHatch extends CommandGroup
     public LeftRocketFarHatch()
     {
         // Reverse path to far rocket and move forward to driver switch position
-        addSequential(new DrivePath(Path.REVERSED_LEVEL_1_LEFT_TO_ROCKET_FAR_LINE_UP, 10));
+        addSequential(new DrivePath(Path.REVERSED_LEVEL_1_LEFT_TO_ROCKET_FAR_LINE_UP, 8));
         addSequential(new DrivePath(Path.LEFT_ROCKET_FAR_LINE_UP_TO_DRIVER_SWITCH, 5));
 
         // Driver hatch placement
@@ -18,7 +18,7 @@ public class LeftRocketFarHatch extends CommandGroup
 
         // Back up from rocket and drive to loading station
         addSequential(new DrivePath(Path.LEFT_ROCKET_FAR_TO_LOADING_STATION_LINE_UP, 5), 2);
-        addSequential(new DrivePath(Path.LEFT_LOADING_STATION_LINE_UP_TO_DRIVER_SWITCH, 10));
+        addSequential(new DrivePath(Path.LEFT_LOADING_STATION_LINE_UP_TO_DRIVER_SWITCH, 8));
 
         // Driver hatch pickup
         addSequential(new DriverSwitch());
