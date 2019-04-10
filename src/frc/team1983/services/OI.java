@@ -18,6 +18,7 @@ import frc.team1983.commands.collector.SetCollectorRollerThrottle;
 import frc.team1983.commands.collector.SetCollectorWristThrottle;
 import frc.team1983.commands.collector.ToggleCollector;
 import frc.team1983.commands.drivebase.RunArcadeDrive;
+import frc.team1983.commands.drivebase.RunGyroDrive;
 import frc.team1983.commands.drivebase.RunTankDrive;
 import frc.team1983.commands.elevator.ManualElevator;
 import frc.team1983.commands.elevator.SetElevatorPosition;
@@ -153,6 +154,11 @@ public class OI
         return scale(right.getX());
     }
 
+	public double getLeftX()
+	{
+		return left.getX();
+	}
+
     public JoystickButton getButton(Joysticks joystickPort, int button)
     {
         Joystick joystick;
@@ -194,7 +200,7 @@ public class OI
 
     public void initializeBindings()
     {
-        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whileHeld(new RunArcadeDrive());
+        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whileHeld(new RunGyroDrive());
         getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whenReleased(new RunTankDrive());
 
 //        // Quick paths

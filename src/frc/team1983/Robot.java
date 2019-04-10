@@ -1,5 +1,7 @@
 package frc.team1983;
 
+import edu.wpi.cscore.VideoCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -86,7 +88,8 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit()
     {
-        CameraServer.getInstance().startAutomaticCapture();
+        CameraServer.getInstance().startAutomaticCapture(0);
+        CameraServer.getInstance().startAutomaticCapture(1);
 
         startingPoseChooser = new SendableChooser<>();
         startingPoseChooser.setDefaultOption("DO NOT RUN AUTO", Pose.LEVEL_1_MIDDLE);
