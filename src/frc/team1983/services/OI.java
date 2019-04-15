@@ -200,8 +200,8 @@ public class OI
 
     public void initializeBindings()
     {
-        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whileHeld(new RunGyroDrive());
-        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whenReleased(new RunTankDrive());
+        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whenReleased(new RunGyroDrive());
+        getButton(Joysticks.RIGHT, JOYSTICK_TRIGGER).whileHeld(new RunTankDrive());
 
 //        // Quick paths
 //        getButton(Joysticks.LEFT, JOYSTICK_BOTTOM_BUTTON).whenPressed(new LeftLoading());
