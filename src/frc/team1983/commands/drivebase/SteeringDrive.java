@@ -6,7 +6,6 @@ import frc.team1983.utilities.motors.ControlMode;
 
 public class SteeringDrive extends Command
 {
-    protected static final double DRIVEBASE_WIDTH = 19.75 / 12;
     protected static final double MAX_VELOCITY = 14.0; // f/s
     protected static final double STEERING_SCALE = 2.0;
     protected static final double VELOCITY_CORRECTION_SCALE = 2.0;
