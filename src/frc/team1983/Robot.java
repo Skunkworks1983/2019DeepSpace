@@ -14,6 +14,7 @@ import frc.team1983.autonomous.paths.LeftLoadingToRocketFar;
 import frc.team1983.autonomous.paths.RightLoading;
 import frc.team1983.autonomous.paths.RightLoadingToRocketFar;
 import frc.team1983.commands.drivebase.RunTankDrive;
+import frc.team1983.commands.drivebase.SteeringDrive;
 import frc.team1983.constants.RobotMap;
 import frc.team1983.services.OI;
 import frc.team1983.services.StateEstimator;
@@ -117,8 +118,6 @@ public class Robot extends TimedRobot
     {
         Scheduler.getInstance().run();
 
-        System.out.println(oi.getLeftYOld() + ", " + oi.getLeftY());
-
         SmartDashboard.putNumber("robotX", estimator.getPosition().getX());
         SmartDashboard.putNumber("robotY", estimator.getPosition().getY());
         SmartDashboard.putNumber("robotAngle", getGyro().getHeading());
@@ -162,7 +161,7 @@ public class Robot extends TimedRobot
         }
 
         Scheduler.getInstance().removeAll();
-        Scheduler.getInstance().add(new RunTankDrive());
+        Scheduler.getInstance().add(new SteeringDrive());
     }
 
     @Override

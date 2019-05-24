@@ -137,12 +137,10 @@ public class OI
         return scale(-left.getY());
     }
 
-    // delete me after glacier peak
-    public double getLeftYOld()
+    public double getLeftX()
     {
-        return scaleOld(-left.getY());
+        return scale(left.getX());
     }
-
 
     public double getRightY()
     {
