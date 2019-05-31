@@ -28,7 +28,7 @@ public class SteeringDrive extends Command
 
         // If moving in reverse, change the direction of steering
         // This is opposite of reversing in a car
-        steer = Math.signum(throttle) * Robot.getInstance().getOI().getLeftX();
+        steer = Math.signum(throttle) * Robot.getInstance().getOI().getSteering();
 
         // Scale the drive train velocities based on the amount of throttle
         // This allows the robot to maintain the same turning radius no matter the throttle

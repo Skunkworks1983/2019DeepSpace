@@ -91,9 +91,13 @@ public class OI
 
     protected static final double JOYSTICK_DEADZONE = 0.15;
     protected static final double JOYSTICK_EXPONENT = 1.7;
-//    protected static final double JOYSTICK_EXPONENT = 3;
     protected static final double LINEAR_ZONE = 0.4;
     protected static final double LINEAR_SLOPE = Math.abs(Math.pow(LINEAR_ZONE, JOYSTICK_EXPONENT) / (LINEAR_ZONE - JOYSTICK_DEADZONE));
+
+    protected static final double STEERING_JOYSTICK_EXPONENT = 1.0;
+    protected static final double STEERING_LINEAR_ZONE = 0.0;
+    protected static final double STEERING_LINEAR_SLOPE = Math.abs(Math.pow(LINEAR_ZONE, JOYSTICK_EXPONENT) / (LINEAR_ZONE - JOYSTICK_DEADZONE));
+
 
     private Joystick left, right, panel;
     private HashMap<Joysticks, HashMap<Integer, JoystickButton>> buttons;
@@ -115,21 +119,18 @@ public class OI
         );
     }
 
-    // delete me after glacier peak
-    protected static double scaleOld(double raw)
-    {
-        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
-//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
-        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw - Math.signum(raw) * JOYSTICK_DEADZONE;
-        else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
-    }
-
     protected static double scale(double raw)
     {
         if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
-//        if(Math.abs(raw) < LINEAR_ZONE) return LINEAR_SLOPE * raw;
         if(Math.abs(raw) < LINEAR_ZONE) return (LINEAR_SLOPE * raw) - (Math.signum(raw) * JOYSTICK_DEADZONE);
         else return Math.pow(Math.abs(raw), JOYSTICK_EXPONENT) * Math.signum(raw);
+    }
+
+    protected static double steeringScale(double raw)
+    {
+        if(Math.abs(raw) < JOYSTICK_DEADZONE) return 0;
+        if(Math.abs(raw) < STEERING_LINEAR_ZONE) return (STEERING_LINEAR_SLOPE * raw) - (Math.signum(raw) * JOYSTICK_DEADZONE);
+        else return Math.pow(Math.abs(raw), STEERING_JOYSTICK_EXPONENT) * Math.signum(raw);
     }
 
     public double getLeftY()
@@ -150,6 +151,11 @@ public class OI
     public double getRightX()
     {
         return scale(right.getX());
+    }
+
+    public double getSteering()
+    {
+        return steeringScale(left.getX());
     }
 
     public JoystickButton getButton(Joysticks joystickPort, int button)
