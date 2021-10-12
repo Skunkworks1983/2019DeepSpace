@@ -11,7 +11,7 @@
   "repository": "https://github.com/Skunkworks1983/2019DeepSpace",
   "productName": "Smelly Dash",
   "devDependencies": {
-    "electron": "^4.0.1"
+    "electron": "^11.5.0"
   },
   "dependencies": {
     "wpilib-nt-client": "^1.7.1"
